@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-07-19T20:38:56.232Z",
+ "generatedAt": "2026-11-13T18:45:05.077Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -7,7 +7,7 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 30081378,
-   "modifiedAt": "2026-01-14T05:07:16.302Z"
+   "modifiedAt": "2026-11-13T18:39:16.091Z"
   },
   {
    "filename": "blogs-banner-bg.jpg",
@@ -15,7 +15,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 4771958,
-   "modifiedAt": "2026-01-13T04:51:53.963Z"
+   "modifiedAt": "2026-11-13T18:39:16.111Z"
   },
   {
    "filename": "business-services-banner-bg.jpg",
@@ -23,7 +23,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 3298783,
-   "modifiedAt": "2026-01-13T04:53:35.006Z"
+   "modifiedAt": "2026-11-13T18:39:16.119Z"
   },
   {
    "filename": "contact-us-banner-bg.jpg",
@@ -31,7 +31,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 3813507,
-   "modifiedAt": "2026-01-13T05:05:28.125Z"
+   "modifiedAt": "2026-11-13T18:39:16.139Z"
   },
   {
    "filename": "contact-us-form.jpg",
@@ -39,7 +39,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 6135339,
-   "modifiedAt": "2026-01-13T05:03:41.021Z"
+   "modifiedAt": "2026-11-13T18:39:16.163Z"
   },
   {
    "filename": "engineering-drawings-bg.mp4",
@@ -47,7 +47,7 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 38721252,
-   "modifiedAt": "2026-01-14T05:26:51.882Z"
+   "modifiedAt": "2026-11-13T18:39:16.199Z"
   },
   {
    "filename": "hero-loop.mp4",
@@ -55,47 +55,39 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 16571637,
-   "modifiedAt": "2026-07-10T17:18:47.716Z"
+   "modifiedAt": "2026-11-13T18:39:16.215Z"
   },
   {
-   "filename": "homepage-banner-bg.mp4",
-   "relPath": "/assets/homepage-banner-bg.mp4",
-   "kind": "video",
-   "mime": "video/mp4",
-   "size": 325791751,
-   "modifiedAt": "2026-01-10T03:47:22.985Z"
-  },
-  {
-   "filename": "martek-group-header.png",
-   "relPath": "/assets/martek-group-header.png",
+   "filename": "marrelay-header.png",
+   "relPath": "/assets/marrelay-header.png",
    "kind": "photo",
    "mime": "image/png",
    "size": 29021,
-   "modifiedAt": "2026-01-10T04:33:56.541Z"
+   "modifiedAt": "2026-11-13T18:39:16.218Z"
   },
   {
-   "filename": "martek-mark.png",
-   "relPath": "/assets/martek-mark.png",
+   "filename": "marrelay-mark.png",
+   "relPath": "/assets/marrelay-mark.png",
    "kind": "photo",
    "mime": "image/png",
    "size": 20137,
-   "modifiedAt": "2026-07-10T17:18:47.728Z"
+   "modifiedAt": "2026-11-13T18:39:16.218Z"
   },
   {
-   "filename": "martek-offical-logo.png",
-   "relPath": "/assets/martek-offical-logo.png",
+   "filename": "marrelay-official-logo.png",
+   "relPath": "/assets/marrelay-official-logo.png",
    "kind": "photo",
    "mime": "image/png",
    "size": 44103,
-   "modifiedAt": "2026-01-10T03:45:10.204Z"
+   "modifiedAt": "2026-11-13T18:39:16.218Z"
   },
   {
-   "filename": "martek-only-logo.png",
-   "relPath": "/assets/martek-only-logo.png",
+   "filename": "marrelay-only-logo.png",
+   "relPath": "/assets/marrelay-only-logo.png",
    "kind": "photo",
    "mime": "image/png",
    "size": 53999,
-   "modifiedAt": "2026-01-10T03:44:21.974Z"
+   "modifiedAt": "2026-11-13T18:39:16.218Z"
   },
   {
    "filename": "office-dark-hero.png",
@@ -103,7 +95,7 @@
    "kind": "photo",
    "mime": "image/png",
    "size": 626900,
-   "modifiedAt": "2026-01-13T03:56:44.105Z"
+   "modifiedAt": "2026-11-13T18:39:16.219Z"
   },
   {
    "filename": "sample-project-bg.jpg",
@@ -111,7 +103,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 5638673,
-   "modifiedAt": "2026-01-14T05:45:22.694Z"
+   "modifiedAt": "2026-11-13T18:39:16.247Z"
   },
   {
    "filename": "web-dev-bg.mp4",
@@ -119,37 +111,20 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 36311879,
-   "modifiedAt": "2026-01-14T05:21:00.584Z"
+   "modifiedAt": "2026-11-13T18:39:16.279Z"
   }
  ],
  "references": {
-  "/assets/martek-group-header.png": [
+  "/assets/marrelay-mark.png": [
    {
-    "file": "app/layout.tsx",
-    "label": "Site metadata / social sharing image",
-    "line": 77
+    "file": "app/blogs/[slug]/page.tsx",
+    "label": "Blogs / [Slug]",
+    "line": 83
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 84
-   },
-   {
-    "file": "app/layout.tsx",
-    "label": "Site metadata / social sharing image",
-    "line": 127
-   },
-   {
-    "file": "lib/site-config.ts",
-    "label": "lib/site-config.ts",
-    "line": 24
-   }
-  ],
-  "/assets/martek-mark.png": [
-   {
-    "file": "app/layout.tsx",
-    "label": "Site metadata / social sharing image",
-    "line": 126
+    "line": 130
    },
    {
     "file": "components/Footer.tsx",
@@ -164,12 +139,12 @@
    {
     "file": "components/Navbar.tsx",
     "label": "Navigation bar (site-wide)",
-    "line": 207
+    "line": 225
    },
    {
     "file": "components/Navbar.tsx",
     "label": "Navigation bar (site-wide)",
-    "line": 263
+    "line": 323
    },
    {
     "file": "lib/site-config.ts",
@@ -177,7 +152,34 @@
     "line": 25
    }
   ],
-  "/assets/martek-only-logo.png": [
+  "/assets/marrelay-header.png": [
+   {
+    "file": "app/layout.tsx",
+    "label": "Site metadata / social sharing image",
+    "line": 77
+   },
+   {
+    "file": "app/layout.tsx",
+    "label": "Site metadata / social sharing image",
+    "line": 84
+   },
+   {
+    "file": "app/layout.tsx",
+    "label": "Site metadata / social sharing image",
+    "line": 131
+   },
+   {
+    "file": "app/lp/launch/page.tsx",
+    "label": "Lp / Launch",
+    "line": 15
+   },
+   {
+    "file": "lib/site-config.ts",
+    "label": "lib/site-config.ts",
+    "line": 24
+   }
+  ],
+  "/assets/marrelay-only-logo.png": [
    {
     "file": "app/site-vc/page.tsx",
     "label": "Site Vc",

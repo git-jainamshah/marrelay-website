@@ -80,7 +80,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     publisher: {
       '@type': 'Organization',
       name: 'Marrelay',
-      logo: { '@type': 'ImageObject', url: `${SITE}/assets/martek-mark.png` },
+      logo: { '@type': 'ImageObject', url: `${SITE}/assets/marrelay-mark.png` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE}/blogs/${post.slug}` },
     articleSection: post.category,

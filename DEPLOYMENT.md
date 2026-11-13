@@ -66,7 +66,7 @@ Vercel is the easiest way to deploy Next.js applications. Follow these steps:
    - Create a new repository on GitHub
    - Push your code:
    ```bash
-   git remote add origin https://github.com/YOUR_USERNAME/martek-group-website.git
+   git remote add origin https://github.com/YOUR_USERNAME/marrelay-website.git
    git branch -M main
    git push -u origin main
    ```

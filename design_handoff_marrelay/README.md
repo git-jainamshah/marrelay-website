@@ -350,7 +350,7 @@ Key breakpoints in CSS:
 ## Assets
 
 **Required**:
-- `assets/martek-mark.png` - Logo mark (40×40px, SVG or PNG)
+- `assets/marrelay-mark.png` - Logo mark (40×40px, SVG or PNG)
 
 **Used in Prototypes** (drop your own images):
 - `assets/hero-loop.mp4` - Background video for hero (optional, falls back to scrim)

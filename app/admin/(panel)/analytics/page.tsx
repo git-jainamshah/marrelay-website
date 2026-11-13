@@ -145,7 +145,7 @@ export default function AnalyticsSeoPage() {
             </select>
           </div>
           <div className="space-y-1 flex-1 min-w-48">
-            <label className="text-xs ad-mut">{tmForm.provider === 'gtm' ? 'Container ID (GTM-XXXXXXX)' : 'account/profile/env (e.g. martek/main/prod)'}</label>
+            <label className="text-xs ad-mut">{tmForm.provider === 'gtm' ? 'Container ID (GTM-XXXXXXX)' : 'account/profile/env (e.g. marrelay/main/prod)'}</label>
             <input className={`${input} w-full`} value={tmForm.containerId} onChange={(e) => setTmForm({ ...tmForm, containerId: e.target.value })} />
           </div>
           <div className="space-y-1">

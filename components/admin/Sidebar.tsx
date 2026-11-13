@@ -84,7 +84,7 @@ export default function Sidebar({ userName, userEmail, role = 'admin' }: { userN
   return (
     <aside className={`ad-side ${collapsed ? 'collapsed' : ''}`}>
       <div className="ad-side-head">
-        <img src="/assets/martek-mark.png" alt="Marrelay" />
+        <img src="/assets/marrelay-mark.png" alt="Marrelay" />
         {!collapsed && (
           <div className="ad-side-title" style={{ flex: 1 }}>
             <b>Marrelay <span>Admin</span></b>

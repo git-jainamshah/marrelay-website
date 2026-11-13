@@ -337,7 +337,7 @@ git gc --prune=now --aggressive
 - **Contributing Guide**: See CONTRIBUTING.md
 - **Changelog**: See CHANGELOG.md
 - **Support**: info@marrelay.com
-- **GitHub Issues**: https://github.com/git-jainamshah/martek-group-website/issues
+- **GitHub Issues**: https://github.com/git-jainamshah/marrelay-website/issues
 
 ---
 

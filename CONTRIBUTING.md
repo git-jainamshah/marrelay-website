@@ -238,7 +238,7 @@ npm start
 
 If you encounter issues:
 
-1. Check existing [GitHub Issues](https://github.com/git-jainamshah/martek-group-website/issues)
+1. Check existing [GitHub Issues](https://github.com/git-jainamshah/marrelay-website/issues)
 2. Read the [README.md](README.md) for setup instructions
 3. Contact the team at info@marrelay.com
 

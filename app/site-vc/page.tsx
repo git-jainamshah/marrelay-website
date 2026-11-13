@@ -226,7 +226,7 @@ export default function VersionControlPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Image
-              src="/assets/martek-only-logo.png"
+              src="/assets/marrelay-only-logo.png"
               alt="Marrelay"
               width={40}
               height={40}

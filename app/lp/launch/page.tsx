@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: 'Marrelay - Launch Offer',
     description: 'Flat 30% off for the first 3 clients. Claim a spot. Founder-led, fixed-price, Toronto-based.',
     url: '/lp/launch',
-    images: [{ url: '/assets/martek-group-header.png', width: 1200, height: 630, alt: 'Marrelay launch offer' }],
+    images: [{ url: '/assets/marrelay-header.png', width: 1200, height: 630, alt: 'Marrelay launch offer' }],
   },
   // Paid-social landing. Kept out of the index so it does not compete with core pages.
   robots: { index: false, follow: true },

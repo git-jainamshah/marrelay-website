@@ -5,7 +5,7 @@ any hosted Postgres, or locally. One env var (`DATABASE_URL`) is the only config
 
 ## One-time setup (Vercel)
 
-1. Vercel dashboard → your `martek_website` project → **Storage** → **Create Database** →
+1. Vercel dashboard → your `marrelay_website` project → **Storage** → **Create Database** →
    **Neon (Postgres)** - free tier is plenty.
 2. Connect it to the project for **all environments** (Production, Preview, Development).
    Vercel injects `DATABASE_URL` automatically.
@@ -52,7 +52,7 @@ The admin area is invisible to search engines: excluded from the sitemap, served
 
 ## Environments
 
-Set `MARTEK_ENV` to `production`, `qa`, or `dev` per deployment to control which tag
+Set `MARRELAY_ENV` (legacy `MARTEK_ENV` still honoured as a fallback) to `production`, `qa`, or `dev` per deployment to control which tag
 managers/scripts load. Defaults: Vercel production → `production`, Vercel preview → `qa`,
 local dev → `dev`.
 

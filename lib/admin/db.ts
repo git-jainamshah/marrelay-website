@@ -358,7 +358,7 @@ async function migrateAndSeed() {
   // ---- One-time rebrand: Martek -> Marrelay in already-stored settings ----
   // The live DB was seeded with the old brand. This rewrites brand text inside
   // company profile, SEO, socials, and legal copy. Targeted tokens only, so it
-  // never touches asset paths (/assets/martek-mark.png) or custom values.
+  // never touches asset paths (e.g. legacy /assets/martek-*.png) or custom values.
   try {
     const done = await q1<{ key: string }>(`SELECT key FROM settings WHERE key = 'brand_marrelay_v1'`)
     if (!done) {
@@ -500,8 +500,8 @@ async function migrateAndSeed() {
       addressLine2: 'Canada',
       email: 'hello@marrelay.com',
       phone: '',
-      logoFull: '/assets/martek-group-header.png',
-      logoIcon: '/assets/martek-mark.png',
+      logoFull: '/assets/marrelay-header.png',
+      logoIcon: '/assets/marrelay-mark.png',
     },
     socials: [
       { platform: 'Instagram', label: '@marrelay', href: 'https://www.instagram.com/marrelay', enabled: true },

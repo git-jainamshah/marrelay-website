@@ -222,7 +222,7 @@ export default function Navbar() {
           <div className="row">
             <Link href="/" className="logo">
               <span className="logo-mark">
-                <Image src={company?.logoIcon || '/assets/martek-mark.png'} alt={brandName} width={40} height={40} priority />
+                <Image src={company?.logoIcon || '/assets/marrelay-mark.png'} alt={brandName} width={40} height={40} priority />
               </span>
               <span className="logo-name">
                 <b>
@@ -320,7 +320,7 @@ export default function Navbar() {
         <div className="m-nav-top">
           <span className="m-brand">
             <span className="lm">
-              <Image src="/assets/martek-mark.png" alt="Marrelay" width={34} height={34} />
+              <Image src="/assets/marrelay-mark.png" alt="Marrelay" width={34} height={34} />
             </span>
             <span className="bt">Menu</span>
           </span>
