@@ -337,3 +337,32 @@
   background-size: 16px 16px;
   background-position: 0 0, 8px 8px;
 }
+
+/* =====================================================================
+   v3 THEME SYNC - re-points the admin's design tokens to the v3 public-site
+   palette and type. Token values only: no layout, markup or behaviour change.
+   Delete this block to return the admin to its previous look.
+   ===================================================================== */
+.adm {
+  --paper: #F2F1EC;
+  --paper-2: #EAE8E1;
+  --paper-3: #E0DED6;
+  --ink: #0E0E0D;
+  --ink-2: #2E2D29;
+  --ink-mut: #6A6964;
+  --ink-soft: #8B8A85;
+  --rule: #D8D6CE;
+  --rule-strong: #C9C7BF;
+  --brand: #D7262C;
+  --brand-ink: #B01E23;
+  --brand-soft: #F6D3D4;
+  --accent: #D7262C;
+  --sans: var(--font-geist-sans, 'Geist'), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --serif: var(--sans);
+  --display: var(--sans);
+  --brand-font: var(--sans);
+  background: var(--paper);
+}
+.adm h1 { font-weight: 500; letter-spacing: -.04em; }
+.adm h1 .it { font-style: normal; }
+.adm h2 { font-weight: 500; letter-spacing: -.02em; }
