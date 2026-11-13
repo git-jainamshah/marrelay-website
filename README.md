@@ -235,9 +235,15 @@ marrelay-website/
 │       ├── contact-us-form.jpg
 │       ├── engineering-drawings-bg.mp4
 │       ├── homepage-banner-bg.mp4
-│       ├── marrelay-header.png       # Logo header
-│       ├── marrelay-official-logo.png       # Full logo
-│       ├── marrelay-only-logo.png          # Icon logo
+│       ├── marrelay-header.png              # 1200x630 social share card (OG/Twitter, company "Full logo")
+│       ├── marrelay-official-logo.png       # Stacked logo, red mark + ink wordmark, transparent
+│       ├── marrelay-logo-white.png          # Stacked logo, all white, transparent (dark backgrounds)
+│       ├── marrelay-mark.png                # Icon mark 500px (navbar, footer, admin)
+│       ├── marrelay-only-logo.png           # Icon mark 1563px (same as app/icon.png)
+│       ├── marrelay-logo-red-gradient.jpg   # Brand master: red gradient square
+│       ├── marrelay-logo-red-gradient-alt.jpg
+│       ├── marrelay-logo-sunset-gradient.jpg
+│       ├── marrelay-mark-on-white.jpg       # Brand master: red mark on white
 │       ├── office-dark-hero.png
 │       ├── sample-project-bg.jpg
 │       └── web-dev-bg.mp4

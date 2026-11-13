@@ -379,6 +379,28 @@ async function migrateAndSeed() {
     }
   } catch { /* ok */ }
 
+  // ---- One-time: point stored logo paths at the Marrelay asset files ----
+  // Settings (company logoFull/logoIcon, etc.) were saved with the legacy
+  // /assets/martek-*.png filenames. Those files were renamed and the
+  // "Martek Group" artwork replaced, so repoint any stored reference. The
+  // next.config.js rewrites still serve the old URLs for external caches.
+  try {
+    const done = await q1<{ key: string }>(`SELECT key FROM settings WHERE key = 'brand_assets_marrelay_v1'`)
+    if (!done) {
+      const repoint = (s: string) => s
+        .split('/assets/martek-group-header.png').join('/assets/marrelay-header.png')
+        .split('/assets/martek-offical-logo.png').join('/assets/marrelay-official-logo.png')
+        .split('/assets/martek-only-logo.png').join('/assets/marrelay-only-logo.png')
+        .split('/assets/martek-mark.png').join('/assets/marrelay-mark.png')
+      const rows = await q<{ key: string; value: string }>('SELECT key, value FROM settings')
+      for (const r of rows) {
+        const nv = repoint(r.value)
+        if (nv !== r.value) await run('UPDATE settings SET value = $1 WHERE key = $2', [nv, r.key])
+      }
+      await run(`INSERT INTO settings (key, value) VALUES ('brand_assets_marrelay_v1', '"done"') ON CONFLICT (key) DO NOTHING`)
+    }
+  } catch { /* ok */ }
+
   // ---- One-time: /#pricing -> /pricing in already-stored settings ----
   // Pricing used to exist twice: a section at /#pricing on the homepage and a
   // separate /pricing page. They are now one URL. Announcement-bar CTAs are

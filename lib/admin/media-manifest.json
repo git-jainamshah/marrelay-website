@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T18:45:05.077Z",
+ "generatedAt": "2026-11-13T19:19:45.122Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -62,8 +62,48 @@
    "relPath": "/assets/marrelay-header.png",
    "kind": "photo",
    "mime": "image/png",
-   "size": 29021,
-   "modifiedAt": "2026-11-13T18:39:16.218Z"
+   "size": 36948,
+   "modifiedAt": "2026-11-13T19:19:16.240Z"
+  },
+  {
+   "filename": "marrelay-logo-red-gradient-alt.jpg",
+   "relPath": "/assets/marrelay-logo-red-gradient-alt.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 665801,
+   "modifiedAt": "2026-11-13T19:19:16.280Z"
+  },
+  {
+   "filename": "marrelay-logo-red-gradient.jpg",
+   "relPath": "/assets/marrelay-logo-red-gradient.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 668328,
+   "modifiedAt": "2026-11-13T19:19:16.278Z"
+  },
+  {
+   "filename": "marrelay-logo-sunset-gradient.jpg",
+   "relPath": "/assets/marrelay-logo-sunset-gradient.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 828499,
+   "modifiedAt": "2026-11-13T19:19:16.283Z"
+  },
+  {
+   "filename": "marrelay-logo-white.png",
+   "relPath": "/assets/marrelay-logo-white.png",
+   "kind": "photo",
+   "mime": "image/png",
+   "size": 33316,
+   "modifiedAt": "2026-11-13T19:19:16.168Z"
+  },
+  {
+   "filename": "marrelay-mark-on-white.jpg",
+   "relPath": "/assets/marrelay-mark-on-white.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 110275,
+   "modifiedAt": "2026-11-13T19:19:16.285Z"
   },
   {
    "filename": "marrelay-mark.png",
@@ -78,8 +118,8 @@
    "relPath": "/assets/marrelay-official-logo.png",
    "kind": "photo",
    "mime": "image/png",
-   "size": 44103,
-   "modifiedAt": "2026-11-13T18:39:16.218Z"
+   "size": 33572,
+   "modifiedAt": "2026-11-13T19:19:16.008Z"
   },
   {
    "filename": "marrelay-only-logo.png",
