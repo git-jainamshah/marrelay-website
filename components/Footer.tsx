@@ -13,7 +13,7 @@ type Social = { platform: string; href: string }
 
 const COMPANY_FALLBACK: Company = {
   name: 'Marrelay', tagline: 'Digital studio', addressLine1: '', addressLine2: '',
-  email: '', phone: '', logoIcon: '/assets/martek-mark.png',
+  email: '', phone: '', logoIcon: '/assets/marrelay-mark.png',
 }
 
 export default function Footer() {
@@ -40,7 +40,7 @@ export default function Footer() {
           <div className="brand">
             <Link href="/" className="logo">
               <span className="logo-mark">
-                <Image src={company.logoIcon || '/assets/martek-mark.png'} alt={company.name} width={40} height={40} />
+                <Image src={company.logoIcon || '/assets/marrelay-mark.png'} alt={company.name} width={40} height={40} />
               </span>
               <span className="logo-name">
                 <b style={{ color: 'var(--paper)' }}>

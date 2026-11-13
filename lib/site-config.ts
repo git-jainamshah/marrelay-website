@@ -21,8 +21,8 @@ export const COMPANY_DEFAULTS: Company = {
   addressLine2: 'Canada',
   email: 'hello@marrelay.com',
   phone: '',
-  logoFull: '/assets/martek-group-header.png',
-  logoIcon: '/assets/martek-mark.png',
+  logoFull: '/assets/marrelay-header.png',
+  logoIcon: '/assets/marrelay-mark.png',
 }
 
 export async function getCompany(): Promise<Company> {

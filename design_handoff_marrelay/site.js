@@ -158,7 +158,7 @@
 
     var top = document.createElement('div');
     top.className = 'm-nav-top';
-    top.innerHTML = '<span class="m-brand"><span class="lm"><img src="assets/martek-mark.png" alt="Marrelay"></span><span class="bt">Menu</span></span>' +
+    top.innerHTML = '<span class="m-brand"><span class="lm"><img src="assets/marrelay-mark.png" alt="Marrelay"></span><span class="bt">Menu</span></span>' +
       '<button class="m-close" type="button" aria-label="Close menu"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4 L14 14 M14 4 L4 14" stroke-linecap="round"/></svg></button>';
 
     var list = document.createElement('nav');

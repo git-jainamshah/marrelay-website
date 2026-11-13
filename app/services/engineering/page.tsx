@@ -30,7 +30,7 @@ const stage = (
         </svg>
       </div>
       <div className="tb">
-        <span>MARTEK · PART-014</span>
+        <span>MARRELAY · PART-014</span>
         <span>REV B · SCALE 1:2</span>
       </div>
     </div>

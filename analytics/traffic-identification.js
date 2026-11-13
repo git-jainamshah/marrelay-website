@@ -1,6 +1,6 @@
 /**
  * =====================================================================
- * MARTEK ANALYTICS - TRAFFIC IDENTIFICATION
+ * MARRELAY ANALYTICS - TRAFFIC IDENTIFICATION
  * =====================================================================
  * Single source of truth for how a visitor was acquired. Runs in the
  * browser only. Captures:

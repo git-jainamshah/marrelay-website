@@ -63,7 +63,7 @@ export default async function ReceiptPage({ params }: { params: { id: string } }
           <div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={company.logoIcon || '/assets/martek-mark.png'} alt={company.name} width={44} height={44} />
+              <img src={company.logoIcon || '/assets/marrelay-mark.png'} alt={company.name} width={44} height={44} />
               <div>
                 <div className="rcpt-serif" style={{ fontSize: 24, fontWeight: 700 }}>{company.name || 'Marrelay'}</div>
                 <div style={{ fontSize: 12, color: '#6E6A62' }}>{company.tagline || 'Digital studio'}</div>

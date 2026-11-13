@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'GTM container ID should look like GTM-XXXXXXX.' }, { status: 400 })
   }
   if (provider === 'tealium' && !/^[\w-]+\/[\w-]+\/[\w-]+$/.test(containerId.trim())) {
-    return NextResponse.json({ error: 'Tealium ID should be account/profile/environment (e.g. martek/main/prod).' }, { status: 400 })
+    return NextResponse.json({ error: 'Tealium ID should be account/profile/environment (e.g. marrelay/main/prod).' }, { status: 400 })
   }
   const id = await insertReturningId(
     'INSERT INTO tag_managers (provider, container_id, environment) VALUES ($1, $2, $3) RETURNING id',

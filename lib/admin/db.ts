@@ -358,7 +358,7 @@ async function migrateAndSeed() {
   // ---- One-time rebrand: Martek -> Marrelay in already-stored settings ----
   // The live DB was seeded with the old brand. This rewrites brand text inside
   // company profile, SEO, socials, and legal copy. Targeted tokens only, so it
-  // never touches asset paths (/assets/martek-mark.png) or custom values.
+  // never touches asset paths (e.g. legacy /assets/martek-*.png) or custom values.
   try {
     const done = await q1<{ key: string }>(`SELECT key FROM settings WHERE key = 'brand_marrelay_v1'`)
     if (!done) {
@@ -376,6 +376,28 @@ async function migrateAndSeed() {
         if (nv !== r.value) await run('UPDATE settings SET value = $1 WHERE key = $2', [nv, r.key])
       }
       await run(`INSERT INTO settings (key, value) VALUES ('brand_marrelay_v1', '"done"') ON CONFLICT (key) DO NOTHING`)
+    }
+  } catch { /* ok */ }
+
+  // ---- One-time: point stored logo paths at the Marrelay asset files ----
+  // Settings (company logoFull/logoIcon, etc.) were saved with the legacy
+  // /assets/martek-*.png filenames. Those files were renamed and the
+  // "Martek Group" artwork replaced, so repoint any stored reference. The
+  // next.config.js rewrites still serve the old URLs for external caches.
+  try {
+    const done = await q1<{ key: string }>(`SELECT key FROM settings WHERE key = 'brand_assets_marrelay_v1'`)
+    if (!done) {
+      const repoint = (s: string) => s
+        .split('/assets/martek-group-header.png').join('/assets/marrelay-header.png')
+        .split('/assets/martek-offical-logo.png').join('/assets/marrelay-official-logo.png')
+        .split('/assets/martek-only-logo.png').join('/assets/marrelay-only-logo.png')
+        .split('/assets/martek-mark.png').join('/assets/marrelay-mark.png')
+      const rows = await q<{ key: string; value: string }>('SELECT key, value FROM settings')
+      for (const r of rows) {
+        const nv = repoint(r.value)
+        if (nv !== r.value) await run('UPDATE settings SET value = $1 WHERE key = $2', [nv, r.key])
+      }
+      await run(`INSERT INTO settings (key, value) VALUES ('brand_assets_marrelay_v1', '"done"') ON CONFLICT (key) DO NOTHING`)
     }
   } catch { /* ok */ }
 
@@ -500,8 +522,8 @@ async function migrateAndSeed() {
       addressLine2: 'Canada',
       email: 'hello@marrelay.com',
       phone: '',
-      logoFull: '/assets/martek-group-header.png',
-      logoIcon: '/assets/martek-mark.png',
+      logoFull: '/assets/marrelay-header.png',
+      logoIcon: '/assets/marrelay-mark.png',
     },
     socials: [
       { platform: 'Instagram', label: '@marrelay', href: 'https://www.instagram.com/marrelay', enabled: true },

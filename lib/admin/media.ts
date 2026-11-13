@@ -171,7 +171,9 @@ export async function syncMediaIndex(): Promise<void> {
         const kind = ['.mp4', '.webm', '.mov'].includes(ext) ? 'video' : 'photo'
         await run(
           `INSERT INTO media (filename, rel_path, kind, mime, size, added_at, modified_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (rel_path) DO NOTHING`,
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           ON CONFLICT (rel_path) DO UPDATE SET size = EXCLUDED.size, mime = EXCLUDED.mime, kind = EXCLUDED.kind, modified_at = EXCLUDED.modified_at
+           WHERE media.size IS DISTINCT FROM EXCLUDED.size`,
           [f, `/${sub}/${f}`, kind, mimeFor(ext), st.size, st.birthtime.toISOString(), st.mtime.toISOString()]
         )
       }
@@ -184,13 +186,27 @@ export async function syncMediaIndex(): Promise<void> {
       }
     }
   } else {
-    // Serverless: make sure everything in the manifest is indexed
-    for (const f of loadMediaManifest().files) {
+    // Serverless: index everything in the manifest; refresh rows whose file
+    // changed (size differs) so the admin shows the deployed version.
+    const files = loadMediaManifest().files
+    for (const f of files) {
       await run(
         `INSERT INTO media (filename, rel_path, kind, mime, size, added_at, modified_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $6) ON CONFLICT (rel_path) DO NOTHING`,
+         VALUES ($1, $2, $3, $4, $5, $6, $6)
+         ON CONFLICT (rel_path) DO UPDATE SET size = EXCLUDED.size, mime = EXCLUDED.mime, kind = EXCLUDED.kind, modified_at = EXCLUDED.modified_at
+         WHERE media.size IS DISTINCT FROM EXCLUDED.size`,
         [f.filename, f.relPath, f.kind, f.mime, f.size, f.modifiedAt]
       )
+    }
+    // Drop rows for bundled /assets files that are no longer shipped (e.g. the
+    // renamed legacy martek-*.png). /uploads rows are never touched, and an
+    // empty/missing manifest never prunes anything.
+    if (files.length > 0) {
+      const shipped = new Set(files.map((f) => f.relPath))
+      const rows = await q<{ id: number; rel_path: string }>(`SELECT id, rel_path FROM media WHERE rel_path LIKE '/assets/%'`)
+      for (const r of rows) {
+        if (!shipped.has(r.rel_path)) await run('DELETE FROM media WHERE id = $1', [r.id])
+      }
     }
   }
 }

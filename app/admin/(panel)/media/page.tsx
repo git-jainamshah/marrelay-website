@@ -187,8 +187,8 @@ export default function ManageMediaPage() {
                       style={{ cursor: 'pointer', padding: 0, outline: selected ? '3px solid var(--brand)' : 'none', opacity: isCurrent ? 0.55 : 1 }}>
                       <div className={`ad-thumb ${isTransparentCapable(c.relPath) ? 'ad-checker' : ''}`} style={{ aspectRatio: '4/3', background: isTransparentCapable(c.relPath) ? undefined : 'var(--ink)' }}>
                         {c.kind === 'video'
-                          ? <video src={c.relPath} muted playsInline preload="metadata" />
-                          : <img src={c.relPath} alt={c.filename} loading="lazy" style={{ objectFit: 'contain' }} />}
+                          ? <video src={`${c.relPath}?v=${c.size}`} muted playsInline preload="metadata" />
+                          : <img src={`${c.relPath}?v=${c.size}`} alt={c.filename} loading="lazy" style={{ objectFit: 'contain' }} />}
                       </div>
                       <div style={{ padding: '6px 8px', fontSize: 11, textAlign: 'left' }}>
                         <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{c.filename}</div>

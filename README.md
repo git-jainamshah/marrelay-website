@@ -23,7 +23,7 @@ A modern, professional business website built with cutting-edge web technologies
 Clone and set up the entire project with a single command:
 
 ```bash
-git clone https://github.com/git-jainamshah/martek-group-website.git && cd martek-group-website && chmod +x setup.sh && ./setup.sh
+git clone https://github.com/git-jainamshah/marrelay-website.git && cd marrelay-website && chmod +x setup.sh && ./setup.sh
 ```
 
 This will:
@@ -39,8 +39,8 @@ If you prefer to run the setup separately:
 
 ```bash
 # Clone the repository
-git clone https://github.com/git-jainamshah/martek-group-website.git
-cd martek-group-website
+git clone https://github.com/git-jainamshah/marrelay-website.git
+cd marrelay-website
 
 # Run the automated setup
 ./setup.sh
@@ -130,8 +130,8 @@ git --version   # Any recent version
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/git-jainamshah/martek-group-website.git
-   cd martek-group-website
+   git clone https://github.com/git-jainamshah/marrelay-website.git
+   cd marrelay-website
    ```
 
 2. **Install dependencies**
@@ -177,7 +177,7 @@ npm run format
 ## 📁 Project Structure
 
 ```
-martek-group-website/
+marrelay-website/
 ├── app/                          # Next.js App Router
 │   ├── about/                    # About page
 │   ├── abstracts/                # Abstracts/summaries page
@@ -235,9 +235,15 @@ martek-group-website/
 │       ├── contact-us-form.jpg
 │       ├── engineering-drawings-bg.mp4
 │       ├── homepage-banner-bg.mp4
-│       ├── martek-group-header.png       # Logo header
-│       ├── martek-offical-logo.png       # Full logo
-│       ├── martek-only-logo.png          # Icon logo
+│       ├── marrelay-header.png              # 1200x630 social share card (OG/Twitter, company "Full logo")
+│       ├── marrelay-official-logo.png       # Stacked logo, red mark + ink wordmark, transparent
+│       ├── marrelay-logo-white.png          # Stacked logo, all white, transparent (dark backgrounds)
+│       ├── marrelay-mark.png                # Icon mark 500px (navbar, footer, admin)
+│       ├── marrelay-only-logo.png           # Icon mark 1563px (same as app/icon.png)
+│       ├── marrelay-logo-red-gradient.jpg   # Brand master: red gradient square
+│       ├── marrelay-logo-red-gradient-alt.jpg
+│       ├── marrelay-logo-sunset-gradient.jpg
+│       ├── marrelay-mark-on-white.jpg       # Brand master: red mark on white
 │       ├── office-dark-hero.png
 │       ├── sample-project-bg.jpg
 │       └── web-dev-bg.mp4
@@ -301,7 +307,7 @@ Open [http://localhost:3000](http://localhost:3000) to view in your browser. The
 
 1. Push your code to GitHub (already set up!)
 2. Visit [vercel.com](https://vercel.com)
-3. Import your repository: `git-jainamshah/martek-group-website`
+3. Import your repository: `git-jainamshah/marrelay-website`
 4. Vercel will auto-detect Next.js and configure everything
 5. Click "Deploy"
 
@@ -537,7 +543,7 @@ http://localhost:3000/site-vc
 
 For questions, issues, or support:
 - 📧 Email: info@marrelay.com
-- 🐛 Issues: [GitHub Issues](https://github.com/git-jainamshah/martek-group-website/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/git-jainamshah/marrelay-website/issues)
 - 📖 Documentation: [Next.js Docs](https://nextjs.org/docs)
 - 🔐 VC Dashboard: [VC_DASHBOARD.md](VC_DASHBOARD.md)
 

@@ -71,7 +71,7 @@ pg_dump --version        # should print 16.x or newer
 ### Run the copy
 
 ```bash
-cd "~/Documents/Jainam Personal Projects/Martek Group"
+cd "~/Documents/Jainam Personal Projects/Marrelay"
 
 ./scripts/clone-db.sh \
   "postgresql://…@ep-hidden-dust-auihsu8i-pooler.c-10.us-east-1.aws.neon.tech/neondb?sslmode=require" \

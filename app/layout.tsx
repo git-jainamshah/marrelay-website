@@ -74,14 +74,14 @@ const baseMetadata: Metadata = {
     type: 'website',
     locale: 'en_CA',
     url: '/',
-    images: [{ url: '/assets/martek-group-header.png', width: 1200, height: 630, alt: 'Marrelay - digital studio' }],
+    images: [{ url: '/assets/marrelay-header.png', width: 1200, height: 630, alt: 'Marrelay - digital studio' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Marrelay - Web, Data, SEO & CAD Studio in Toronto',
     description:
       'Founder-led digital studio in Toronto. Web, data, social, SEO & ads, and engineering for teams that sweat the details.',
-    images: ['/assets/martek-group-header.png'],
+    images: ['/assets/marrelay-header.png'],
   },
   // QA and DEV are full copies of the site; letting them be indexed would create
   // duplicate content competing with marrelay.com. Production is unaffected.
@@ -127,8 +127,8 @@ const buildOrgLd = (c: { name: string; email: string; phone?: string; logoIcon: 
   description:
     'Toronto-based founder-led digital studio building websites, analytics, social, SEO & ads, and engineering/CAD deliverables. Serving Toronto and the GTA, and clients remotely worldwide.',
   url: SITE_URL,
-  logo: `${SITE_URL}${c.logoIcon || '/assets/martek-mark.png'}`,
-  image: `${SITE_URL}${c.logoFull || '/assets/martek-group-header.png'}`,
+  logo: `${SITE_URL}${c.logoIcon || '/assets/marrelay-mark.png'}`,
+  image: `${SITE_URL}${c.logoFull || '/assets/marrelay-header.png'}`,
   email: c.email || 'hello@marrelay.com',
   ...(c.phone ? { telephone: c.phone } : {}),
   address: {

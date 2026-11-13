@@ -131,7 +131,7 @@ echo ""
 # ===== REPOSITORY INFO =====
 TOTAL_COMMITS=$(git rev-list --count HEAD)
 CURRENT_BRANCH=$(git branch --show-current)
-REPO_URL="https://github.com/git-jainamshah/martek-group-website"
+REPO_URL="https://github.com/git-jainamshah/marrelay-website"
 LATEST_COMMIT=$(git log -1 --pretty=format:"%h - %s (%ar)")
 
 echo -e "${PRIMARY}📊 Repository Information:${NC}"
