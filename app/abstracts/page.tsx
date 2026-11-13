@@ -10,15 +10,12 @@ export const metadata: Metadata = {
 
 export default function AbstractsPage() {
   return (
-    <div className="pt-24 section-padding">
-      <div className="container-custom">
-        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 text-center">
-          Abstracts
-        </h1>
-        <p className="text-xl text-gray-600 text-center max-w-2xl mx-auto">
-          Coming soon - View our abstracts and case studies
-        </p>
-      </div>
-    </div>
+    <section className="v-wrap v-top v-sec-b">
+      <span className="v-label">Abstracts</span>
+      <h1 className="v-big" style={{ marginTop: 24 }}>Coming soon.</h1>
+      <p className="v-body" style={{ fontSize: 18, marginTop: 24, maxWidth: '30em' }}>
+        Our abstracts are on the way. In the meantime, the case studies show how we approach real problems.
+      </p>
+    </section>
   )
 }

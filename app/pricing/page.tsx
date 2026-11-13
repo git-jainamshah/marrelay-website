@@ -1,8 +1,9 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
-import PricingSection from '@/components/home/PricingSection'
 import { SITE_URL } from '@/lib/env'
+import { getPackageOverrides } from '@/lib/pricing'
+import { SERVICES_V3 } from '@/lib/v3-content'
+import Faq from '@/components/v3/Faq'
 
 export const metadata: Metadata = {
   title: 'Pricing',
@@ -44,7 +45,14 @@ const FAQS = [
   },
 ]
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  // Admin-managed packages: the "home" set is the three main plans,
+  // each service page's set feeds the by-service list.
+  const [plans, ...svc] = await Promise.all([
+    getPackageOverrides('home'),
+    ...SERVICES_V3.map((x) => getPackageOverrides(x.pricingKey)),
+  ])
+
   // FAQPage structured data - lets the questions appear directly in search results.
   const faqLd = {
     '@context': 'https://schema.org',
@@ -65,44 +73,71 @@ export default function PricingPage() {
     ],
   }
 
+  const pkgParam = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
-      {/* Exactly the view that used to live at /#pricing, now with an h1. */}
-      <PricingSection as="h1" />
+      <section className="v-wrap v-top v-phead" id="pricing">
+        <h1 className="v-big" data-reveal>Pricing</h1>
+        <p data-reveal data-delay="1">
+          Every project gets a fixed quote on one page before any money changes hands. These are the three ways most
+          clients start.
+        </p>
+      </section>
 
-      <section className="sec alt">
-        <div className="wrap">
-          <div className="price-head" data-reveal>
-            <div>
-              <span className="kicker">Questions</span>
-              <h2 style={{ marginTop: 14 }}>
-                Before you <span className="it">ask</span>.
-              </h2>
-            </div>
-            <div className="note">
-              Nothing here is a trick question. If something is still unclear, ask us directly and we will answer
-              plainly.
-            </div>
-          </div>
-
-          {/* Own class names: .faq-grid / .faq-item belong to the interactive
-              accordion elsewhere and expect a different DOM shape. */}
-          <div className="pfaq-grid" data-reveal-stagger>
-            {FAQS.map((f) => (
-              <div key={f.q} className="pfaq-item">
-                <h3>{f.q}</h3>
-                <p>{f.a}</p>
+      <section className="v-wrap" style={{ paddingTop: 'clamp(56px,7vw,96px)' }}>
+        <div className="v-tiers lg">
+          {plans.map((t, i) => (
+            <div key={t.idx} className={`v-tier${t.featured ? ' feat' : ''}`} data-reveal data-delay={String(i + 1)}>
+              <div className="top">
+                <span className="nm">{t.name}</span>
+                {t.billing && <span className="bl">{t.billing}</span>}
               </div>
+              {t.featured && t.tag && <span className="tag">{t.tag}</span>}
+              <div className="pr"><b>{t.price}</b>{t.priceNote && <small>{t.priceNote}</small>}</div>
+              {t.description && <span className="ds">{t.description}</span>}
+              <ul>{(t.items ?? []).map((it, j) => <li key={j}>{it}</li>)}</ul>
+              <Link href={`/contact?package=${pkgParam(t.name)}`} className="cta tbtn">
+                {(t.ctaLabel ?? 'Get started').replace(/\s*→\s*$/, '')} →
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="v-wrap v-sec">
+        <div className="v-split">
+          <div className="l" data-reveal>
+            <span className="v-label">By service</span>
+            <p className="v-body">Starting prices for single-discipline work. Full breakdowns on each service page.</p>
+          </div>
+          <div className="r v-rows v-bylist">
+            {SERVICES_V3.map((x, i) => (
+              <Link key={x.key} href={`${x.url}#pricing`} data-reveal>
+                <span className="nm">{x.full}</span>
+                <span className="ti">{svc[i].map((p) => p.name).join(' · ')}</span>
+                {svc[i][0] && <span className="fr">from {svc[i][0].price}</span>}
+              </Link>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div style={{ marginTop: 40 }} data-reveal>
-            <Link href="/contact" className="btn btn-ghost">
-              Still have questions? Talk to us <ArrowRight size={16} />
-            </Link>
+      <section className="v-wrap v-sec v-sec-b">
+        <div className="v-split">
+          <div className="l" data-reveal>
+            <span className="v-label">Questions</span>
+            <h2 className="v-h2-sm">Before you ask.</h2>
+            <p className="v-body">
+              Nothing here is a trick question. Still unclear?{' '}
+              <Link href="/contact" className="v-link" style={{ fontSize: 'inherit' }}>Talk to us →</Link>
+            </p>
+          </div>
+          <div className="r" data-reveal>
+            <Faq items={FAQS} />
           </div>
         </div>
       </section>

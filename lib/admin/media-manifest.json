@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T19:19:45.122Z",
+ "generatedAt": "2026-11-13T20:59:51.824Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -7,7 +7,7 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 30081378,
-   "modifiedAt": "2026-11-13T18:39:16.091Z"
+   "modifiedAt": "2026-11-13T20:24:13.384Z"
   },
   {
    "filename": "blogs-banner-bg.jpg",
@@ -15,7 +15,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 4771958,
-   "modifiedAt": "2026-11-13T18:39:16.111Z"
+   "modifiedAt": "2026-11-13T20:24:13.404Z"
   },
   {
    "filename": "business-services-banner-bg.jpg",
@@ -23,7 +23,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 3298783,
-   "modifiedAt": "2026-11-13T18:39:16.119Z"
+   "modifiedAt": "2026-11-13T20:24:13.412Z"
   },
   {
    "filename": "contact-us-banner-bg.jpg",
@@ -31,7 +31,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 3813507,
-   "modifiedAt": "2026-11-13T18:39:16.139Z"
+   "modifiedAt": "2026-11-13T20:24:13.432Z"
   },
   {
    "filename": "contact-us-form.jpg",
@@ -39,7 +39,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 6135339,
-   "modifiedAt": "2026-11-13T18:39:16.163Z"
+   "modifiedAt": "2026-11-13T20:24:13.452Z"
   },
   {
    "filename": "engineering-drawings-bg.mp4",
@@ -47,7 +47,7 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 38721252,
-   "modifiedAt": "2026-11-13T18:39:16.199Z"
+   "modifiedAt": "2026-11-13T20:24:13.492Z"
   },
   {
    "filename": "hero-loop.mp4",
@@ -55,7 +55,7 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 16571637,
-   "modifiedAt": "2026-11-13T18:39:16.215Z"
+   "modifiedAt": "2026-11-13T20:24:13.512Z"
   },
   {
    "filename": "marrelay-header.png",
@@ -63,7 +63,7 @@
    "kind": "photo",
    "mime": "image/png",
    "size": 36948,
-   "modifiedAt": "2026-11-13T19:19:16.240Z"
+   "modifiedAt": "2026-11-13T20:24:13.516Z"
   },
   {
    "filename": "marrelay-logo-red-gradient-alt.jpg",
@@ -71,7 +71,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 665801,
-   "modifiedAt": "2026-11-13T19:19:16.280Z"
+   "modifiedAt": "2026-11-13T20:24:13.516Z"
   },
   {
    "filename": "marrelay-logo-red-gradient.jpg",
@@ -79,7 +79,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 668328,
-   "modifiedAt": "2026-11-13T19:19:16.278Z"
+   "modifiedAt": "2026-11-13T20:24:13.516Z"
   },
   {
    "filename": "marrelay-logo-sunset-gradient.jpg",
@@ -87,7 +87,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 828499,
-   "modifiedAt": "2026-11-13T19:19:16.283Z"
+   "modifiedAt": "2026-11-13T20:24:13.520Z"
   },
   {
    "filename": "marrelay-logo-white.png",
@@ -95,7 +95,7 @@
    "kind": "photo",
    "mime": "image/png",
    "size": 33316,
-   "modifiedAt": "2026-11-13T19:19:16.168Z"
+   "modifiedAt": "2026-11-13T20:24:13.520Z"
   },
   {
    "filename": "marrelay-mark-on-white.jpg",
@@ -103,7 +103,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 110275,
-   "modifiedAt": "2026-11-13T19:19:16.285Z"
+   "modifiedAt": "2026-11-13T20:24:13.520Z"
   },
   {
    "filename": "marrelay-mark.png",
@@ -111,7 +111,7 @@
    "kind": "photo",
    "mime": "image/png",
    "size": 20137,
-   "modifiedAt": "2026-11-13T18:39:16.218Z"
+   "modifiedAt": "2026-11-13T20:24:13.520Z"
   },
   {
    "filename": "marrelay-official-logo.png",
@@ -119,7 +119,7 @@
    "kind": "photo",
    "mime": "image/png",
    "size": 33572,
-   "modifiedAt": "2026-11-13T19:19:16.008Z"
+   "modifiedAt": "2026-11-13T20:24:13.520Z"
   },
   {
    "filename": "marrelay-only-logo.png",
@@ -127,7 +127,7 @@
    "kind": "photo",
    "mime": "image/png",
    "size": 53999,
-   "modifiedAt": "2026-11-13T18:39:16.218Z"
+   "modifiedAt": "2026-11-13T20:24:13.520Z"
   },
   {
    "filename": "office-dark-hero.png",
@@ -135,7 +135,7 @@
    "kind": "photo",
    "mime": "image/png",
    "size": 626900,
-   "modifiedAt": "2026-11-13T18:39:16.219Z"
+   "modifiedAt": "2026-11-13T20:24:13.524Z"
   },
   {
    "filename": "sample-project-bg.jpg",
@@ -143,7 +143,7 @@
    "kind": "photo",
    "mime": "image/jpeg",
    "size": 5638673,
-   "modifiedAt": "2026-11-13T18:39:16.247Z"
+   "modifiedAt": "2026-11-13T20:24:13.552Z"
   },
   {
    "filename": "web-dev-bg.mp4",
@@ -151,7 +151,7 @@
    "kind": "video",
    "mime": "video/mp4",
    "size": 36311879,
-   "modifiedAt": "2026-11-13T18:39:16.279Z"
+   "modifiedAt": "2026-11-13T20:24:13.592Z"
   }
  ],
  "references": {
@@ -159,12 +159,22 @@
    {
     "file": "app/blogs/[slug]/page.tsx",
     "label": "Blogs / [Slug]",
-    "line": 83
+    "line": 88
+   },
+   {
+    "file": "app/blogs/[slug]/page.tsx",
+    "label": "Blogs / [Slug]",
+    "line": 147
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 130
+    "line": 141
+   },
+   {
+    "file": "app/page.tsx",
+    "label": "Home page",
+    "line": 148
    },
    {
     "file": "components/Footer.tsx",
@@ -187,6 +197,21 @@
     "line": 323
    },
    {
+    "file": "components/v3/Footer.tsx",
+    "label": "Component: v3/Footer",
+    "line": 18
+   },
+   {
+    "file": "components/v3/Footer.tsx",
+    "label": "Component: v3/Footer",
+    "line": 101
+   },
+   {
+    "file": "components/v3/Header.tsx",
+    "label": "Component: v3/Header",
+    "line": 128
+   },
+   {
     "file": "lib/site-config.ts",
     "label": "lib/site-config.ts",
     "line": 25
@@ -196,17 +221,17 @@
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 77
+    "line": 88
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 84
+    "line": 95
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 131
+    "line": 142
    },
    {
     "file": "app/lp/launch/page.tsx",
@@ -269,59 +294,77 @@
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 29
+    "line": 43
    }
   ],
-  "/assets/business-services-banner-bg.jpg": [
+  "/assets/city-night.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 31
-   }
-  ],
-  "/assets/blogs-banner-bg.jpg": [
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 33
-   }
-  ],
-  "/assets/blog-1.jpg": [
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 34
-   }
-  ],
-  "/assets/blog-2.jpg": [
+    "line": 28
+   },
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
     "line": 35
    }
   ],
-  "/assets/blog-3.jpg": [
+  "/assets/arch-curve.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 29
+   },
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
     "line": 36
    }
   ],
-  "/assets/sample-project-bg.jpg": [
+  "/assets/blog-banner.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 38
+    "line": 30
    }
   ],
   "/assets/web-dev-bg.mp4": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 40
+    "line": 32
+   },
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 54
+   }
+  ],
+  "/assets/city-blue.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 33
    }
   ],
   "/assets/analytics-bg.mp4": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 34
+   },
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 55
+   }
+  ],
+  "/assets/crowd.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 37
+   },
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
@@ -332,7 +375,61 @@
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 42
+    "line": 38
+   },
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 56
+   }
+  ],
+  "/assets/arch-tunnel.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 39
+   }
+  ],
+  "/assets/business-services-banner-bg.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 45
+   }
+  ],
+  "/assets/blogs-banner-bg.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 47
+   }
+  ],
+  "/assets/blog-1.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 48
+   }
+  ],
+  "/assets/blog-2.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 49
+   }
+  ],
+  "/assets/blog-3.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 50
+   }
+  ],
+  "/assets/sample-project-bg.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 52
    }
   ]
  }

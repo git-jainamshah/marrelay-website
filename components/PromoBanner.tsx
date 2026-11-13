@@ -98,10 +98,10 @@ export default function PromoBanner() {
 
         {cfg.template === 'picture' && cfg.imageUrl && (
           /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={cfg.imageUrl} alt={cfg.title} style={{ width: '100%', borderRadius: 12, marginBottom: 16, display: 'block' }} />
+          <img src={cfg.imageUrl} alt={cfg.title} style={{ width: '100%', borderRadius: 0, marginBottom: 18, display: 'block' }} />
         )}
 
-        <h3 style={{ margin: '0 0 8px', fontSize: 22, fontWeight: 700 }}>{cfg.title}</h3>
+        <h3 style={{ margin: '0 0 10px', fontSize: 28, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1.05 }}>{cfg.title}</h3>
         {cfg.body && <p style={{ margin: '0 0 18px', fontSize: 14, opacity: 0.75, lineHeight: 1.55 }}>{cfg.body}</p>}
 
         {cfg.template === 'signup' ? (
@@ -154,25 +154,25 @@ export default function PromoBanner() {
 }
 
 const overlay: React.CSSProperties = {
-  position: 'fixed', inset: 0, background: 'rgba(0,0,0,.55)', zIndex: 9999,
+  position: 'fixed', inset: 0, background: 'rgba(10,10,9,.72)', backdropFilter: 'blur(8px)', zIndex: 9999,
   display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
 }
 const card: React.CSSProperties = {
-  position: 'relative', background: '#fff', color: '#111', borderRadius: 16,
-  padding: 28, width: '100%', maxWidth: 440, boxShadow: '0 24px 80px rgba(0,0,0,.35)',
+  position: 'relative', background: '#F2F1EC', color: '#0E0E0D', borderRadius: 0,
+  padding: 32, width: '100%', maxWidth: 440, boxShadow: '0 24px 80px rgba(0,0,0,.35)',
 }
 const closeBtn: React.CSSProperties = {
   position: 'absolute', top: 12, right: 12, background: 'transparent', border: 0,
   cursor: 'pointer', color: '#666', padding: 6,
 }
 const inputStyle: React.CSSProperties = {
-  border: '1px solid #ddd', borderRadius: 10, padding: '10px 12px', fontSize: 14,
+  border: 0, borderBottom: '1px solid #0E0E0D', borderRadius: 0, padding: '10px 0', fontSize: 16, background: 'transparent', outline: 'none',
 }
 const primaryBtn: React.CSSProperties = {
-  background: '#111', color: '#fff', borderRadius: 999, padding: '10px 20px',
-  fontSize: 14, fontWeight: 700, border: 0, cursor: 'pointer', textDecoration: 'none', display: 'inline-block',
+  background: '#0E0E0D', color: '#F2F1EC', borderRadius: 999, padding: '13px 22px',
+  fontSize: 14, fontWeight: 400, border: 0, cursor: 'pointer', textDecoration: 'none', display: 'inline-block',
 }
 const secondaryBtn: React.CSSProperties = {
-  background: 'transparent', color: '#111', borderRadius: 999, padding: '10px 20px',
-  fontSize: 14, fontWeight: 700, border: '1px solid #ccc', cursor: 'pointer', textDecoration: 'none', display: 'inline-block',
+  background: 'transparent', color: '#0E0E0D', borderRadius: 999, padding: '13px 22px',
+  fontSize: 14, fontWeight: 400, border: '1px solid #0E0E0D', cursor: 'pointer', textDecoration: 'none', display: 'inline-block',
 }

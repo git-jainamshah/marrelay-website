@@ -12,6 +12,6 @@ export const metadata: Metadata = {
 }
 
 export default async function AnalyticsTaggingPage() {
-  const bannerVideo = await getSlot('project-analytics-video')
-  return <AnalyticsTaggingPageView bannerVideo={bannerVideo} />
+  const [bannerVideo, poster] = await Promise.all([getSlot('project-analytics-video'), getSlot('service-data-poster')])
+  return <AnalyticsTaggingPageView bannerVideo={bannerVideo} poster={poster} />
 }

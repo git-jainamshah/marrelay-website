@@ -1,14 +1,13 @@
+/* eslint-disable @next/next/no-img-element */
 import { ReactNode } from 'react'
 import Link from 'next/link'
 import AccentSetter from '@/components/AccentSetter'
 import ViewItem from '@/analytics/ViewItem'
-import FaqList, { FaqItem } from './FaqList'
-
-const ArrowSvg = () => (
-  <svg className="arr-svg" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6">
-    <path d="M3 11 L11 3 M5 3 H11 V9" />
-  </svg>
-)
+import type { FaqItem } from './FaqList'
+import Faq from '@/components/v3/Faq'
+import { BgVideo } from '@/components/v3/Media'
+import { getSlots } from '@/lib/media-slots-server'
+import { SERVICES_V3, serviceByParam } from '@/lib/v3-content'
 
 export interface Deliverable {
   icon: ReactNode
@@ -79,9 +78,13 @@ const SERVICE_SLUG: Record<string, string> = {
 }
 const SITE = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://www.marrelay.com'
 
-export default function ServicePage({ data }: { data: ServiceData }) {
+export default async function ServicePage({ data }: { data: ServiceData }) {
   const contactHref = `/contact?service=${data.contactQuery}`
   const slug = SERVICE_SLUG[data.contactQuery] || data.contactQuery
+  const v3 = serviceByParam(data.contactQuery) ?? SERVICES_V3[0]
+  const slots = await getSlots()
+  const poster = slots[v3.posterSlot]
+  const video = v3.heroSlot ? slots[v3.heroSlot] : ''
 
   const faqLd = {
     '@context': 'https://schema.org',
@@ -111,67 +114,66 @@ export default function ServicePage({ data }: { data: ServiceData }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
       {/* HERO */}
-      <section className="svc-hero">
-        <div className="wrap">
-          <div className="crumb">
-            <Link href="/">Home</Link>
-            <span className="sep">/</span>
-            <Link href="/#what">Services</Link>
-            <span className="sep">/</span>
-            <span className="here">{data.crumb}</span>
-          </div>
-          <div className="svc-hero-grid" style={{ marginTop: 18 }}>
-            <div data-reveal>
-              <span className="svc-tag">
-                <span className="no">{data.tagNo}</span>
-                {data.tagLabel}
-              </span>
-              <h1>{data.h1}</h1>
-              <p className="lede">{data.lede}</p>
-              <div className="cta-row">
-                <Link href={contactHref} className="btn btn-primary">
-                  Book a discovery call
-                  <ArrowSvg />
-                </Link>
-                <a href="#pricing" className="btn btn-ghost">
-                  See pricing
-                </a>
-              </div>
-              <div className="mini-stats">
-                {data.miniStats.map((s, i) => (
-                  <div className="ms" key={i}>
-                    <div className="v">{s.v}</div>
-                    <div className="k">{s.k}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div data-reveal>{data.stage}</div>
+      <section className="v-phero svc-hero">
+        <img src={poster} alt="" />
+        {video && <BgVideo src={video} poster={poster} />}
+        <div className="scrim"></div>
+        <div className="v-wrap inner">
+          <nav className="v-tabs" aria-label="Services" data-reveal>
+            {SERVICES_V3.map((s) => (
+              <Link key={s.key} href={s.url} className={s.key === v3.key ? 'on' : undefined} aria-current={s.key === v3.key ? 'page' : undefined}>
+                {s.full}
+              </Link>
+            ))}
+          </nav>
+          <span className="v-label" data-reveal>{v3.kicker}</span>
+          <h1 data-reveal data-delay="1">{v3.h1}</h1>
+          <div className="foot" data-reveal data-delay="2">
+            <p>{v3.intro}</p>
+            <Link href={contactHref} className="btn btn-light">{v3.cta} <span aria-hidden="true">→</span></Link>
           </div>
         </div>
       </section>
 
-      {/* WHAT'S INCLUDED */}
-      <section className="sec">
-        <div className="wrap">
-          <div className="sec-head" data-reveal>
-            <h2>
-              What&apos;s <span className="hl">included</span>
-            </h2>
-            <p className="intro">{data.includedIntro}</p>
+      {/* THE DETAILS */}
+      <section className="v-wrap v-sec">
+        <div className="v-split">
+          <div className="l" data-reveal>
+            <span className="v-label">(01) What you get</span>
+            <h2 className="v-h2-sm">The details.</h2>
           </div>
-          <div className="deliverables" data-reveal-stagger>
-            {data.deliverables.map((d, i) => (
-              <div className="deliv" key={i}>
-                <div className="ic">{d.icon}</div>
-                <h4>{d.title}</h4>
-                <p>{d.text}</p>
-                <div className="tagrow">
-                  {d.tags.map((t) => (
-                    <span key={t}>{t}</span>
-                  ))}
+          <div className="r">
+            <div className="v-rows">
+              {v3.rows.map(([k, v]) => (
+                <div key={k} className="v-row" data-reveal>
+                  <span className="k">{k}</span>
+                  <span className="v">{v}</span>
                 </div>
+              ))}
+            </div>
+            <div className="v-tools">
+              <span className="v-label">Tools</span>
+              {v3.logos.map((l) => <img key={l} src={l} alt="" loading="lazy" />)}
+              <span className="t">{v3.tools}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT'S INCLUDED (the toolkit) */}
+      <section className="v-wrap v-sec">
+        <div className="v-split">
+          <div className="l" data-reveal>
+            <span className="v-label">(02) What&apos;s included</span>
+            <h2 className="v-h2-sm">The toolkit.</h2>
+            <p className="v-body">{data.includedIntro}</p>
+          </div>
+          <div className="r v-rows">
+            {data.deliverables.map((d, i) => (
+              <div key={i} className="v-row" data-reveal>
+                <span className="k">{d.title}</span>
+                <span className="v">{d.text}</span>
+                {d.tags.length > 0 && <span className="tags">{d.tags.map((t) => <span key={t}>{t}</span>)}</span>}
               </div>
             ))}
           </div>
@@ -179,167 +181,68 @@ export default function ServicePage({ data }: { data: ServiceData }) {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="sec alt">
-        <div className="wrap">
-          <div className="sec-head" data-reveal>
-            <h2>{data.flowTitle}</h2>
-            <p className="intro">{data.flowIntro}</p>
+      <section className="v-wrap v-sec">
+        <div className="v-split">
+          <div className="l sticky" data-reveal>
+            <span className="v-label">(03) How it works</span>
+            <h2 className="v-h2-sm">{data.flowTitle}</h2>
+            <p className="v-body">{data.flowIntro}</p>
           </div>
-          <div className="flow" data-reveal-stagger>
+          <div className="r v-steps sm">
             {data.flow.map((f, i) => (
-              <div className="fstep" key={i}>
-                <span className="fn">{i + 1}</span>
-                <h4>{f.title}</h4>
-                <p>{f.text}</p>
-                <span className="ft">{f.time}</span>
+              <div key={i} className="v-step" data-reveal>
+                <span className="n">0{i + 1}</span>
+                <div className="b">
+                  <span className="t">{f.title}</span>
+                  <span className="d">{f.text}</span>
+                  <span className="w">{f.time}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CASE STUDY (optional - shown once real client work exists) */}
-      {data.caseStudy && (
-        <section className="sec">
-          <div className="wrap">
-            <div className="sec-head" data-reveal>
-              <h2>
-                Recent <span className="hl">work</span>
-              </h2>
-              <p className="intro">{data.workIntro}</p>
+      {/* PACKAGES (admin-managed prices) */}
+      <section className="v-wrap v-sec" id="pricing">
+        <div className="v-head" style={{ marginBottom: 32 }} data-reveal>
+          <div>
+            <span className="v-label">(04) Packages</span>
+            <h2 className="v-h2-sm">Ways to work with us.</h2>
+          </div>
+          <span className="v-body" style={{ fontSize: 14, color: 'var(--v-mut-2)' }}>
+            Fixed prices in CAD. Every project starts with a free call.
+          </span>
+        </div>
+        <div className="v-tiers">
+          {data.cards.map((c, i) => (
+            <div key={i} className={`v-tier${c.featured ? ' feat' : ''}`} data-reveal data-delay={String(i + 1)}>
+              <div className="top">
+                <span className="nm">{c.name}</span>
+                {c.billing && <span className="bl">{c.billing}</span>}
+              </div>
+              {c.featured && c.tag && <span className="tag">{c.tag}</span>}
+              <div className="pr"><b>{c.price}</b>{c.priceNote && <small>{c.priceNote}</small>}</div>
+              <span className="ds">{c.desc}</span>
+              <ul>{c.items.map((item) => <li key={item}>{item}</li>)}</ul>
+              <Link href={contactHref} className="cta tbtn">{c.ctaLabel.replace(/\s*→\s*$/, '')} →</Link>
             </div>
-            <div className="casestudy" data-reveal>
-              <div className="cs-media">
-                <span className="img-slot">
-                  <span className="ph">{data.caseStudy.placeholder}</span>
-                </span>
-              </div>
-              <div className="cs-body">
-                <div className="tagline">{data.caseStudy.tagline}</div>
-                <h3>{data.caseStudy.h3}</h3>
-                <p>{data.caseStudy.text}</p>
-                <div className="cs-metrics">
-                  {data.caseStudy.metrics.map((m, i) => (
-                    <div className="m" key={i}>
-                      <div className="v">{m.v}</div>
-                      <div className="k">{m.k}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="cs-author">
-                  <div className="av">{data.caseStudy.author.av}</div>
-                  <div className="meta">
-                    <b>{data.caseStudy.author.name}</b>
-                    <span>{data.caseStudy.author.role}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* PRICING */}
-      <section className="sec alt" id="pricing">
-        <div className="wrap">
-          <div className="sec-head" data-reveal>
-            <h2>{data.pricingTitle}</h2>
-            <p className="intro">{data.pricingIntro}</p>
-          </div>
-          <div className="svc-price" data-reveal-stagger>
-            {data.cards.map((c, i) => (
-              <div className={`card ${c.variant}${c.featured ? ' featured' : ''}`} key={i}>
-                {c.tag && <div className="tag">{c.tag}</div>}
-                <div className="pname">
-                  <span className="dot"></span>
-                  <b>{c.name}</b>
-                </div>
-                <h3>{c.h3}</h3>
-                <p className="desc">{c.desc}</p>
-                <div className="price-line">
-                  {c.price} <small>{c.priceNote}</small>
-                </div>
-                <div className="billing">{c.billing}</div>
-                <ul>
-                  {c.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                <Link href={contactHref} className="cta">
-                  {c.ctaLabel}
-                </Link>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="sec">
-        <div className="wrap">
-          <div className="faq-grid">
-            <div data-reveal>
-              <span className="kicker">{data.faqKicker}</span>
-              <h2
-                style={{
-                  fontFamily: 'var(--display)',
-                  fontWeight: 400,
-                  fontSize: 'clamp(36px,4.4vw,56px)',
-                  lineHeight: 1,
-                  letterSpacing: '-.02em',
-                  marginTop: 14,
-                }}
-              >
-                {data.faqTitle}
-              </h2>
-              <p className="sub">
-                Couldn&apos;t find it?{' '}
-                <Link
-                  href={contactHref}
-                  style={{
-                    textDecoration: 'underline',
-                    textUnderlineOffset: 3,
-                    textDecorationColor: 'var(--accent)',
-                  }}
-                >
-                  Ask on the call →
-                </Link>
-              </p>
-            </div>
-            <FaqList items={data.faqs} />
+      {/* QUESTIONS */}
+      <section className="v-wrap v-sec v-sec-b">
+        <div className="v-split">
+          <div className="l" data-reveal>
+            <span className="v-label">(05) Questions</span>
+            <h2 className="v-h2-sm">Asked often.</h2>
+            <p className="v-body">
+              Couldn&apos;t find it? <Link href={contactHref} className="v-link" style={{ fontSize: 'inherit' }}>Ask on the call →</Link>
+            </p>
           </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="final-cta">
-        <div className="dot-bg"></div>
-        <div className="wrap final-cta-inner">
-          <div className="grid">
-            <div data-reveal>
-              <span className="kicker" style={{ color: 'var(--paper-3)' }}>
-                Ready when you are
-              </span>
-              <h2 style={{ marginTop: 14 }}>{data.ctaH2}</h2>
-            </div>
-            <div className="right" data-reveal>
-              <p>{data.ctaText}</p>
-              <div className="cta-row">
-                <Link href={contactHref} className="btn btn-primary">
-                  Book a discovery call
-                  <ArrowSvg />
-                </Link>
-                <a href="mailto:hello@marrelay.com" className="btn btn-ghost">
-                  hello@marrelay.com
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="signoff">
-            <span>
-              <b>Marrelay</b> · {data.signoff}
-            </span>
-            <span>Toronto, Canada</span>
+          <div className="r" data-reveal>
+            <Faq items={data.faqs} />
           </div>
         </div>
       </section>

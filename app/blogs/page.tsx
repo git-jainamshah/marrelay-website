@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { POSTS, sortByPopularity, formatPostDate } from '@/lib/blog'
+import { getSlot } from '@/lib/media-slots-server'
+import JournalIndex, { PostCard } from '@/components/v3/JournalIndex'
 import { getViewCounts } from '@/lib/blog/views-server'
 import { plainText } from '@/lib/blog/richtext'
 
@@ -19,67 +21,39 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogsPage() {
-  const views = await getViewCounts()
-  const sorted = sortByPopularity(POSTS, views)
-  const [featured, ...rest] = sorted
+  const [views, image] = await Promise.all([getViewCounts(), getSlot('home-journal-image')])
+  // Most-read first (real view counts), exactly as before; the top post is featured.
+  const posts: PostCard[] = sortByPopularity(POSTS, views).map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    card: p.cardTitle ?? p.title,
+    excerpt: plainText(p.excerpt),
+    category: p.category,
+    date: formatPostDate(p.date),
+    mins: p.readMinutes,
+    tags: p.tags,
+  }))
 
   return (
-    <div className="wrap">
-      <div className="crumb">
-        <Link href="/">Home</Link>
-        <span className="sep">/</span>
-        <span className="here">Blog</span>
+    <section className="v-wrap v-top v-sec-b">
+      <div className="v-crumb">
+        <Link href="/">Home</Link><span>/</span><span className="here">Journal</span>
       </div>
-
-      <header className="bl-head" data-reveal>
-        <div className="kicker">Field notes</div>
-        <h1>
-          Guides we wish <span className="serif-it">someone</span> had written for us.
-        </h1>
-        <p className="lede">
-          No fluff, no gated PDFs. Step-by-step guides on analytics, site performance, and engineering files, written
-          for the person who has to make the decision.
+      <div className="v-phead">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <span className="v-label" data-reveal>The Marrelay journal</span>
+          <h1 className="v-big" data-reveal data-delay="1">Journal</h1>
+        </div>
+        <p data-reveal data-delay="2" style={{ maxWidth: '24em' }}>
+          Practical guides on websites, analytics, ads and engineering files. Written by the people who do the work,
+          with primary sources linked.
         </p>
-      </header>
-
-      {featured && (
-        <Link href={`/blogs/${featured.slug}`} className="bl-featured" data-reveal>
-          <div className="bl-featured-body">
-            <div className="bl-meta">
-              <span className="bl-cat">{featured.category}</span>
-              <span>Most read</span>
-              <span>·</span>
-              <span>{featured.readMinutes} min</span>
-            </div>
-            <h2>{featured.title}</h2>
-            <p>{plainText(featured.excerpt)}</p>
-            <span className="bl-more">
-              Read the guide
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                <path d="M3 11 L11 3 M5 3 H11 V9" />
-              </svg>
-            </span>
-          </div>
-        </Link>
-      )}
-
-      <div className="bl-grid" data-reveal>
-        {rest.map((p) => (
-          <Link key={p.slug} href={`/blogs/${p.slug}`} className="bl-card">
-            <span className="bl-cat">{p.category}</span>
-            <h3>{p.cardTitle ?? p.title}</h3>
-            <p>{plainText(p.excerpt)}</p>
-            <span className="bl-card-foot">
-              {formatPostDate(p.date)} · {p.readMinutes} min read
-            </span>
-          </Link>
-        ))}
       </div>
-
-      <p className="bl-note">
+      <JournalIndex posts={posts} image={image} />
+      <p className="v-body" style={{ marginTop: 48 }}>
         More guides are on the way. Got a question you want answered properly?{' '}
-        <Link href="/contact">Ask us</Link> and we may write it up.
+        <Link href="/contact" className="v-link" style={{ fontSize: 'inherit' }}>Ask us</Link> and we may write it up.
       </p>
-    </div>
+    </section>
   )
 }

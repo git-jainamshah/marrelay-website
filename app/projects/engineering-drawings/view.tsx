@@ -57,6 +57,6 @@ const data: CaseStudyData = {
   seoDescription: 'An illustrative example of how Marrelay would turn vague sketches into precise, GD&T-toleranced CAD/CAM drawings that reduce rework for small manufacturers.',
 }
 
-export default function EngineeringDrawingsPageView({ bannerVideo }: { bannerVideo: string }) {
-  return <CaseStudyPage data={{ ...data, interactive: <CadMotor /> }} media={bannerVideo} />
+export default function EngineeringDrawingsPageView({ bannerVideo, poster }: { bannerVideo: string; poster?: string }) {
+  return <CaseStudyPage data={{ ...data, interactive: <CadMotor /> }} media={bannerVideo} poster={poster} />
 }

@@ -5,7 +5,9 @@ import { POSTS, getPost, postSlugs, tocOf, relatedPosts, formatPostDate } from '
 import { blockText } from '@/lib/blog/types'
 import { getViewCounts } from '@/lib/blog/views-server'
 import { BlockView } from '@/components/blog/Blocks'
-import ArticleClient, { ArticleCta } from '@/components/blog/ArticleClient'
+import ArticleClient, { ArticleCta, ShareButtons, ArticleToc } from '@/components/blog/ArticleClient'
+import { getSlot } from '@/lib/media-slots-server'
+import { sortByPopularity } from '@/lib/blog'
 import { MoneyProvider, CurrencySwitcher } from '@/components/blog/Money'
 import { getRates } from '@/lib/money/rates'
 import { MONEY_RE, plainText } from '@/lib/blog/richtext'
@@ -58,6 +60,9 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   MONEY_RE.lastIndex = 0
   const related = relatedPosts(post.slug, 2, views)
   const toc = tocOf(post)
+  // The most-read article carries the journal banner photo, as in the v3 design.
+  const isTop = sortByPopularity(POSTS, views)[0]?.slug === post.slug
+  const banner = isTop ? await getSlot('home-journal-image') : ''
 
   const ld = {
     '@context': 'https://schema.org',
@@ -122,56 +127,59 @@ export default async function ArticlePage({ params }: { params: { slug: string }
 
       <ArticleClient slug={post.slug} title={post.title} category={post.category} readMinutes={post.readMinutes} />
 
-      <div className="wrap">
-        <div className="crumb">
-          <Link href="/">Home</Link>
-          <span className="sep">/</span>
-          <Link href="/blogs">Blog</Link>
-          <span className="sep">/</span>
-          <span className="here">{post.category}</span>
-        </div>
-
-        <header className="bp-head">
-          <div className="bp-meta">
-            <span className="bp-cat">{post.category}</span>
-            <span>{formatPostDate(post.date)}</span>
-            <span>·</span>
-            <span>{post.readMinutes} min read</span>
+      <article>
+        <header className="v-wrap v-top-sm">
+          <div className="v-crumb">
+            <Link href="/">Home</Link><span>/</span><Link href="/blogs">Journal</Link><span>/</span>
+            <span className="here">{post.category}</span>
           </div>
-          <h1>{post.title}</h1>
-          <p className="bp-excerpt">{plainText(post.excerpt)}</p>
-          <div className="bp-author">
-            <span className="bp-avatar" aria-hidden="true">M</span>
-            <span>
-              <b>{post.author.name}</b>
-              <small>{post.author.role}</small>
-            </span>
+          <div className="v-art-head">
+            <div className="v-label mt" data-reveal>
+              <span className="pill">{post.category}</span>
+              <span>{formatPostDate(post.date)}</span><span>·</span><span>{post.readMinutes} min read</span>
+            </div>
+            <h1 data-reveal data-delay="1">{post.title}</h1>
+            <p className="ex" data-reveal data-delay="2">{plainText(post.excerpt)}</p>
+          </div>
+          <div className="v-byline" data-reveal data-delay="3">
+            <div className="who">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <span className="av"><img src="/assets/marrelay-mark.png" alt="" /></span>
+              <span><b>{post.author.name}</b><small>{post.author.role}</small></span>
+            </div>
+            <ShareButtons slug={post.slug} title={post.title} />
           </div>
         </header>
 
-        <div className="bp-layout">
-          <aside className="bp-toc" aria-label="On this page">
-            <div className="bp-toc-inner">
-              <b>On this page</b>
-              <nav>
-                {toc.map((h) => (
-                  <a key={h.id} href={`#${h.id}`}>{h.text}</a>
-                ))}
-              </nav>
-            </div>
-          </aside>
+        {isTop && banner && (
+          <div className="v-wrap" style={{ marginTop: 'clamp(40px,5vw,64px)' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <div className="v-art-banner" data-reveal><img src={banner} alt="" /></div>
+          </div>
+        )}
 
-          <article className="bp-article">
+        <div className="v-wrap v-art-layout" style={{ paddingTop: 'clamp(56px,7vw,96px)' }}>
+          {toc.length > 0 && (
+            <ArticleToc
+              items={[...toc.map((h) => ({ id: h.id, text: h.text })), ...(faqBlock ? [{ id: 'faq', text: 'Questions' }] : [])]}
+              minutes={post.readMinutes}
+            />
+          )}
+
+          <div className="v-art-body">
             <MoneyProvider rates={rates}>
               {hasPrices && <CurrencySwitcher />}
-              {post.blocks.map((b, i) => <BlockView key={i} b={b} />)}
+              {post.blocks.map((b, i) =>
+                b.t === 'faq' ? <div key={i} id="faq" style={{ scrollMarginTop: 110 }}><BlockView b={b} /></div> : <BlockView key={i} b={b} />
+              )}
             </MoneyProvider>
 
             <div className="bp-tags">
               {post.tags.map((t) => <span key={t}>{t}</span>)}
             </div>
 
-            <section className="bp-cta">
+            <section className="v-dark v-art-cta">
+              <span className="v-label">Work with us</span>
               <h3>Want this handled for you?</h3>
               <p>
                 We are a founder-led studio in Toronto. If you would rather not do this yourself, we set it up properly,
@@ -179,25 +187,27 @@ export default async function ArticlePage({ params }: { params: { slug: string }
               </p>
               <ArticleCta slug={post.slug} title={post.title} />
             </section>
-          </article>
+          </div>
         </div>
+      </article>
 
-        {related.length > 0 && (
-          <section className="bp-related">
-            <div className="kicker">Keep reading</div>
-            <div className="bp-related-grid">
-              {related.map((r) => (
-                <Link key={r.slug} href={`/blogs/${r.slug}`} className="bp-card">
-                  <span className="bp-card-cat">{r.category}</span>
-                  <h3>{r.cardTitle ?? r.title}</h3>
-                  <p>{plainText(r.excerpt)}</p>
-                  <span className="bp-card-meta">{r.readMinutes} min read</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+      {related.length > 0 && (
+        <section className="v-wrap v-sec v-sec-b">
+          <div className="v-head" style={{ alignItems: 'baseline', marginBottom: 8 }} data-reveal>
+            <span className="v-label">Keep reading</span>
+            <Link href="/blogs" className="v-link">All articles →</Link>
+          </div>
+          <div className="v-pgrid">
+            {related.map((r) => (
+              <Link key={r.slug} href={`/blogs/${r.slug}`} className="v-pcard rel" data-reveal>
+                <div className="v-label mt"><span>{r.category}</span><span>{r.readMinutes} min</span></div>
+                <span className="tt">{r.cardTitle ?? r.title}</span>
+                <span className="ex">{plainText(r.excerpt)}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </>
   )
 }

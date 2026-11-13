@@ -57,6 +57,6 @@ const data: CaseStudyData = {
   seoDescription: 'An illustrative example of how Marrelay would rebuild a slow, hard-to-edit website into a fast, measurable, conversion-focused site a team can run themselves.',
 }
 
-export default function WebDevelopmentPageView({ bannerVideo }: { bannerVideo: string }) {
-  return <CaseStudyPage data={{ ...data, interactive: <WebBeforeAfter /> }} media={bannerVideo} />
+export default function WebDevelopmentPageView({ bannerVideo, poster }: { bannerVideo: string; poster?: string }) {
+  return <CaseStudyPage data={{ ...data, interactive: <WebBeforeAfter /> }} media={bannerVideo} poster={poster} />
 }

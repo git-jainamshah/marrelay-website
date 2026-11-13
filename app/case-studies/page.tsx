@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import CaseStudiesPageView from './view'
-import { getSlot } from '@/lib/media-slots-server'
+import { getSlots } from '@/lib/media-slots-server'
 
 export const metadata: Metadata = {
   title: 'Case Studies',
@@ -12,6 +12,6 @@ export const metadata: Metadata = {
 }
 
 export default async function CaseStudiesPage() {
-  const bannerImage = await getSlot('case-studies-banner')
-  return <CaseStudiesPageView bannerImage={bannerImage} />
+  const slots = await getSlots()
+  return <CaseStudiesPageView slots={slots} />
 }

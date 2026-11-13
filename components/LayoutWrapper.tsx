@@ -1,8 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import Header from './v3/Header';
+import Footer from './v3/Footer';
 import RevealInit from './RevealInit';
 import PromoBanner from './PromoBanner';
 import TrafficInit from './TrafficInit';
@@ -12,14 +12,16 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith('/site-vc') || pathname?.startsWith('/admin');
 
+  // Admin + version-control dashboard render on their own, untouched.
   if (isAdminRoute) {
     return <>{children}</>;
   }
 
+  // `.v3` scopes the redesigned public-site styles (app/v3.css).
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen">
+    <div className="v3">
+      <Header />
+      <main>
         {children}
       </main>
       <Footer />
@@ -27,6 +29,6 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
       <PromoBanner />
       <TrafficInit />
       <AutoTrack />
-    </>
+    </div>
   );
 }

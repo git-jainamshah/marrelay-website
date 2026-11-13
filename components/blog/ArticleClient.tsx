@@ -14,7 +14,6 @@ type Props = { slug: string; title: string; category: string; readMinutes: numbe
  */
 export default function ArticleClient({ slug, title, category, readMinutes }: Props) {
   const [progress, setProgress] = useState(0)
-  const [copied, setCopied] = useState(false)
   const fired = useRef<Set<number>>(new Set())
   const counted = useRef(false)
 
@@ -69,6 +68,17 @@ export default function ArticleClient({ slug, title, category, readMinutes }: Pr
     }
   }, [slug, title])
 
+  return (
+    <div className="v-progress" aria-hidden="true">
+      <span style={{ width: `${progress}%` }} />
+    </div>
+  )
+}
+
+/** Share row for the article byline. Pushes the same `blog_share` event as before. */
+export function ShareButtons({ slug, title }: { slug: string; title: string }) {
+  const [copied, setCopied] = useState(false)
+
   const share = (network: 'linkedin' | 'x' | 'copy') => {
     const url = window.location.href
     dlPush('blog_share', { blog_slug: slug, blog_title: title, share_method: network })
@@ -88,33 +98,46 @@ export default function ArticleClient({ slug, title, category, readMinutes }: Pr
   }
 
   return (
-    <>
-      <div className="bp-progress" aria-hidden="true">
-        <span style={{ width: `${progress}%` }} />
-      </div>
+    <div className="v-share" role="group" aria-label="Share this article">
+      <span className="v-label">Share</span>
+      <button type="button" onClick={() => share('linkedin')} aria-label="Share on LinkedIn" title="Share on LinkedIn">in</button>
+      <button type="button" onClick={() => share('x')} aria-label="Share on X" title="Share on X">X</button>
+      <button type="button" onClick={() => share('copy')} aria-label="Copy link" title="Copy link">{copied ? 'Copied' : 'Copy link'}</button>
+    </div>
+  )
+}
 
-      <div className="bp-share" role="group" aria-label="Share this article">
-        <span className="bp-share-label">Share</span>
-        <button onClick={() => share('linkedin')} aria-label="Share on LinkedIn" title="Share on LinkedIn">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-            <rect x="3" y="3" width="14" height="14" rx="2" />
-            <path d="M6 8.5 V14 M6 5.6 V5.7 M9.5 14 V10.6 Q9.5 8.6 11.4 8.6 T13.4 10.6 V14" strokeLinecap="round" />
-          </svg>
-        </button>
-        <button onClick={() => share('x')} aria-label="Share on X" title="Share on X">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-            <path d="M4 4 L16 16 M16 4 L4 16" strokeLinecap="round" />
-          </svg>
-        </button>
-        <button onClick={() => share('copy')} aria-label="Copy link" title="Copy link">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-            <rect x="7" y="7" width="9" height="9" rx="2" />
-            <path d="M13 7 V5 a2 2 0 0 0-2-2 H5 a2 2 0 0 0-2 2 v6 a2 2 0 0 0 2 2 h2" />
-          </svg>
-        </button>
-        {copied && <span className="bp-copied">Link copied</span>}
-      </div>
-    </>
+/** "On this page" list that highlights the section being read. */
+export function ArticleToc({ items, minutes }: { items: { id: string; text: string }[]; minutes: number }) {
+  const [act, setAct] = useState(0)
+  const [pct, setPct] = useState(0)
+  useEffect(() => {
+    const onScroll = () => {
+      let a = 0
+      items.forEach((t, i) => {
+        const el = document.getElementById(t.id)
+        if (el && el.getBoundingClientRect().top < 160) a = i
+      })
+      setAct(a)
+      const doc = document.documentElement
+      const max = doc.scrollHeight - window.innerHeight
+      setPct(max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [items])
+  const left = Math.max(0, Math.ceil(minutes * (1 - pct / 100)))
+  return (
+    <aside className="v-toc" aria-label="On this page">
+      <span className="v-label">On this page</span>
+      <nav>
+        {items.map((t, i) => (
+          <a key={t.id} href={`#${t.id}`} className={i === act ? 'on' : undefined}>{t.text}</a>
+        ))}
+      </nav>
+      <span className="v-num" style={{ marginTop: 8 }}>{left ? `${left} MIN LEFT` : 'FINISHED'}</span>
+    </aside>
   )
 }
 
@@ -123,13 +146,10 @@ export function ArticleCta({ slug, title }: { slug: string; title: string }) {
   return (
     <a
       href="/contact"
-      className="bp-cta-btn"
+      className="bp-cta-btn v-btnlike"
       onClick={() => dlPush('blog_cta_click', { blog_slug: slug, blog_title: title, cta: 'book_discovery_call' })}
     >
-      Book a discovery call
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-        <path d="M3 11 L11 3 M5 3 H11 V9" />
-      </svg>
+      Book a discovery call <span aria-hidden="true">↗</span>
     </a>
   )
 }

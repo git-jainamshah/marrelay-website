@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import ServicesView from './view'
-import { getSlot } from '@/lib/media-slots-server'
+import { getPackageOverrides } from '@/lib/pricing'
+import { SERVICES_V3 } from '@/lib/v3-content'
 
 export const metadata: Metadata = {
   title: 'Services',
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Services() {
-  const bannerImage = await getSlot('services-banner')
-  return <ServicesView bannerImage={bannerImage} />
+  const pkgs = await Promise.all(SERVICES_V3.map((s) => getPackageOverrides(s.pricingKey)))
+  const items = SERVICES_V3.map((s, i) => ({ key: s.key, full: s.full, intro: s.intro, url: s.url, from: pkgs[i][0]?.price ?? '' }))
+  return <ServicesView items={items} />
 }

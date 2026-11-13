@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { searchDocs, SEARCH_INDEX } from '@/lib/search-index'
 import { trackSiteSearch, trackSiteSearchSelect } from '@/analytics/events'
@@ -15,7 +16,7 @@ const SearchIcon = ({ size = 18 }: { size?: number }) => (
 // A few handy suggestions shown before the visitor types.
 const QUICK = ['Web Development', 'Data & Analytics', 'SEO & Ads', 'Engineering & CAD', 'Case Studies', 'Pricing', 'Contact Us']
 
-export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'drawer' }) {
+export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'drawer' | 'pill' }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
@@ -79,20 +80,12 @@ export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'd
     else if (e.key === 'Escape') { e.preventDefault(); close() }
   }
 
-  return (
-    <>
-      {variant === 'icon' ? (
-        <button type="button" className="nav-search" aria-label="Search the site" title="Search  ( / )" onClick={openSearch}>
-          <SearchIcon />
-        </button>
-      ) : (
-        <button type="button" className="m-search" onClick={openSearch}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}><SearchIcon size={16} /> Search</span>
-          <span className="ar"><SearchIcon size={14} /></span>
-        </button>
-      )}
+  // The overlay is portalled to the page root: the v3 header uses
+  // backdrop-filter, which would otherwise trap a fixed overlay inside it.
+  const [portalEl, setPortalEl] = useState<Element | null>(null)
+  useEffect(() => { setPortalEl(document.querySelector('.v3') || document.body) }, [])
 
-      {open && (
+  const overlay = open && (
         <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Site search" onClick={close}>
           <div className="search-panel" onClick={(e) => e.stopPropagation()}>
             <div className="search-input-row">
@@ -138,7 +131,27 @@ export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'd
             </div>
           </div>
         </div>
+  )
+
+  return (
+    <>
+      {variant === 'pill' ? (
+        <button type="button" className="v-search-btn" aria-label="Search the site" title="Search  ( / )" onClick={openSearch}>
+          <SearchIcon size={15} />
+          <span className="kbd" aria-hidden="true">⌘K</span>
+        </button>
+      ) : variant === 'icon' ? (
+        <button type="button" className="nav-search" aria-label="Search the site" title="Search  ( / )" onClick={openSearch}>
+          <SearchIcon />
+        </button>
+      ) : (
+        <button type="button" className="m-search" onClick={openSearch}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}><SearchIcon size={16} /> Search</span>
+          <span className="ar"><SearchIcon size={14} /></span>
+        </button>
       )}
+
+      {overlay && (portalEl ? createPortal(overlay, portalEl) : overlay)}
     </>
   )
 }

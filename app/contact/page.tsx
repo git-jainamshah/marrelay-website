@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import ContactLeadForm from '@/components/ContactLeadForm'
 import { getCompany, getEnabledSocials } from '@/lib/site-config'
-import { getSlot } from '@/lib/media-slots-server'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -13,147 +12,59 @@ export const metadata: Metadata = {
   openGraph: { url: '/contact' },
 }
 
+const NEXT = [
+  { n: '01', t: 'We reply', b: 'Within one business day, with a few times that work.' },
+  { n: '02', t: 'A 30-minute call', b: 'We learn the goal and tell you honestly if we’re a fit.' },
+  { n: '03', t: 'A one-page proposal', b: 'Scope, fixed price and timeline within three working days.' },
+]
+
 export default async function ContactPage() {
-  const [company, enabledSocials, contactImage] = await Promise.all([getCompany(), getEnabledSocials(), getSlot('contact-form-image')])
-  const ig = enabledSocials.find((s) => s.platform === 'Instagram') ?? null
-  const li = enabledSocials.find((s) => s.platform === 'LinkedIn') ?? null
+  const [company, enabledSocials] = await Promise.all([getCompany(), getEnabledSocials()])
+  const email = company.email || 'hello@marrelay.com'
+  const where = [company.addressLine1, company.addressLine2].filter(Boolean).join(', ') || 'Toronto, Canada'
   return (
-    <>
-      <section className="contact-hero">
-        <div className="wrap">
-          <div className="crumb">
-            <Link href="/">Home</Link>
-            <span className="sep">/</span>
-            <span className="here">Contact</span>
+    <section className="v-wrap v-top v-sec-b" id="form">
+      <div className="v-crumb">
+        <Link href="/">Home</Link><span>/</span><span className="here">Contact</span>
+      </div>
+      <div className="v-contact">
+        <div className="l">
+          <span className="v-label" data-reveal>Contact us</span>
+          <h1 data-reveal data-delay="1">Let&apos;s talk about your project.</h1>
+          <p data-reveal data-delay="2">
+            Tell us what you&apos;re building. A founder replies within one business day with a few times for a
+            30-minute discovery call.
+          </p>
+          <div className="v-next" data-reveal data-delay="3">
+            {NEXT.map((x) => (
+              <div key={x.n}>
+                <span className="n">{x.n}</span>
+                <div><b>{x.t}</b><span>{x.b}</span></div>
+              </div>
+            ))}
           </div>
-          <div className="head" style={{ paddingTop: 24 }} data-reveal>
-            <h1>
-              Let&apos;s book a <span className="hl">discovery call</span>.
-            </h1>
-            <p className="lede">
-              Fill this in and we&apos;ll reply within a few hours with a couple of times that work. It takes about two
-              minutes, and a real person reads every word.
-            </p>
-            <div className="trust-strip">
-              <span className="stars">✦</span>
-              <span className="t">Founder-led studio</span>
-              <span className="t">· fixed-price quotes</span>
-              <span className="t">· replies in &lt;2 hrs</span>
-            </div>
+          <div className="v-cinfo" data-reveal>
+            <div><span className="v-label">Email</span><a href={`mailto:${email}`}>{email}</a></div>
+            <div><span className="v-label">Studio</span><span>{where}</span></div>
+            {company.phone && (
+              <div><span className="v-label">Phone</span><a href={`tel:${company.phone.replace(/[^+\d]/g, '')}`}>{company.phone}</a></div>
+            )}
+            {enabledSocials.length > 0 && (
+              <div>
+                <span className="v-label">Elsewhere</span>
+                {enabledSocials.map((s) => (
+                  <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer">{s.platform} ↗</a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </section>
-
-      <div className="wrap">
-        <div className="contact-grid">
-          {/* ASIDE */}
-          <aside data-reveal>
-            <div className="aside-card">
-              <h4>What happens next</h4>
-              <ul className="what-next">
-                <li>
-                  <span className="n">1</span>
-                  <div>
-                    <b>We reply, fast</b>
-                    <span>A real human emails you back within a few hours (work hours) to find a time.</span>
-                  </div>
-                </li>
-                <li>
-                  <span className="n">2</span>
-                  <div>
-                    <b>30-min discovery call</b>
-                    <span>No pitch deck. We learn the goal and tell you honestly if we&apos;re a fit.</span>
-                  </div>
-                </li>
-                <li>
-                  <span className="n">3</span>
-                  <div>
-                    <b>One-page proposal</b>
-                    <span>Scope, price, and timeline on a single page within 3 working days.</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div className="aside-card" style={{ padding: 0, overflow: 'hidden' }}>
-              <div
-                className="media-frame"
-                style={{ border: 0, borderRadius: 0, boxShadow: 'none', aspectRatio: '4/3' }}
-              >
-                <span className="img-slot" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={contactImage} alt="The Marrelay team on a call" />
-                </span>
-              </div>
-            </div>
-
-            <div className="aside-card">
-              <h4>Or reach us directly</h4>
-              <div className="contact-lines">
-                <a href={`mailto:${company.email}`}>
-                  <span className="ic">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="var(--ink)" strokeWidth="1.6">
-                      <rect x="2" y="4" width="16" height="12" rx="2" />
-                      <path d="M3 5 L10 11 L17 5" />
-                    </svg>
-                  </span>
-                  <span>
-                    <b>Email</b>{company.email}
-                  </span>
-                </a>
-                {ig && (<a href={ig!.href} target="_blank" rel="noopener noreferrer">
-                  <span className="ic">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="var(--ink)" strokeWidth="1.6">
-                      <rect x="3" y="3" width="14" height="14" rx="3" />
-                      <circle cx="10" cy="10" r="3.4" />
-                      <circle cx="14.4" cy="5.6" r="1" fill="var(--ink)" stroke="none" />
-                    </svg>
-                  </span>
-                  <span>
-                    <b>Instagram</b>
-                    {ig!.label}
-                  </span>
-                </a>)}
-                {li && (<a href={li!.href} target="_blank" rel="noopener noreferrer">
-                  <span className="ic">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="var(--ink)" strokeWidth="1.6">
-                      <rect x="3" y="3" width="14" height="14" rx="2" />
-                      <path
-                        d="M6 8.5 V14 M6 5.6 V5.7 M9.5 14 V10.6 Q9.5 8.6 11.4 8.6 T13.4 10.6 V14"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                  <span>
-                    <b>LinkedIn</b>
-                    {li!.label}
-                  </span>
-                </a>)}
-              </div>
-              <p
-                style={{
-                  marginTop: 14,
-                  fontFamily: 'var(--mono)',
-                  fontSize: 11.5,
-                  color: 'var(--ink-mut)',
-                  lineHeight: 1.5,
-                }}
-              >
-                Toronto, Canada
-                <br />
-                Async-first, with live call windows.
-              </p>
-            </div>
-          </aside>
-
-          {/* FORM */}
-          <div className="lead-wrap" id="form" data-reveal>
-            <Suspense fallback={null}>
-              <ContactLeadForm />
-            </Suspense>
-          </div>
+        <div className="r" data-reveal>
+          <Suspense fallback={null}>
+            <ContactLeadForm />
+          </Suspense>
         </div>
       </div>
-    </>
+    </section>
   )
 }

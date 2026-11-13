@@ -1,135 +1,61 @@
-'use client'
-
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
+import MediaCard from '@/components/v3/MediaCard'
+import { SlotMedia } from '@/components/v3/Media'
+import { CASES_V3 } from '@/lib/v3-content'
+import type { SlotValues } from '@/lib/media-slots-server'
 
-const ArrowSvg = () => (
-  <svg className="arr-svg" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6">
-    <path d="M3 11 L11 3 M5 3 H11 V9" />
-  </svg>
-)
-
-const isVideo = (p: string) => /\.(mp4|webm|mov)(\?|$)/i.test(p)
-
-const studies = [
-  {
-    href: '/projects/web-development',
-    accent: '#E07A5F',
-    category: 'Web Development',
-    title: <>A website that <em>sells</em>, not just sits there</>,
-    description:
-      'How we’d rebuild a slow, hard-to-edit site into a fast, measurable one the team can run themselves.',
-    metrics: [{ v: '≈1.8s', k: 'Load target' }, { v: 'Fewer', k: 'Drop-offs' }],
-  },
-  {
-    href: '/projects/analytics-tagging',
-    accent: '#6B9080',
-    category: 'Data & Analytics',
-    title: <>Stop guessing. <em>Measure</em> what works</>,
-    description:
-      'How we’d turn a broken, untrusted analytics stack into an accurate GA4 and server-side tagging setup.',
-    metrics: [{ v: 'Clear', k: 'Attribution' }, { v: 'Less', k: 'Wasted spend' }],
-  },
-  {
-    href: '/projects/engineering-drawings',
-    accent: '#8B5A8C',
-    category: 'Engineering & CAD',
-    title: <>Drawings that <em>leave no room to guess</em></>,
-    description:
-      'How we’d produce precise CAD/CAM documentation that cuts rework and helps small shops win bigger jobs.',
-    metrics: [{ v: 'Tighter', k: 'Tolerances' }, { v: 'Fewer', k: 'Reworks' }],
-  },
-]
-
-export default function CaseStudiesPageView({ bannerImage }: { bannerImage: string }) {
+export default function CaseStudiesPageView({ slots }: { slots: SlotValues }) {
   return (
     <>
-      {/* HERO */}
-      <section className="svc-hero">
-        <div className="wrap">
-          <div className="crumb">
-            <Link href="/">Home</Link>
-            <span className="sep">/</span>
-            <span className="here">Case Studies</span>
-          </div>
-
-          <div className="cs-hero-grid">
-            <div data-reveal>
-              <span className="svc-tag"><span className="no">CS</span>Case Studies</span>
-              <h1>How we&apos;d <span className="it">help you win</span></h1>
-              <p className="lede">
-                We are a young studio, so rather than borrow logos we did something more honest:
-                worked-through <b>hypothetical</b> examples of how we would approach common problems, end to end.
-                Think of each as an assumption, a way to show how we think, not a real project or the only way we would do it.
-              </p>
-              <p className="cs-note" style={{ marginTop: 18 }}>Hypothetical examples · assumptions, not delivered client work</p>
-              <div className="cta-row" style={{ marginTop: 26 }}>
-                <Link href="/contact" className="btn btn-primary">
-                  Start your project
-                  <ArrowSvg />
-                </Link>
-                <Link href="/pricing" className="btn btn-ghost">See pricing</Link>
-              </div>
-            </div>
-
-            <div data-reveal>
-              <div className="cs-frame">
-                {isVideo(bannerImage)
-                  ? <video src={bannerImage} autoPlay muted loop playsInline aria-hidden="true" />
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  : <img src={bannerImage} alt="Marrelay case studies" />}
-              </div>
-            </div>
-          </div>
+      <section className="v-wrap v-top">
+        <div className="v-crumb">
+          <Link href="/">Home</Link><span>/</span><span className="here">Case studies</span>
         </div>
+        <div className="v-phead">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <span className="v-label" data-reveal>Case studies · Worked examples</span>
+            <h1 className="v-big" data-reveal data-delay="1">How we&apos;d approach it.</h1>
+          </div>
+          <p data-reveal data-delay="2">
+            We are a young studio, so rather than borrow logos we did something more honest: worked-through
+            hypothetical examples of how we would approach common problems, end to end.
+          </p>
+        </div>
+        <p className="v-note" style={{ marginTop: 32 }} data-reveal>Hypothetical examples · assumptions, not delivered client work</p>
       </section>
 
-      {/* STUDIES GRID */}
-      <section className="sec alt">
-        <div className="wrap">
-          <div className="sec-head" data-reveal>
-            <h2>Worked <span className="it">examples</span></h2>
-            <p className="intro">
-              Three disciplines, three made-up scenarios. Open any one to see how we would think it through, with a
-              small interactive sketch you can play with.
-            </p>
-          </div>
-          <div className="cs-cards" data-reveal-stagger>
-            {studies.map((s) => (
-              <Link key={s.href} href={s.href} className="cs-card" style={{ ['--accent' as string]: s.accent }}>
-                <span className="cat">{s.category}</span>
-                <h3>{s.title}</h3>
-                <p>{s.description}</p>
-                <div className="metricrow">
-                  {s.metrics.map((m) => (
-                    <div key={m.k}>
-                      <div className="v">{m.v}</div>
-                      <div className="k">{m.k}</div>
-                    </div>
-                  ))}
+      <section className="v-wrap" style={{ paddingTop: 'clamp(56px,7vw,96px)' }}>
+        <div className="v-work-grid light">
+          {CASES_V3.map((c, i) => (
+            <MediaCard key={c.key} href={c.url} data-reveal data-delay={String(i + 1)}>
+              <div className="m" data-reveal="wipe">
+                <SlotMedia src={slots[c.slot]} poster={slots[c.poster]} />
+                <div className="cap">
+                  <span className="v-label">{c.cat}</span>
+                  <span className="arr" aria-hidden="true">→</span>
                 </div>
-                <span className="go">Read the case study <ArrowSvg /></span>
-              </Link>
-            ))}
-          </div>
+              </div>
+              <span className="tt">{c.title}</span>
+              <span className="dd">{c.desc}</span>
+            </MediaCard>
+          ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="sec">
-        <div className="wrap" style={{ textAlign: 'center' }}>
-          <div data-reveal style={{ maxWidth: 640, margin: '0 auto' }}>
-            <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 'clamp(32px,4.4vw,54px)', lineHeight: 1.03, letterSpacing: '-.02em' }}>
-              Your project could be the <span className="it">next one</span>
-            </h2>
-            <p className="lede" style={{ margin: '16px auto 26px' }}>
+      <section className="v-wrap v-sec v-sec-b">
+        <div className="v-split">
+          <div className="l" data-reveal>
+            <span className="v-label">Your project</span>
+            <h2 className="v-h2-sm">Could be the next one.</h2>
+          </div>
+          <div className="r" data-reveal style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <p style={{ fontSize: 18, lineHeight: 1.65, color: 'var(--v-ink-2)', maxWidth: '34em' }}>
               Tell us what you are trying to build or fix. We will show you exactly how we would approach it, with a
               plan and a price, no pressure.
             </p>
-            <div className="cta-row" style={{ justifyContent: 'center' }}>
-              <Link href="/contact" className="btn btn-primary">
-                Book a discovery call
-                <ArrowSvg />
-              </Link>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <Link href="/contact" className="btn btn-dark">Book a discovery call <span aria-hidden="true">→</span></Link>
               <Link href="/about" className="btn btn-ghost">Meet the studio</Link>
             </div>
           </div>

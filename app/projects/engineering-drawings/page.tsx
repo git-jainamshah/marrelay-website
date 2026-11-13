@@ -12,6 +12,6 @@ export const metadata: Metadata = {
 }
 
 export default async function EngineeringDrawingsPage() {
-  const bannerVideo = await getSlot('project-eng-video')
-  return <EngineeringDrawingsPageView bannerVideo={bannerVideo} />
+  const [bannerVideo, poster] = await Promise.all([getSlot('project-eng-video'), getSlot('service-eng-poster')])
+  return <EngineeringDrawingsPageView bannerVideo={bannerVideo} poster={poster} />
 }

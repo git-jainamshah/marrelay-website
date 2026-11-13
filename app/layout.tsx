@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
-import { Instrument_Serif, Fraunces, DM_Sans, JetBrains_Mono, Poppins } from 'next/font/google'
+import { Instrument_Serif, Fraunces, DM_Sans, JetBrains_Mono, Poppins, Archivo } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import './marrelay.css'
+// v3 redesign: scoped to the public site via the .v3 wrapper in LayoutWrapper.
+// The admin never renders inside .v3, so its look is unaffected.
+import './v3.css'
 import LayoutWrapper from '@/components/LayoutWrapper'
 import { SOCIALS } from '@/lib/social'
 import { HeadScripts, BodyStartScripts, FooterScripts } from '@/components/SiteScripts'
@@ -29,6 +33,13 @@ const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   variable: '--font-jetbrains',
+})
+
+// v3 secondary face: Archivo with its width axis, used expanded for labels.
+const archivo = Archivo({
+  subsets: ['latin'],
+  axes: ['wdth'],
+  variable: '--font-archivo',
 })
 
 const poppins = Poppins({
@@ -170,7 +181,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${instrument.variable} ${fraunces.variable} ${dmSans.variable} ${jetbrains.variable} ${poppins.variable}`}
+      className={`${instrument.variable} ${fraunces.variable} ${dmSans.variable} ${jetbrains.variable} ${poppins.variable} ${GeistSans.variable} ${archivo.variable}`}
     >
       <head>
         <script

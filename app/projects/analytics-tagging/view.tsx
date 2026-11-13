@@ -57,6 +57,6 @@ const data: CaseStudyData = {
   seoDescription: 'An illustrative example of how Marrelay would rebuild a broken analytics stack into an accurate, consent-compliant GA4 and server-side tagging setup marketing can trust.',
 }
 
-export default function AnalyticsTaggingPageView({ bannerVideo }: { bannerVideo: string }) {
-  return <CaseStudyPage data={{ ...data, interactive: <DataDashboard /> }} media={bannerVideo} />
+export default function AnalyticsTaggingPageView({ bannerVideo, poster }: { bannerVideo: string; poster?: string }) {
+  return <CaseStudyPage data={{ ...data, interactive: <DataDashboard /> }} media={bannerVideo} poster={poster} />
 }
