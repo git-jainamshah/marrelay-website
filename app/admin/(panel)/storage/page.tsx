@@ -144,9 +144,9 @@ export default function StoragePage() {
                 <div key={m.id} className="group relative ad-tile">
                   <div className={`aspect-square flex items-center justify-center ${isTransparentCapable(m.relPath) ? "ad-checker" : "bg-black"}`}>
                     {m.kind === 'video'
-                      ? <video src={m.relPath} className="w-full h-full object-cover" muted playsInline preload="metadata" />
+                      ? <video src={`${m.relPath}?v=${m.size}`} className="w-full h-full object-cover" muted playsInline preload="metadata" />
                       : /* eslint-disable-next-line @next/next/no-img-element */
-                        <img src={m.relPath} alt={m.filename} loading="lazy" className="w-full h-full object-cover" />}
+                        <img src={`${m.relPath}?v=${m.size}`} alt={m.filename} loading="lazy" className="w-full h-full object-cover" />}
                   </div>
                   <div className="p-2.5">
                     <div className="text-xs font-medium truncate">{m.filename}</div>
