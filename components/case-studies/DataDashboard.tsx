@@ -13,7 +13,6 @@ const CHANNELS = [
   { k: 'Social', sessions: 1800, conversions: 26 },
   { k: 'Email', sessions: 900, conversions: 31 },
 ]
-const ACCENT = '#6B9080'
 
 export default function DataDashboard() {
   const [metric, setMetric] = useState<'sessions' | 'conversions'>('sessions')
@@ -22,49 +21,60 @@ export default function DataDashboard() {
   const max = Math.max(...vals)
   const total = vals.reduce((a, b) => a + b, 0)
   const top = CHANNELS.reduce((a, b) => (b[metric] > a[metric] ? b : a))
+  const sel = CHANNELS.find((c) => c.k === active)
+  const share = sel ? Math.round((sel[metric] / total) * 100) : null
 
-  const W = 420, H = 190, pad = 28, bw = 46, gap = (W - pad * 2 - bw * CHANNELS.length) / (CHANNELS.length - 1)
+  const W = 640, H = 240, padL = 8, padR = 8, base = H - 30, top0 = 26
+  const slot = (W - padL - padR) / CHANNELS.length
+  const bw = Math.min(64, slot * 0.56)
+  const grid = [0.25, 0.5, 0.75, 1]
 
   return (
-    <div className="ix-wrap" style={{ ['--accent' as string]: ACCENT }}>
-      <div className="ix-head">
+    <div className="vx">
+      <div className="vx-top">
+        <span className="vx-title">A dashboard you&apos;d actually open</span>
+        <div className="vx-seg" role="group" aria-label="Metric">
+          <button type="button" className={metric === 'sessions' ? 'on' : ''} aria-pressed={metric === 'sessions'} onClick={() => setMetric('sessions')}>Sessions</button>
+          <button type="button" className={metric === 'conversions' ? 'on' : ''} aria-pressed={metric === 'conversions'} onClick={() => setMetric('conversions')}>Conversions</button>
+        </div>
+      </div>
+
+      <div className="vx-kpis">
+        <div><span className="vx-lab">Total {metric}</span><span className="vx-big">{total.toLocaleString()}</span></div>
+        <div><span className="vx-lab">Top channel</span><span className="vx-big">{top.k}</span></div>
         <div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-mut)' }}>Interactive sketch</div>
-          <div style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 22 }}>A dashboard you&apos;d actually open</div>
-        </div>
-        <div className="ix-seg">
-          <button className={metric === 'sessions' ? 'on' : ''} onClick={() => setMetric('sessions')}>Sessions</button>
-          <button className={metric === 'conversions' ? 'on' : ''} onClick={() => setMetric('conversions')}>Conversions</button>
+          <span className="vx-lab">Selected</span>
+          <span className={`vx-big${sel ? ' red' : ' mute'}`}>{sel ? `${sel.k} · ${share}%` : 'Tap a bar'}</span>
         </div>
       </div>
 
-      <div className="ix-kpis">
-        <div className="ix-kpi"><div className="v">{total.toLocaleString()}</div><div className="k">Total {metric}</div></div>
-        <div className="ix-kpi"><div className="v">{top.k}</div><div className="k">Top channel</div></div>
-        <div className="ix-kpi"><div className="v">{active ?? '-'}</div><div className="k">Selected</div></div>
-      </div>
-
-      <svg className="ix-chart" viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', marginTop: 12 }} role="img" aria-label={`${metric} by channel`}>
-        <line x1={pad} y1={H - 26} x2={W - pad} y2={H - 26} stroke="var(--rule-strong)" strokeWidth="1" />
+      <svg className="vx-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${metric} by channel`}>
+        {grid.map((g) => (
+          <line key={g} x1={padL} x2={W - padR} y1={base - (base - top0) * g} y2={base - (base - top0) * g} className="gl" />
+        ))}
+        <line x1={padL} x2={W - padR} y1={base} y2={base} className="axis" />
         {CHANNELS.map((c, i) => {
           const v = c[metric]
-          const bh = Math.round(((H - 60) * v) / max)
-          const x = pad + i * (bw + gap)
-          const y = H - 26 - bh
+          const bh = Math.round(((base - top0) * v) / max)
+          const x = padL + i * slot + (slot - bw) / 2
+          const y = base - bh
           const on = active === c.k
+          const dim = !!active && !on
           return (
-            <g key={c.k} className="barwrap" onClick={() => setActive(on ? null : c.k)} style={{ cursor: 'pointer' }}>
-              <rect className="bar" x={x} y={y} width={bw} height={bh} rx="4"
-                fill={on ? 'var(--ink)' : ACCENT} opacity={active && !on ? 0.4 : 1} />
-              <text x={x + bw / 2} y={y - 6} textAnchor="middle" fontFamily="var(--mono)" fontSize="11" fill="var(--ink)">{v.toLocaleString()}</text>
-              <text x={x + bw / 2} y={H - 10} textAnchor="middle" fontFamily="var(--mono)" fontSize="10.5" fill="var(--ink-mut)">{c.k}</text>
+            <g key={c.k} className="bw" onClick={() => setActive(on ? null : c.k)} role="button" tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActive(on ? null : c.k) } }}
+              aria-pressed={on} aria-label={`${c.k}: ${v.toLocaleString()} ${metric}`}>
+              <rect x={x - 6} y={top0 - 18} width={bw + 12} height={base - top0 + 18} fill="transparent" />
+              <rect className={`bar${on ? ' on' : ''}${dim ? ' dim' : ''}`} x={x} y={y} width={bw} height={bh} />
+              <text className="val" x={x + bw / 2} y={y - 8} textAnchor="middle">{v.toLocaleString()}</text>
+              <text className="cat" x={x + bw / 2} y={H - 10} textAnchor="middle">{c.k.toUpperCase()}</text>
             </g>
           )
         })}
       </svg>
 
-      <p className="ix-note">
-        Switch the metric, tap a bar to focus a channel. Sample numbers only - the point is that once tracking is clean,
+      <p className="vx-note">
+        Switch the metric, tap a bar to focus a channel. Sample numbers only: the point is that once tracking is clean,
         you can finally see which channels earn and which just spend.
       </p>
     </div>

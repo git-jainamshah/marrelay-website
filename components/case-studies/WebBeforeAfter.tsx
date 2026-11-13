@@ -6,79 +6,80 @@ import { useState } from 'react'
  * Illustrative before/after for the web case study. All numbers are invented
  * to show the *kind* of shift we'd aim for - not a measured result.
  */
-const DATA = {
-  before: {
-    bars: [
-      { k: 'Page load (mobile)', v: 4.6, unit: 's', pct: 100, good: false },
-      { k: 'Visitors who bounce', v: 68, unit: '%', pct: 68, good: false },
-      { k: 'Enquiries / month', v: 12, unit: '', pct: 30, good: true },
-    ],
-  },
-  after: {
-    bars: [
-      { k: 'Page load (mobile)', v: 1.8, unit: 's', pct: 39, good: true },
-      { k: 'Visitors who bounce', v: 41, unit: '%', pct: 41, good: true },
-      { k: 'Enquiries / month', v: 28, unit: '', pct: 72, good: true },
-    ],
-  },
-}
+const ROWS = [
+  { k: 'Page load (mobile)', unit: 's', before: 4.6, after: 1.8, max: 5, lowerIsBetter: true },
+  { k: 'Visitors who bounce', unit: '%', before: 68, after: 41, max: 100, lowerIsBetter: true },
+  { k: 'Enquiries / month', unit: '', before: 12, after: 28, max: 40, lowerIsBetter: false },
+]
+
+const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1))
 
 export default function WebBeforeAfter() {
   const [mode, setMode] = useState<'before' | 'after'>('after')
   const after = mode === 'after'
-  const bars = DATA[mode].bars
 
   return (
-    <div className="ix-wrap" style={{ ['--accent' as string]: '#E07A5F' }}>
-      <div className="ix-head">
-        <div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-mut)' }}>Interactive sketch</div>
-          <div style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 22 }}>Current site vs. a reimagined one</div>
-        </div>
-        <div className="ix-seg" role="tablist">
-          <button className={!after ? 'on' : ''} onClick={() => setMode('before')}>Current</button>
-          <button className={after ? 'on' : ''} onClick={() => setMode('after')}>Reimagined</button>
+    <div className="vx">
+      <div className="vx-top">
+        <span className="vx-title">Current site vs. a reimagined one</span>
+        <div className="vx-seg" role="group" aria-label="Compare">
+          <button type="button" className={!after ? 'on' : ''} aria-pressed={!after} onClick={() => setMode('before')}>Current</button>
+          <button type="button" className={after ? 'on' : ''} aria-pressed={after} onClick={() => setMode('after')}>Reimagined</button>
         </div>
       </div>
 
-      <div className="ix-grid2">
-        {/* mock preview */}
-        <div className="ix-mock" aria-hidden="true">
-          <div className="mbar"><i /><i /><i /></div>
+      <div className="vx-2col">
+        {/* page mock */}
+        <div className={`vx-mock${after ? ' is-after' : ''}`} aria-hidden="true">
+          <div className="vx-mock-bar"><i /><i /><i /><span>{after ? 'yourbrand.com' : 'yourbrand.com/home-v2-final'}</span></div>
           {after ? (
-            <div className="mbody" style={{ justifyContent: 'center', alignItems: 'flex-start' }}>
-              <div className="ln" style={{ width: '80%', height: 13, background: 'var(--ink)' }} />
-              <div className="ln" style={{ width: '55%' }} />
-              <div className="cta" style={{ marginTop: 8 }} />
+            <div className="vx-mock-body focus">
+              <span className="vx-mk-kick" />
+              <span className="vx-mk-h" style={{ width: '82%' }} />
+              <span className="vx-mk-h" style={{ width: '58%' }} />
+              <span className="vx-mk-l" style={{ width: '64%' }} />
+              <span className="vx-mk-cta">Book a call</span>
             </div>
           ) : (
-            <div className="mbody">
-              <div style={{ display: 'flex', gap: 6 }}>
-                <div className="ln" style={{ width: '30%' }} /><div className="ln" style={{ width: '22%' }} /><div className="ln" style={{ width: '26%' }} />
-              </div>
-              <div className="blk" style={{ height: 34 }} />
-              <div className="ln" style={{ width: '92%' }} /><div className="ln" style={{ width: '85%' }} /><div className="ln" style={{ width: '88%' }} />
-              <div style={{ display: 'flex', gap: 6 }}>
-                <div className="blk" style={{ height: 26, flex: 1 }} /><div className="blk" style={{ height: 26, flex: 1 }} /><div className="blk" style={{ height: 26, flex: 1 }} />
-              </div>
+            <div className="vx-mock-body busy">
+              <div className="vx-mk-row"><span className="vx-mk-l" style={{ width: '22%' }} /><span className="vx-mk-l" style={{ width: '18%' }} /><span className="vx-mk-l" style={{ width: '20%' }} /><span className="vx-mk-l" style={{ width: '14%' }} /></div>
+              <span className="vx-mk-blk" style={{ height: 40 }} />
+              <span className="vx-mk-l" style={{ width: '94%' }} />
+              <span className="vx-mk-l" style={{ width: '88%' }} />
+              <span className="vx-mk-l" style={{ width: '91%' }} />
+              <div className="vx-mk-row"><span className="vx-mk-blk" /><span className="vx-mk-blk" /><span className="vx-mk-blk" /></div>
+              <span className="vx-mk-pop">Subscribe to our newsletter!</span>
             </div>
           )}
         </div>
 
-        {/* comparison bars */}
-        <div className="ix-bars">
-          {bars.map((b) => (
-            <div className="ix-bar" key={b.k}>
-              <div className="lab"><span>{b.k}</span><b>{b.v}{b.unit}</b></div>
-              <div className="track"><div className="fill" style={{ width: `${b.pct}%`, background: after ? '#6B9080' : '#C86A54' }} /></div>
-            </div>
-          ))}
+        {/* metrics */}
+        <div className="vx-metrics">
+          {ROWS.map((r) => {
+            const v = after ? r.after : r.before
+            const delta = r.after - r.before
+            return (
+              <div key={r.k} className="vx-metric">
+                <div className="vx-metric-top">
+                  <span className="vx-lab">{r.k}</span>
+                  {after && (
+                    <span className="vx-delta">{delta > 0 ? '+' : '−'}{fmt(Math.abs(delta))}{r.unit}</span>
+                  )}
+                </div>
+                <span className="vx-big">{fmt(v)}<small>{r.unit}</small></span>
+                <span className="vx-track">
+                  <span className="ghost" style={{ width: `${(r.before / r.max) * 100}%` }} />
+                  <span className={`fill${after ? ' on' : ''}`} style={{ width: `${(v / r.max) * 100}%` }} />
+                </span>
+              </div>
+            )
+          })}
         </div>
       </div>
 
-      <p className="ix-note">
-        Toggle between a cluttered, slow page and a focused, fast one. The figures are invented for illustration -
-        a real project would start from your actual analytics, and the plan would be yours, not this one.
+      <p className="vx-note">
+        Toggle between a cluttered, slow page and a focused, fast one. The figures are invented for illustration. A
+        real project would start from your actual analytics, and the plan would be yours, not this one.
       </p>
     </div>
   )

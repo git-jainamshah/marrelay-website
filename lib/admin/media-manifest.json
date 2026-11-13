@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T20:59:51.824Z",
+ "generatedAt": "2026-11-13T21:55:56.310Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -8,6 +8,30 @@
    "mime": "video/mp4",
    "size": 30081378,
    "modifiedAt": "2026-11-13T20:24:13.384Z"
+  },
+  {
+   "filename": "arch-curve.jpg",
+   "relPath": "/assets/arch-curve.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 429285,
+   "modifiedAt": "2026-11-13T21:50:54.429Z"
+  },
+  {
+   "filename": "arch-tunnel.jpg",
+   "relPath": "/assets/arch-tunnel.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 328852,
+   "modifiedAt": "2026-11-13T21:50:54.541Z"
+  },
+  {
+   "filename": "blog-banner.jpg",
+   "relPath": "/assets/blog-banner.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 526820,
+   "modifiedAt": "2026-11-13T21:55:56.157Z"
   },
   {
    "filename": "blogs-banner-bg.jpg",
@@ -26,6 +50,22 @@
    "modifiedAt": "2026-11-13T20:24:13.412Z"
   },
   {
+   "filename": "city-blue.jpg",
+   "relPath": "/assets/city-blue.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 385368,
+   "modifiedAt": "2026-11-13T21:50:54.269Z"
+  },
+  {
+   "filename": "city-night.jpg",
+   "relPath": "/assets/city-night.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 186915,
+   "modifiedAt": "2026-11-13T21:50:54.209Z"
+  },
+  {
    "filename": "contact-us-banner-bg.jpg",
    "relPath": "/assets/contact-us-banner-bg.jpg",
    "kind": "photo",
@@ -40,6 +80,14 @@
    "mime": "image/jpeg",
    "size": 6135339,
    "modifiedAt": "2026-11-13T20:24:13.452Z"
+  },
+  {
+   "filename": "crowd.jpg",
+   "relPath": "/assets/crowd.jpg",
+   "kind": "photo",
+   "mime": "image/jpeg",
+   "size": 177015,
+   "modifiedAt": "2026-11-13T21:50:54.297Z"
   },
   {
    "filename": "engineering-drawings-bg.mp4",

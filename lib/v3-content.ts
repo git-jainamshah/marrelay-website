@@ -50,7 +50,8 @@ export const SERVICES_V3: ServiceV3[] = [
       ['You own', 'The repository, design files, and every hosting and CMS account.'],
     ],
     tools: 'Next.js · Figma · Webflow · Shopify · Contentful · WordPress',
-    logos: [B + 'nextjs.png', B + 'figma.png', B + 'webflow.png', B + 'shopify.png', B + 'contentful.png', B + 'wordpress.png'],
+    // No licensed marks for these tools in the repo yet: the names show as text.
+    logos: [],
     heroSlot: 'service-web-hero', posterSlot: 'service-web-poster',
   },
   {
