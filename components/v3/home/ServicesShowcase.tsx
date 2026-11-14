@@ -96,18 +96,30 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
         </div>
       </div>
 
-      <div className="v-svc-list">
-        {items.map((s) => (
-          <Link key={s.key} href={s.url} className="v-svc-row" data-reveal>
-            <span className="n">{s.n}</span>
-            <span className="nm">{s.full}</span>
-            <span className="ds">{s.intro}</span>
-            <span className="fr">
-              {s.price && <span>from {s.price}</span>}
-              <span className="v-arrow-circle" style={{ color: 'var(--v-ink)' }}>→</span>
+      {/* Narrow screens: a swipeable strip of the same media panels, so phones
+          get the same gateway into each service instead of a flat text list. */}
+      <div className="v-svc-strip" role="list">
+        {items.map((s, i) => (
+          <Link key={s.key} href={s.url} className="v-svc-card" role="listitem" data-reveal data-delay={String(Math.min(i, 3))}>
+            <SlotMedia src={s.media} poster={s.poster} />
+            <span className="scrim"></span>
+            <span className="body">
+              <span className="hd"><span>{s.n} / {String(items.length).padStart(2, '0')}</span><span>{s.full}</span></span>
+              <span className="bt">
+                <span className="hook">{s.hook}</span>
+                <span className="chips">{s.chips.slice(0, 3).map((c) => <span key={c}>{c}</span>)}</span>
+                <span className="ft">
+                  {s.price ? <span className="p"><span className="v-label">Starting at</span><b>{s.price}{s.unit && <small> {s.unit}</small>}</b></span> : <span />}
+                  <span className="go">Explore {s.short} →</span>
+                </span>
+              </span>
             </span>
           </Link>
         ))}
+      </div>
+      <div className="v-svc-strip-foot">
+        <span>Swipe for more · One team, one channel, one invoice.</span>
+        <Link href="/pricing">Compare pricing →</Link>
       </div>
     </>
   )

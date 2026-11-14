@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T21:55:56.310Z",
+ "generatedAt": "2026-11-14T05:26:36.799Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -222,7 +222,7 @@
    {
     "file": "app/page.tsx",
     "label": "Home page",
-    "line": 148
+    "line": 151
    },
    {
     "file": "components/Footer.tsx",

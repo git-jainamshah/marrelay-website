@@ -4,11 +4,12 @@ import Link from 'next/link'
 import { getSlots } from '@/lib/media-slots-server'
 import { getPackageOverrides } from '@/lib/pricing'
 import { SERVICES_V3, CASES_V3, PROCESS_V3, startingPrice } from '@/lib/v3-content'
-import { BgVideo, SlotMedia } from '@/components/v3/Media'
+import { SlotMedia } from '@/components/v3/Media'
 import MediaCard from '@/components/v3/MediaCard'
 import ServicesShowcase, { ShowcaseItem } from '@/components/v3/home/ServicesShowcase'
 import SprintAd from '@/components/v3/home/SprintAd'
 import JournalTeaser from '@/components/v3/home/JournalTeaser'
+import Film from '@/components/v3/home/Film'
 import LeadForm from '@/components/home/LeadForm'
 import { getCompany } from '@/lib/site-config'
 
@@ -36,7 +37,6 @@ export default async function Home() {
       {/* HERO */}
       <section className="v-phero full v-hero svc-hero" id="top">
         <img src={slots['home-hero-poster']} alt="Toronto skyline at night" />
-        <BgVideo src={slots['home-hero-video']} poster={slots['home-hero-poster']} />
         <div className="scrim"></div>
         <div className="v-wrap inner">
           <div className="meta" data-reveal>
@@ -71,6 +71,9 @@ export default async function Home() {
           </span>
         </p>
       </section>
+
+      {/* STUDIO REEL (the hero loop, re-homed) */}
+      <Film video={slots['home-hero-video']} poster={slots['home-hero-poster']} />
 
       {/* SERVICES */}
       <section id="what" className="v-wrap v-sec">
