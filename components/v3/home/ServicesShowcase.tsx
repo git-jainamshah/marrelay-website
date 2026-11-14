@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { SlotMedia } from '../Media'
 
 export type ShowcaseItem = {
   key: string
@@ -21,23 +20,26 @@ export type ShowcaseItem = {
 }
 
 /**
- * Desktop: auto-advancing list + media panel (7s per service, pauses on hover).
- * Narrow screens: a plain linked list (CSS switches between the two).
+ * Desktop: a fixed list on the left and a fixed image pane on the right.
+ * Hovering a service just updates which image is on top and swaps the copy.
+ * Every image stays mounted and painted the whole time (we only cross-fade
+ * opacity), so nothing is ever hidden and no image has to re-decode when it
+ * comes back, which is what used to cause the brief blank between services.
+ *
+ * Narrow screens get a swipeable strip of the same cards (CSS switches).
  */
 export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
   const [act, setAct] = useState(0)
   const [paused, setPaused] = useState(false)
+  const cur = items[act]
+  const total = String(items.length).padStart(2, '0')
 
-  // Decode every panel photo up front so the first switch to each one is
-  // instant instead of decoding a full-res image on the main thread mid-fade.
+  // Gentle auto-advance; pauses while the pointer is over the section.
   useEffect(() => {
-    items.forEach((s) => {
-      if (!s.media || /\.(mp4|webm|mov)$/i.test(s.media)) return
-      const img = new Image()
-      img.src = s.media
-      if (img.decode) img.decode().catch(() => {})
-    })
-  }, [items])
+    if (paused) return
+    const id = setTimeout(() => setAct((a) => (a + 1) % items.length), 6000)
+    return () => clearTimeout(id)
+  }, [act, paused, items.length])
 
   return (
     <>
@@ -54,7 +56,7 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
                 key={s.key}
                 href={s.url}
                 className={`v-show-item${act === i ? ' on' : ''}`}
-                onMouseEnter={() => act !== i && setAct(i)}
+                onMouseEnter={() => setAct(i)}
                 onFocus={() => setAct(i)}
               >
                 <span className="row">
@@ -62,10 +64,7 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
                   <span className="nm">{s.full}</span>
                 </span>
                 <span className="ds"><span>{s.intro}</span></span>
-                <span
-                  className="bar"
-                  onAnimationEnd={() => act === i && setAct((i + 1) % items.length)}
-                ></span>
+                <span className="bar" />
               </Link>
             ))}
           </div>
@@ -77,33 +76,39 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
 
         <div className="v-show-stage">
           {items.map((s, i) => (
-            <div key={s.key} className={`v-panel${act === i ? ' on' : ''}`} aria-hidden={act !== i}>
-              <SlotMedia src={s.media} poster={s.poster} eager />
-              <div className="scrim"></div>
-              <div className="body">
-                <div className="hd">
-                  <span>{s.n} / {String(items.length).padStart(2, '0')}</span>
-                  <span>{s.full}</span>
-                </div>
-                <div className="bt">
-                  <span className="hook">{s.hook}</span>
-                  <div className="chips">{s.chips.map((c) => <span key={c}>{c}</span>)}</div>
-                  <div className="ft">
-                    {s.price && (
-                      <span className="p">
-                        <span className="v-label">Starting at</span>
-                        <b>{s.price}{s.unit && <small> {s.unit}</small>}</b>
-                      </span>
-                    )}
-                    <span className="a">
-                      <Link href={s.url} className="btn btn-light btn-sm" tabIndex={act === i ? 0 : -1}>Explore {s.short} →</Link>
-                      <Link href={`/contact?service=${s.param}`} className="btn btn-ghost-light btn-sm" tabIndex={act === i ? 0 : -1}>Get a quote</Link>
-                    </span>
-                  </div>
-                </div>
+            <img
+              key={s.key}
+              className={`v-stage-img${act === i ? ' on' : ''}`}
+              src={s.poster || s.media}
+              alt=""
+              aria-hidden={act !== i}
+              loading={i < 2 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          ))}
+          <div className="scrim" />
+          <div className="body" key={act}>
+            <div className="hd">
+              <span>{cur.n} / {total}</span>
+              <span>{cur.full}</span>
+            </div>
+            <div className="bt">
+              <span className="hook">{cur.hook}</span>
+              <div className="chips">{cur.chips.map((c) => <span key={c}>{c}</span>)}</div>
+              <div className="ft">
+                {cur.price && (
+                  <span className="p">
+                    <span className="v-label">Starting at</span>
+                    <b>{cur.price}{cur.unit && <small> {cur.unit}</small>}</b>
+                  </span>
+                )}
+                <span className="a">
+                  <Link href={cur.url} className="btn btn-light btn-sm">Explore {cur.short} →</Link>
+                  <Link href={`/contact?service=${cur.param}`} className="btn btn-ghost-light btn-sm">Get a quote</Link>
+                </span>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
@@ -112,10 +117,11 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
       <div className="v-svc-strip" role="list">
         {items.map((s, i) => (
           <Link key={s.key} href={s.url} className="v-svc-card" role="listitem" data-reveal data-delay={String(Math.min(i, 3))}>
-            <SlotMedia src={s.media} poster={s.poster} eager={i < 2} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={s.poster || s.media} alt="" loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
             <span className="scrim"></span>
             <span className="body">
-              <span className="hd"><span>{s.n} / {String(items.length).padStart(2, '0')}</span><span>{s.full}</span></span>
+              <span className="hd"><span>{s.n} / {total}</span><span>{s.full}</span></span>
               <span className="bt">
                 <span className="hook">{s.hook}</span>
                 <span className="chips">{s.chips.slice(0, 3).map((c) => <span key={c}>{c}</span>)}</span>
