@@ -387,8 +387,8 @@ body:has(> .v3) { background: #F2F1EC; }
 
 /* tools row */
 .v3 .v-tools { display: flex; align-items: center; gap: 16px 24px; flex-wrap: wrap; padding: 24px 0; }
-.v3 .v-tools img { height: 26px; width: auto; filter: grayscale(1); opacity: .75; transition: filter .4s, opacity .4s; }
-.v3 .v-tools img:hover { filter: none; opacity: 1; }
+.v3 .v-tools img { height: 26px; width: auto; opacity: .9; transition: opacity .4s; }
+.v3 .v-tools img:hover { opacity: 1; }
 .v3 .v-tools .t { font-size: 14px; color: var(--v-mut); }
 
 /* big outcome numbers */
@@ -995,9 +995,9 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .v-rows.compact .v-row { padding: 18px 0; }
 .v3 .v-rows.compact .v-row .k { font-size: 16px; }
 .v3 .v-rows.compact .v-row .v { font-size: 15px; }
-/* tools row: icons uniform, grey until hover */
-.v3 .v-tools img { height: 22px; width: auto; max-width: 92px; object-fit: contain; filter: grayscale(1) opacity(.7); transition: filter .4s; }
-.v3 .v-tools img:hover { filter: none; }
+/* tools row: icons uniform, colourful */
+.v3 .v-tools img { height: 22px; width: auto; max-width: 92px; object-fit: contain; opacity: .9; transition: opacity .4s; }
+.v3 .v-tools img:hover { opacity: 1; }
 .v3 .v-tools .t { font-size: 13px; color: var(--v-mut-2); }
 /* tier: examples label inside card */
 .v3 .v-tier .v-kick { font-size: 10.5px; }
@@ -1005,6 +1005,6 @@ body:has(> .v3) { background: #F2F1EC; }
 /* services gateway rows */
 .v3 .v-svc-row.gw .ds { display: flex; flex-direction: column; gap: 12px; }
 .v3 .gw-tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.v3 .gw-tools img { height: 18px; width: auto; max-width: 80px; object-fit: contain; filter: grayscale(1) opacity(.6); transition: filter .4s; }
-.v3 .v-svc-row.gw:hover .gw-tools img { filter: none; }
+.v3 .gw-tools img { height: 18px; width: auto; max-width: 80px; object-fit: contain; opacity: .85; transition: opacity .4s; }
+.v3 .v-svc-row.gw:hover .gw-tools img { opacity: 1; }
 .v3 .gw-tools small { font-size: 12px; color: var(--v-mut-2); }
