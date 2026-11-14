@@ -5,9 +5,10 @@ import AccentSetter from '@/components/AccentSetter'
 import ViewItem from '@/analytics/ViewItem'
 import type { FaqItem } from './FaqList'
 import Faq from '@/components/v3/Faq'
-import { BgVideo } from '@/components/v3/Media'
 import { getSlots } from '@/lib/media-slots-server'
 import { SERVICES_V3, serviceByParam } from '@/lib/v3-content'
+import ToolsRow from '@/components/v3/ToolsRow'
+import PricingStance from '@/components/v3/PricingStance'
 
 export interface Deliverable {
   icon: ReactNode
@@ -84,7 +85,6 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
   const v3 = serviceByParam(data.contactQuery) ?? SERVICES_V3[0]
   const slots = await getSlots()
   const poster = slots[v3.posterSlot]
-  const video = v3.heroSlot ? slots[v3.heroSlot] : ''
 
   const faqLd = {
     '@context': 'https://schema.org',
@@ -116,7 +116,6 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
       {/* HERO */}
       <section className="v-phero svc-hero">
         <img src={poster} alt="" />
-        {video && <BgVideo src={video} poster={poster} />}
         <div className="scrim"></div>
         <div className="v-wrap inner">
           <nav className="v-tabs" aria-label="Services" data-reveal>
@@ -126,7 +125,7 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
               </Link>
             ))}
           </nav>
-          <span className="v-label" data-reveal>{v3.kicker}</span>
+          <span className="v-kick on-dark" data-reveal>{v3.kicker}</span>
           <h1 data-reveal data-delay="1">{v3.h1}</h1>
           <div className="foot" data-reveal data-delay="2">
             <p>{v3.intro}</p>
@@ -135,12 +134,12 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
         </div>
       </section>
 
-      {/* THE DETAILS */}
+      {/* THE SHORT VERSION */}
       <section className="v-wrap v-sec">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">(01) What you get</span>
-            <h2 className="v-h2-sm">The details.</h2>
+            <span className="v-kick"><i>01</i>The short version</span>
+            <h2 className="v-h2-sm">What this looks like.</h2>
           </div>
           <div className="r">
             <div className="v-rows">
@@ -151,29 +150,24 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
                 </div>
               ))}
             </div>
-            <div className="v-tools">
-              <span className="v-label">Tools</span>
-              {v3.logos.map((l) => <img key={l} src={l} alt="" loading="lazy" />)}
-              <span className="t">{v3.tools}</span>
-            </div>
+            <ToolsRow tools={v3.tools} />
           </div>
         </div>
       </section>
 
-      {/* WHAT'S INCLUDED (the toolkit) */}
+      {/* EXAMPLES OF WORK (compact: title + one line) */}
       <section className="v-wrap v-sec">
         <div className="v-split">
-          <div className="l" data-reveal>
-            <span className="v-label">(02) What&apos;s included</span>
-            <h2 className="v-h2-sm">The toolkit.</h2>
-            <p className="v-body">{data.includedIntro}</p>
+          <div className="l sticky" data-reveal>
+            <span className="v-kick"><i>02</i>Examples of work</span>
+            <h2 className="v-h2-sm">The kind of thing we do.</h2>
+            <p className="v-body">A few examples, not a menu. Most projects mix a couple of these.</p>
           </div>
-          <div className="r v-rows">
+          <div className="r v-rows compact">
             {data.deliverables.map((d, i) => (
               <div key={i} className="v-row" data-reveal>
                 <span className="k">{d.title}</span>
                 <span className="v">{d.text}</span>
-                {d.tags.length > 0 && <span className="tags">{d.tags.map((t) => <span key={t}>{t}</span>)}</span>}
               </div>
             ))}
           </div>
@@ -184,9 +178,8 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
       <section className="v-wrap v-sec">
         <div className="v-split">
           <div className="l sticky" data-reveal>
-            <span className="v-label">(03) How it works</span>
+            <span className="v-kick"><i>03</i>How it works</span>
             <h2 className="v-h2-sm">{data.flowTitle}</h2>
-            <p className="v-body">{data.flowIntro}</p>
           </div>
           <div className="r v-steps sm">
             {data.flow.map((f, i) => (
@@ -205,25 +198,24 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
 
       {/* PACKAGES (admin-managed prices) */}
       <section className="v-wrap v-sec" id="pricing">
-        <div className="v-head" style={{ marginBottom: 32 }} data-reveal>
+        <div className="v-head" style={{ marginBottom: 28 }} data-reveal>
           <div>
-            <span className="v-label">(04) Packages</span>
-            <h2 className="v-h2-sm">Ways to work with us.</h2>
+            <span className="v-kick"><i>04</i>Pricing</span>
+            <h2 className="v-h2-sm">Ways to start.</h2>
           </div>
-          <span className="v-body" style={{ fontSize: 14, color: 'var(--v-mut-2)' }}>
-            Fixed prices in CAD. Every project starts with a free call.
-          </span>
+          <span className="v-body" style={{ fontSize: 14, color: 'var(--v-mut-2)' }}>Prices in CAD. Every project starts with a free call.</span>
         </div>
-        <div className="v-tiers">
+        <PricingStance contactHref={contactHref} />
+        <div className="v-tiers" style={{ marginTop: 28 }}>
           {data.cards.map((c, i) => (
             <div key={i} className={`v-tier${c.featured ? ' feat' : ''}`} data-reveal data-delay={String(i + 1)}>
               <div className="top">
                 <span className="nm">{c.name}</span>
                 {c.billing && <span className="bl">{c.billing}</span>}
               </div>
-              {c.featured && c.tag && <span className="tag">{c.tag}</span>}
               <div className="pr"><b>{c.price}</b>{c.priceNote && <small>{c.priceNote}</small>}</div>
               <span className="ds">{c.desc}</span>
+              <span className="v-kick" style={{ marginTop: 4 }}>Examples of work</span>
               <ul>{c.items.map((item) => <li key={item}>{item}</li>)}</ul>
               <Link href={contactHref} className="cta tbtn">{c.ctaLabel.replace(/\s*→\s*$/, '')} →</Link>
             </div>
@@ -235,14 +227,14 @@ export default async function ServicePage({ data }: { data: ServiceData }) {
       <section className="v-wrap v-sec v-sec-b">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">(05) Questions</span>
+            <span className="v-kick"><i>05</i>Questions</span>
             <h2 className="v-h2-sm">Asked often.</h2>
             <p className="v-body">
-              Couldn&apos;t find it? <Link href={contactHref} className="v-link" style={{ fontSize: 'inherit' }}>Ask on the call →</Link>
+              Not covered? <Link href={contactHref} className="v-link" style={{ fontSize: 'inherit' }}>Ask on the call →</Link>
             </p>
           </div>
           <div className="r" data-reveal>
-            <Faq items={data.faqs} />
+            <Faq items={data.faqs.slice(0, 5)} />
           </div>
         </div>
       </section>

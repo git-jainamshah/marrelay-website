@@ -14,7 +14,7 @@ export default function CaseStudiesPageView({ slots }: { slots: SlotValues }) {
         </div>
         <div className="v-phead">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <span className="v-label" data-reveal>Case studies · Worked examples</span>
+            <span className="v-kick">Case studies · Worked examples</span>
             <h1 className="v-big" data-reveal data-delay="1">How we&apos;d approach it.</h1>
           </div>
           <p data-reveal data-delay="2">
@@ -30,7 +30,7 @@ export default function CaseStudiesPageView({ slots }: { slots: SlotValues }) {
           {CASES_V3.map((c, i) => (
             <MediaCard key={c.key} href={c.url} data-reveal data-delay={String(i + 1)}>
               <div className="m" data-reveal="wipe">
-                <SlotMedia src={slots[c.slot]} poster={slots[c.poster]} />
+                <SlotMedia src={slots[c.poster]} />
                 <div className="cap">
                   <span className="v-label">{c.cat}</span>
                   <span className="arr" aria-hidden="true">→</span>
@@ -46,7 +46,7 @@ export default function CaseStudiesPageView({ slots }: { slots: SlotValues }) {
       <section className="v-wrap v-sec v-sec-b">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">Your project</span>
+            <span className="v-kick">Your project</span>
             <h2 className="v-h2-sm">Could be the next one.</h2>
           </div>
           <div className="r" data-reveal style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>

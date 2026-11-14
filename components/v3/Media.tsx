@@ -60,14 +60,14 @@ export function BgVideo({ src, poster, className }: { src: string; poster?: stri
  * Image or video for a media slot. Media slots hold a single path, so the
  * same spot can be a photo or a video depending on what the admin picks.
  */
-export function SlotMedia({ src, poster, alt = '' }: { src: string; poster?: string; alt?: string }) {
+export function SlotMedia({ src, poster, alt = '', eager = false }: { src: string; poster?: string; alt?: string; eager?: boolean }) {
   if (isVideo(src)) {
     return (
       <>
-        {poster && <img src={poster} alt={alt} loading="lazy" />}
+        {poster && <img src={poster} alt={alt} loading={eager ? 'eager' : 'lazy'} />}
         <BgVideo src={src} poster={poster} />
       </>
     )
   }
-  return <img src={src} alt={alt} loading="lazy" />
+  return <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} />
 }

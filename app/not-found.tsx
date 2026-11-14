@@ -3,7 +3,7 @@ import Link from 'next/link'
 export default function NotFound() {
   return (
     <section className="v-wrap v-top v-sec-b v-404">
-      <span className="v-label">Error 404</span>
+      <span className="v-kick">Error 404</span>
       <h1 className="v-big">This page took a coffee break.</h1>
       <p className="v-body" style={{ fontSize: 18, maxWidth: '30em' }}>
         It either moved, never existed, or is off somewhere shipping. Either way, the rest of the studio is very much

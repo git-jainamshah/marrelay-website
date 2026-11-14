@@ -4,6 +4,7 @@ import { SITE_URL } from '@/lib/env'
 import { getPackageOverrides } from '@/lib/pricing'
 import { SERVICES_V3 } from '@/lib/v3-content'
 import Faq from '@/components/v3/Faq'
+import PricingStance from '@/components/v3/PricingStance'
 
 export const metadata: Metadata = {
   title: 'Pricing',
@@ -83,22 +84,23 @@ export default async function PricingPage() {
       <section className="v-wrap v-top v-phead" id="pricing">
         <h1 className="v-big" data-reveal>Pricing</h1>
         <p data-reveal data-delay="1">
-          Every project gets a fixed quote on one page before any money changes hands. These are the three ways most
-          clients start.
+          Small fixed packages to start with, and a custom plan for everything else. Either way, the price is agreed
+          on one page before any work begins.
         </p>
       </section>
 
       <section className="v-wrap" style={{ paddingTop: 'clamp(56px,7vw,96px)' }}>
-        <div className="v-tiers lg">
+        <PricingStance />
+        <div className="v-tiers lg" style={{ marginTop: 28 }}>
           {plans.map((t, i) => (
             <div key={t.idx} className={`v-tier${t.featured ? ' feat' : ''}`} data-reveal data-delay={String(i + 1)}>
               <div className="top">
                 <span className="nm">{t.name}</span>
                 {t.billing && <span className="bl">{t.billing}</span>}
               </div>
-              {t.featured && t.tag && <span className="tag">{t.tag}</span>}
               <div className="pr"><b>{t.price}</b>{t.priceNote && <small>{t.priceNote}</small>}</div>
               {t.description && <span className="ds">{t.description}</span>}
+              <span className="v-kick" style={{ marginTop: 4 }}>Examples of work</span>
               <ul>{(t.items ?? []).map((it, j) => <li key={j}>{it}</li>)}</ul>
               <Link href={`/contact?package=${pkgParam(t.name)}`} className="cta tbtn">
                 {(t.ctaLabel ?? 'Get started').replace(/\s*→\s*$/, '')} →
@@ -111,8 +113,8 @@ export default async function PricingPage() {
       <section className="v-wrap v-sec">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">By service</span>
-            <p className="v-body">Starting prices for single-discipline work. Full breakdowns on each service page.</p>
+            <span className="v-kick">By service</span>
+            <p className="v-body">Starting points for single-discipline work. Details on each service page.</p>
           </div>
           <div className="r v-rows v-bylist">
             {SERVICES_V3.map((x, i) => (
@@ -129,7 +131,7 @@ export default async function PricingPage() {
       <section className="v-wrap v-sec v-sec-b">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">Questions</span>
+            <span className="v-kick">Questions</span>
             <h2 className="v-h2-sm">Before you ask.</h2>
             <p className="v-body">
               Nothing here is a trick question. Still unclear?{' '}

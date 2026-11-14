@@ -41,7 +41,7 @@ export default async function BlogsPage() {
       </div>
       <div className="v-phead">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          <span className="v-label" data-reveal>The Marrelay journal</span>
+          <span className="v-kick">The Marrelay journal</span>
           <h1 className="v-big" data-reveal data-delay="1">Journal</h1>
         </div>
         <p data-reveal data-delay="2" style={{ maxWidth: '24em' }}>

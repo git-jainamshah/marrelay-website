@@ -17,6 +17,6 @@ export const metadata: Metadata = {
 
 export default async function Services() {
   const pkgs = await Promise.all(SERVICES_V3.map((s) => getPackageOverrides(s.pricingKey)))
-  const items = SERVICES_V3.map((s, i) => ({ key: s.key, full: s.full, intro: s.intro, url: s.url, from: pkgs[i][0]?.price ?? '' }))
+  const items = SERVICES_V3.map((s, i) => ({ key: s.key, full: s.full, intro: s.intro, url: s.url, from: pkgs[i][0]?.price ?? '', tools: s.tools, chips: s.chips }))
   return <ServicesView items={items} />
 }

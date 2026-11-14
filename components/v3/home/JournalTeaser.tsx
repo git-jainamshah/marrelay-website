@@ -29,7 +29,7 @@ export default async function JournalTeaser({ image }: { image: string }) {
     <section id="journal" className="v-wrap v-sec">
       <div className="v-head" data-reveal>
         <div style={{ maxWidth: 760 }}>
-          <span className="v-label">(04) Journal</span>
+          <span className="v-kick"><i>04</i>Journal</span>
           <h2 className="v-h2">Read this before you hire anyone.</h2>
           <p className="v-body" style={{ fontSize: 17, maxWidth: '34em' }}>
             Straight answers on costs, platforms and tracking, written by the people who do the work. Most readers
@@ -41,7 +41,7 @@ export default async function JournalTeaser({ image }: { image: string }) {
 
       {asks.length > 0 && (
         <div className="v-asks" data-reveal>
-          <span className="v-label">People ask us</span>
+          <span className="v-kick">People ask us</span>
           {asks.map(([q, slug]) => (
             <Link key={slug} href={`/blogs/${slug}`}>{q}<span aria-hidden="true">→</span></Link>
           ))}

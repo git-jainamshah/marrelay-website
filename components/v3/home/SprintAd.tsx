@@ -31,7 +31,7 @@ export default function SprintAd({ price, image, logo }: { price: string; image:
           <span className="v-label" data-reveal>The Launch Sprint · {price} fixed</span>
           <h2>
             <span data-reveal="line"><span>Start Monday.</span></span>
-            <span data-reveal="line" data-delay="1"><span className="g">{d ? `Live by ${d.launchLong}.` : 'Live in 14 days.'}</span></span>
+            <span data-reveal="line" data-delay="1"><span>{d ? `Live by ${d.launchLong}.` : 'Live in 14 days.'}</span></span>
           </h2>
           <p data-reveal data-delay="2">
             A landing page designed, built and launched in 14 days. One price agreed before we start, a demo on

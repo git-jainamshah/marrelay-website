@@ -27,7 +27,7 @@ export default async function Home() {
     return {
       key: s.key, n: `0${i + 1}`, full: s.full, short: s.short, intro: s.intro, url: s.url, param: s.param,
       hook: s.hook, chips: s.chips, price, unit, poster,
-      media: s.heroSlot ? slots[s.heroSlot] : poster,
+      media: poster,
     }
   })
   const sprintPrice = homePkgs[0]?.price || '$2,400'
@@ -46,7 +46,7 @@ export default async function Home() {
           <h1>
             <span data-reveal="line" data-delay="1"><span>We design, build</span></span>
             <span data-reveal="line" data-delay="2"><span>and grow digital</span></span>
-            <span data-reveal="line" data-delay="3"><span className="v-muted">products.</span></span>
+            <span data-reveal="line" data-delay="3"><span>products.</span></span>
           </h1>
           <div className="foot" data-reveal data-delay="4">
             <p>
@@ -64,11 +64,8 @@ export default async function Home() {
       {/* STATEMENT */}
       <section className="v-wrap v-sec v-statement">
         <p data-reveal>
-          The person who answers your first email is the person who builds your project.{' '}
-          <span className="v-muted">
-            We agree the price before we begin, show you real progress every week, and hand over everything when
-            we&apos;re done.
-          </span>
+          The person who answers your first email is the person who builds your project. We agree the price
+          before we begin, show progress every week, and hand over everything at the end.
         </p>
       </section>
 
@@ -79,7 +76,7 @@ export default async function Home() {
       <section id="what" className="v-wrap v-sec">
         <div className="v-head" data-reveal>
           <div>
-            <span className="v-label">(01) Services</span>
+            <span className="v-kick"><i>01</i>Services</span>
             <h2 className="v-h2"><span>Five disciplines.</span><span>One small team.</span></h2>
           </div>
           <p className="v-body">
@@ -95,8 +92,8 @@ export default async function Home() {
         <div className="v-wrap" style={{ paddingTop: 'clamp(80px,10vw,140px)', paddingBottom: 'clamp(80px,10vw,140px)' }}>
           <div className="v-head" style={{ marginBottom: 48 }} data-reveal>
             <div>
-              <span className="v-label">(02) Case studies</span>
-              <h2 className="v-h2">How we&apos;d approach it.</h2>
+              <span className="v-kick"><i>02</i>Case studies</span>
+              <h2 className="v-h2">How we would approach it.</h2>
             </div>
             <p className="v-body" style={{ maxWidth: '28em' }}>
               Worked examples, end to end. We&apos;re a young studio, so instead of borrowed logos we show exactly how
@@ -107,7 +104,7 @@ export default async function Home() {
             {CASES_V3.map((c, i) => (
               <MediaCard key={c.key} href={c.url} data-reveal data-delay={String(i + 1)}>
                 <div className="m" data-reveal="wipe">
-                  <SlotMedia src={slots[c.slot]} poster={slots[c.poster]} />
+                  <SlotMedia src={slots[c.poster]} />
                   <div className="cap">
                     <span className="v-label">{c.cat}</span>
                     <span className="arr" aria-hidden="true">→</span>
@@ -125,7 +122,7 @@ export default async function Home() {
       <section id="how" className="v-wrap v-sec">
         <div className="v-split">
           <div className="l sticky" data-reveal>
-            <span className="v-label">(03) Process</span>
+            <span className="v-kick"><i>03</i>Process</span>
             <h2 className="v-h2">Four steps. No surprises.</h2>
             <p className="v-body">
               Most projects take four to six weeks. You&apos;ll know the price, the timeline and who&apos;s doing the
@@ -157,7 +154,7 @@ export default async function Home() {
       <section id="start" className="v-wrap v-sec v-sec-b">
         <div className="v-start" data-reveal>
           <div className="l">
-            <span className="v-label">(05) Start here</span>
+            <span className="v-kick"><i>05</i>Start here</span>
             <h2>Tell us about your project.</h2>
             <p>A founder reads every enquiry and replies within one business day with a few times for a 30-minute call.</p>
             <Link href="/contact" className="v-link">Prefer the full brief? Contact page →</Link>

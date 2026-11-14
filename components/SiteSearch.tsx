@@ -16,6 +16,9 @@ const SearchIcon = ({ size = 18 }: { size?: number }) => (
 // A few handy suggestions shown before the visitor types.
 const QUICK = ['Web Development', 'Data & Analytics', 'SEO & Ads', 'Engineering & CAD', 'Case Studies', 'Pricing', 'Contact Us']
 
+/** First clause of a description, so rows stay one line like the v3 overlay. */
+const shortDesc = (t: string) => { const m = t.split(/ [-–] | \. |: /)[0]; return m.replace(/[.,;:\s]+$/, '') + (m.length < t.length ? '.' : '') }
+
 export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'drawer' | 'pill' }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -93,17 +96,18 @@ export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'd
               <input
                 ref={inputRef}
                 type="text"
-                placeholder="Search pages, services, case studies…"
+                placeholder="Search pages, services, case studies, guides…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={onInputKey}
                 aria-label="Search query"
               />
-              <button type="button" className="search-esc" onClick={close} aria-label="Close">Esc</button>
+              <button type="button" className="search-esc" onClick={close} aria-label="Close">ESC</button>
             </div>
 
             <div className="search-results">
-              {!query.trim() && <div className="search-hint">Popular</div>}
+              {!query.trim() && <div className="search-hint">POPULAR</div>}
+              {query.trim() && results.length > 0 && <div className="search-hint">RESULTS</div>}
               {query.trim() && results.length === 0 && (
                 <div className="search-empty">No matches for “{query}”. Try “web”, “analytics”, “CAD”, or “pricing”.</div>
               )}
@@ -117,7 +121,7 @@ export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'd
                 >
                   <span className="search-item-main">
                     <b>{d.title}</b>
-                    <small>{d.description}</small>
+                    <small>{shortDesc(d.description)}</small>
                   </span>
                   <span className="search-item-sec">{d.section}</span>
                 </button>
@@ -125,9 +129,9 @@ export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'd
             </div>
 
             <div className="search-foot">
-              <span><kbd>↑</kbd><kbd>↓</kbd> to navigate</span>
-              <span><kbd>↵</kbd> to open</span>
-              <span><kbd>esc</kbd> to close</span>
+              <span>↑↓ navigate</span>
+              <span>↵ open</span>
+              <span>esc close</span>
             </div>
           </div>
         </div>

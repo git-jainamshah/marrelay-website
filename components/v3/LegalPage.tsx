@@ -9,7 +9,8 @@ type Doc = { html: string; updatedAt: string }
  * only decides where each section starts, for the v3 layout and contents list.
  */
 function splitSections(html: string) {
-  const clean = sanitizeHtml(html)
+  // House style: no em dashes anywhere on the public site, even in admin-authored text.
+  const clean = sanitizeHtml(html).replace(/\s*\u2014\s*/g, ', ')
   const parts = clean.split(/(?=<h2[\s>])/i)
   const intro = parts[0] && !/^<h2[\s>]/i.test(parts[0]) ? parts.shift()! : ''
   const sections = parts.map((p, i) => {

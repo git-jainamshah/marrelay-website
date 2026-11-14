@@ -54,7 +54,7 @@ export default function Footer() {
         <section className="v-dark v-band">
           <div className="v-wrap v-band-in">
             <h2 data-reveal>
-              Have a project in mind? <span className="v-muted">Let&apos;s talk.</span>
+              Have a project in mind? Let&apos;s talk.
             </h2>
             <div className="v-band-r" data-reveal data-delay="1">
               <a href={`mailto:${email}`} className="mail">{email}</a>

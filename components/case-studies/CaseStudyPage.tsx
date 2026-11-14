@@ -2,9 +2,10 @@
 import { ReactNode } from 'react'
 import Link from 'next/link'
 import AccentSetter from '@/components/AccentSetter'
-import { BgVideo, SlotMedia, isVideo } from '@/components/v3/Media'
+import { SlotMedia } from '@/components/v3/Media'
 import MediaCard from '@/components/v3/MediaCard'
-import { CASES_V3 } from '@/lib/v3-content'
+import { CASES_V3, SERVICES_V3 } from '@/lib/v3-content'
+import ToolsRow from '@/components/v3/ToolsRow'
 import { SLOT_DEFS } from '@/lib/media-slots'
 
 const slotDefault = (key: string) => SLOT_DEFS.find((s) => s.key === key)?.defaultPath ?? ''
@@ -66,6 +67,7 @@ export default function CaseStudyPage({ data, media, poster }: { data: CaseStudy
   }
 
   const idx = Math.max(0, CASES_V3.findIndex((c) => c.url === `/projects/${data.slug}`))
+  const svcTools = SERVICES_V3.find((x) => x.param === data.contactQuery)?.tools ?? []
   const heroPoster = poster || slotDefault(CASES_V3[idx].poster)
   const nav = [
     { k: 'Previous', arrow: '←', c: CASES_V3[(idx + CASES_V3.length - 1) % CASES_V3.length] },
@@ -81,7 +83,6 @@ export default function CaseStudyPage({ data, media, poster }: { data: CaseStudy
       {/* HERO */}
       <section className="v-phero tall svc-hero">
         {heroPoster && <img src={heroPoster} alt="" />}
-        {isVideo(media) ? <BgVideo src={media} poster={heroPoster} /> : media && <img src={media} alt="" />}
         <div className="scrim"></div>
         <div className="v-wrap inner" style={{ gap: 28 }}>
           <span className="v-label" data-reveal>Case study · {data.category} · Worked example</span>
@@ -120,7 +121,7 @@ export default function CaseStudyPage({ data, media, poster }: { data: CaseStudy
         <section className="v-wrap v-sec">
           <div className="v-head" data-reveal>
             <div>
-              <span className="v-label">Interactive sketch</span>
+              <span className="v-kick">Interactive sketch</span>
               <h2 className="v-h2-sm">{data.interactiveTitle ?? 'A quick interactive sketch'}</h2>
             </div>
             <p className="v-body">
@@ -136,7 +137,7 @@ export default function CaseStudyPage({ data, media, poster }: { data: CaseStudy
       <section className="v-wrap v-sec">
         <div className="v-split">
           <div className="l sticky" data-reveal>
-            <span className="v-label">The approach</span>
+            <span className="v-kick">The approach</span>
             <p className="v-body">{data.approachIntro}</p>
           </div>
           <div className="r v-steps sm">
@@ -158,17 +159,19 @@ export default function CaseStudyPage({ data, media, poster }: { data: CaseStudy
       <section className="v-wrap v-sec">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">What we&apos;d build</span>
+            <span className="v-kick">What we&apos;d build</span>
             <p className="v-body">{data.buildIntro}</p>
           </div>
-          <div className="r v-rows">
-            {data.build.map((d) => (
-              <div key={d.title} className="v-row" data-reveal>
-                <span className="k">{d.title}</span>
-                <span className="v">{d.text}</span>
-                {d.tags.length > 0 && <span className="tags">{d.tags.map((t) => <span key={t}>{t}</span>)}</span>}
-              </div>
-            ))}
+          <div className="r">
+            <div className="v-rows compact">
+              {data.build.map((d) => (
+                <div key={d.title} className="v-row" data-reveal>
+                  <span className="k">{d.title}</span>
+                  <span className="v">{d.text}</span>
+                </div>
+              ))}
+            </div>
+            <ToolsRow tools={svcTools} label="Tools used in this example" />
           </div>
         </div>
       </section>
@@ -200,14 +203,14 @@ export default function CaseStudyPage({ data, media, poster }: { data: CaseStudy
       {/* MORE CASE STUDIES */}
       <section className="v-wrap v-sec v-sec-b">
         <div className="v-head" style={{ alignItems: 'baseline', marginBottom: 28 }} data-reveal>
-          <span className="v-label">More case studies</span>
+          <span className="v-kick">More case studies</span>
           <Link href="/case-studies" className="v-link">All case studies →</Link>
         </div>
         <div className="v-work-grid v-cs-nav">
           {nav.map(({ k, arrow, c }) => (
             <MediaCard key={k} href={c.url} data-reveal="wipe">
               <div className="m">
-                <SlotMedia src={slotDefault(c.slot)} poster={slotDefault(c.poster)} />
+                <SlotMedia src={slotDefault(c.poster)} />
                 <div className="ov">
                   <div className="hd"><span className="v-label">{k}</span><span className="v-label">{c.cat}</span></div>
                   <div className="ft"><span>{c.title}</span><span className="ac">{arrow}</span></div>

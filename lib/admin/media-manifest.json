@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-14T05:26:36.799Z",
+ "generatedAt": "2026-11-14T06:04:47.083Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -98,12 +98,20 @@
    "modifiedAt": "2026-11-13T20:24:13.492Z"
   },
   {
-   "filename": "hero-loop.mp4",
-   "relPath": "/assets/hero-loop.mp4",
+   "filename": "hero-loop-full.mp4",
+   "relPath": "/assets/hero-loop-full.mp4",
    "kind": "video",
    "mime": "video/mp4",
    "size": 16571637,
    "modifiedAt": "2026-11-13T20:24:13.512Z"
+  },
+  {
+   "filename": "hero-loop.mp4",
+   "relPath": "/assets/hero-loop.mp4",
+   "kind": "video",
+   "mime": "video/mp4",
+   "size": 2848787,
+   "modifiedAt": "2026-11-14T05:58:23.177Z"
   },
   {
    "filename": "marrelay-header.png",
@@ -222,7 +230,7 @@
    {
     "file": "app/page.tsx",
     "label": "Home page",
-    "line": 151
+    "line": 148
    },
    {
     "file": "components/Footer.tsx",

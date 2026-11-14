@@ -34,7 +34,7 @@ export default async function AboutPage() {
         <div className="v-crumb">
           <Link href="/">Home</Link><span>/</span><span className="here">About</span>
         </div>
-        <span className="v-label" data-reveal>About the studio</span>
+        <span className="v-kick">About the studio</span>
         <h1 className="v-about-h1" data-reveal data-delay="1">We started Marrelay to be the studio we wanted to hire.</h1>
       </section>
 
@@ -46,7 +46,7 @@ export default async function AboutPage() {
 
       <section className="v-wrap v-sec">
         <div className="v-split">
-          <div className="l" data-reveal><span className="v-label">Our story</span></div>
+          <div className="l" data-reveal><span className="v-kick">Our story</span></div>
           <div className="r v-story" data-reveal>
             <p>
               The engineering and CAD side came first: four years of drafting and 3D modelling, where &ldquo;almost
@@ -65,7 +65,7 @@ export default async function AboutPage() {
       <section className="v-wrap v-sec">
         <div className="v-split">
           <div className="l sticky" data-reveal>
-            <span className="v-label">Where we come from</span>
+            <span className="v-kick">Where we come from</span>
             <p className="v-body">
               We build digital things the way a draftsperson builds a drawing set: scoped up front, checked at every
               gate, and delivered so you can actually use it without us.
@@ -89,7 +89,7 @@ export default async function AboutPage() {
       <section className="v-wrap v-sec v-sec-b">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">How we work</span>
+            <span className="v-kick">How we work</span>
             <p className="v-body">No mission-statement poetry, just the rules we actually run projects by. If we ever break one, call us on it.</p>
           </div>
           <div className="r" style={{ borderTop: '1px solid var(--v-ink)' }}>

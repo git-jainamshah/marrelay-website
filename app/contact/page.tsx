@@ -29,7 +29,7 @@ export default async function ContactPage() {
       </div>
       <div className="v-contact">
         <div className="l">
-          <span className="v-label" data-reveal>Contact us</span>
+          <span className="v-kick">Contact us</span>
           <h1 data-reveal data-delay="1">Let&apos;s talk about your project.</h1>
           <p data-reveal data-delay="2">
             Tell us what you&apos;re building. A founder replies within one business day with a few times for a

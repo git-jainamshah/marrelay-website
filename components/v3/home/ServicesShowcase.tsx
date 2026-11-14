@@ -67,7 +67,7 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
         <div className="v-show-stage">
           {items.map((s, i) => (
             <div key={s.key} className={`v-panel${act === i ? ' on' : ''}`} aria-hidden={act !== i}>
-              <SlotMedia src={s.media} poster={s.poster} />
+              <SlotMedia src={s.media} poster={s.poster} eager />
               <div className="scrim"></div>
               <div className="body">
                 <div className="hd">
@@ -101,7 +101,7 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
       <div className="v-svc-strip" role="list">
         {items.map((s, i) => (
           <Link key={s.key} href={s.url} className="v-svc-card" role="listitem" data-reveal data-delay={String(Math.min(i, 3))}>
-            <SlotMedia src={s.media} poster={s.poster} />
+            <SlotMedia src={s.media} poster={s.poster} eager={i < 2} />
             <span className="scrim"></span>
             <span className="body">
               <span className="hd"><span>{s.n} / {String(items.length).padStart(2, '0')}</span><span>{s.full}</span></span>

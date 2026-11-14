@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
 
-export type ServiceListItem = { key: string; full: string; intro: string; url: string; from: string }
+export type ServiceListItem = { key: string; full: string; intro: string; url: string; from: string; tools: { name: string; src: string }[]; chips: string[] }
 
 /** /services overview: the five disciplines as a v3 list, prices from the admin. */
 export default function ServicesView({ items }: { items: ServiceListItem[] }) {
@@ -12,12 +13,12 @@ export default function ServicesView({ items }: { items: ServiceListItem[] }) {
         </div>
         <div className="v-phead">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <span className="v-label" data-reveal>Services</span>
+            <span className="v-kick">Services</span>
             <h1 className="v-big" data-reveal data-delay="1">Five disciplines. One small team.</h1>
           </div>
           <p data-reveal data-delay="2">
-            The people who build your site also set up the tracking and run the ads, so nothing gets lost between
-            agencies. Most clients start with one and add another once it works.
+            Pick a discipline to see what the work looks like, how it runs and where prices start. Most clients begin
+            with one and add another once it works.
           </p>
         </div>
       </section>
@@ -25,10 +26,13 @@ export default function ServicesView({ items }: { items: ServiceListItem[] }) {
       <section className="v-wrap" style={{ paddingTop: 'clamp(56px,7vw,96px)' }}>
         <div className="v-svc-list always">
           {items.map((s, i) => (
-            <Link key={s.key} href={s.url} className="v-svc-row" data-reveal>
+            <Link key={s.key} href={s.url} className="v-svc-row gw" data-reveal>
               <span className="n">0{i + 1}</span>
               <span className="nm">{s.full}</span>
-              <span className="ds">{s.intro}</span>
+              <span className="ds">
+                {s.intro}
+                <span className="gw-tools">{s.tools.map((t) => <img key={t.src} src={t.src} alt={t.name} title={t.name} loading="lazy" />)}<small>and more</small></span>
+              </span>
               <span className="fr">
                 {s.from && <span>from {s.from}</span>}
                 <span className="v-arrow-circle" style={{ color: 'var(--v-ink)' }}>→</span>
@@ -41,7 +45,7 @@ export default function ServicesView({ items }: { items: ServiceListItem[] }) {
       <section className="v-wrap v-sec v-sec-b">
         <div className="v-split">
           <div className="l" data-reveal>
-            <span className="v-label">Not sure where to start?</span>
+            <span className="v-kick">Not sure where to start?</span>
             <h2 className="v-h2-sm">Tell us the goal.</h2>
           </div>
           <div className="r" data-reveal style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>

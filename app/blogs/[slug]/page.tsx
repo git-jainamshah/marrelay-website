@@ -179,7 +179,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             </div>
 
             <section className="v-dark v-art-cta">
-              <span className="v-label">Work with us</span>
+              <span className="v-kick">Work with us</span>
               <h3>Want this handled for you?</h3>
               <p>
                 We are a founder-led studio in Toronto. If you would rather not do this yourself, we set it up properly,
@@ -194,7 +194,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       {related.length > 0 && (
         <section className="v-wrap v-sec v-sec-b">
           <div className="v-head" style={{ alignItems: 'baseline', marginBottom: 8 }} data-reveal>
-            <span className="v-label">Keep reading</span>
+            <span className="v-kick">Keep reading</span>
             <Link href="/blogs" className="v-link">All articles →</Link>
           </div>
           <div className="v-pgrid">
