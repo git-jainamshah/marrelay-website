@@ -22,20 +22,20 @@ export type SlotDef = {
 
 export const SLOT_DEFS: SlotDef[] = [
   // ---- Home ----
-  { key: 'home-hero-video', page: 'Home page', pageUrl: '/', section: 'Hero background video', kind: 'video', defaultPath: '/assets/hero-loop.mp4' },
+  { key: 'home-hero-video', page: 'Home page', pageUrl: '/', section: 'Studio loop video (plays behind the Launch Sprint band)', kind: 'video', defaultPath: '/assets/hero-loop.mp4' },
   { key: 'home-proof-image', page: 'Home page', pageUrl: '/', section: 'Why work with us - photo', kind: 'photo', defaultPath: '/assets/office-dark-hero.png' },
   { key: 'home-minicta-image', page: 'Home page', pageUrl: '/', section: 'Lead form section - photo', kind: 'photo', defaultPath: '/assets/contact-us-form.jpg' },
   { key: 'home-hero-poster', page: 'Home page', pageUrl: '/', section: 'Hero poster photo (shows while the video loads)', kind: 'photo', defaultPath: '/assets/city-night.jpg' },
   { key: 'home-sprint-image', page: 'Home page', pageUrl: '/', section: 'Launch Sprint banner - background photo', kind: 'photo', defaultPath: '/assets/arch-curve.jpg' },
   { key: 'home-journal-image', page: 'Home page', pageUrl: '/', section: 'Journal - featured article photo', kind: 'photo', defaultPath: '/assets/blog-banner.jpg' },
   // ---- Service pages (hero background; also used by the home services showcase) ----
-  { key: 'service-web-hero', page: 'Service: Web Development', pageUrl: '/services/web-development', section: 'Hero background video', kind: 'video', defaultPath: '/assets/web-dev-bg.mp4' },
+  { key: 'service-web-hero', page: 'Service: Web Development', pageUrl: '/services/web-development', section: 'Studio loop video (plays behind the Launch Sprint band)', kind: 'video', defaultPath: '/assets/web-dev-bg.mp4' },
   { key: 'service-web-poster', page: 'Service: Web Development', pageUrl: '/services/web-development', section: 'Hero poster photo', kind: 'photo', defaultPath: '/assets/city-blue.jpg' },
-  { key: 'service-data-hero', page: 'Service: Data & Analytics', pageUrl: '/services/data-analytics', section: 'Hero background video', kind: 'video', defaultPath: '/assets/analytics-bg.mp4' },
+  { key: 'service-data-hero', page: 'Service: Data & Analytics', pageUrl: '/services/data-analytics', section: 'Studio loop video (plays behind the Launch Sprint band)', kind: 'video', defaultPath: '/assets/analytics-bg.mp4' },
   { key: 'service-data-poster', page: 'Service: Data & Analytics', pageUrl: '/services/data-analytics', section: 'Hero poster photo', kind: 'photo', defaultPath: '/assets/city-night.jpg' },
   { key: 'service-seo-poster', page: 'Service: SEO & Ads', pageUrl: '/services/seo-ads', section: 'Hero photo', kind: 'photo', defaultPath: '/assets/arch-curve.jpg' },
   { key: 'service-social-poster', page: 'Service: Social', pageUrl: '/services/social', section: 'Hero photo', kind: 'photo', defaultPath: '/assets/crowd.jpg' },
-  { key: 'service-eng-hero', page: 'Service: Engineering & CAD', pageUrl: '/services/engineering', section: 'Hero background video', kind: 'video', defaultPath: '/assets/engineering-drawings-bg.mp4' },
+  { key: 'service-eng-hero', page: 'Service: Engineering & CAD', pageUrl: '/services/engineering', section: 'Studio loop video (plays behind the Launch Sprint band)', kind: 'video', defaultPath: '/assets/engineering-drawings-bg.mp4' },
   { key: 'service-eng-poster', page: 'Service: Engineering & CAD', pageUrl: '/services/engineering', section: 'Hero poster photo', kind: 'photo', defaultPath: '/assets/arch-tunnel.jpg' },
   // ---- About ----
   { key: 'about-image', page: 'About page', pageUrl: '/about', section: 'Full-width photo', kind: 'photo', defaultPath: '/assets/crowd.jpg' },

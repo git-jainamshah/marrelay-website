@@ -9,7 +9,6 @@ import MediaCard from '@/components/v3/MediaCard'
 import ServicesShowcase, { ShowcaseItem } from '@/components/v3/home/ServicesShowcase'
 import SprintAd from '@/components/v3/home/SprintAd'
 import JournalTeaser from '@/components/v3/home/JournalTeaser'
-import Film from '@/components/v3/home/Film'
 import LeadForm from '@/components/home/LeadForm'
 import { getCompany } from '@/lib/site-config'
 
@@ -46,7 +45,7 @@ export default async function Home() {
           <h1>
             <span data-reveal="line" data-delay="1"><span>We design, build</span></span>
             <span data-reveal="line" data-delay="2"><span>and grow digital</span></span>
-            <span data-reveal="line" data-delay="3"><span>products.</span></span>
+            <span data-reveal="line" data-delay="3"><span className="v-muted">products.</span></span>
           </h1>
           <div className="foot" data-reveal data-delay="4">
             <p>
@@ -64,13 +63,12 @@ export default async function Home() {
       {/* STATEMENT */}
       <section className="v-wrap v-sec v-statement">
         <p data-reveal>
-          The person who answers your first email is the person who builds your project. We agree the price
-          before we begin, show progress every week, and hand over everything at the end.
+          The person who answers your first email is the person who builds your project.{' '}
+          <span className="v-muted">
+            We agree the price before we begin, show progress every week, and hand over everything at the end.
+          </span>
         </p>
       </section>
-
-      {/* STUDIO REEL (the hero loop, re-homed) */}
-      <Film video={slots['home-hero-video']} poster={slots['home-hero-poster']} />
 
       {/* SERVICES */}
       <section id="what" className="v-wrap v-sec">
@@ -145,7 +143,7 @@ export default async function Home() {
       </section>
 
       {/* LAUNCH SPRINT */}
-      <SprintAd price={sprintPrice} image={slots['home-sprint-image']} logo={company.logoIcon || '/assets/marrelay-mark.png'} />
+      <SprintAd price={sprintPrice} image={slots['home-sprint-image']} logo={company.logoIcon || '/assets/marrelay-mark.png'} video={slots['home-hero-video']} />
 
       {/* JOURNAL */}
       <JournalTeaser image={slots['home-journal-image']} />

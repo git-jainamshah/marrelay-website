@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { BgVideo } from '../Media'
 
 type Dates = { start: string; startDay: string; launch: string; launchDay: string; launchLong: string }
 
@@ -18,20 +19,21 @@ function sprintDates(): Dates {
   return { start: md(kick), startDay: wd(kick), launch: md(live), launchDay: wd(live), launchLong: live.toLocaleDateString('en-CA', { month: 'long', day: 'numeric' }) }
 }
 
-export default function SprintAd({ price, image, logo }: { price: string; image: string; logo: string }) {
+export default function SprintAd({ price, image, logo, video }: { price: string; image: string; logo: string; video?: string }) {
   const [d, setD] = useState<Dates | null>(null)
   useEffect(() => setD(sprintDates()), [])
 
   return (
     <section className="v-dark v-sprint v-sec-gap" aria-label="The Launch Sprint">
       <img src={image} alt="" loading="lazy" />
+      {video && <BgVideo src={video} poster={image} />}
       <div className="scrim"></div>
       <div className="v-wrap inner">
         <div className="l">
           <span className="v-label" data-reveal>The Launch Sprint · {price} fixed</span>
           <h2>
             <span data-reveal="line"><span>Start Monday.</span></span>
-            <span data-reveal="line" data-delay="1"><span>{d ? `Live by ${d.launchLong}.` : 'Live in 14 days.'}</span></span>
+            <span data-reveal="line" data-delay="1"><span className="g">{d ? `Live by ${d.launchLong}.` : 'Live in 14 days.'}</span></span>
           </h2>
           <p data-reveal data-delay="2">
             A landing page designed, built and launched in 14 days. One price agreed before we start, a demo on
