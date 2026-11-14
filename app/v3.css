@@ -251,6 +251,21 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .search-foot { display: flex; gap: 20px; padding: 12px 22px; border-top: 1px solid var(--v-line); font-family: var(--v-f2); font-stretch: 125%; font-weight: 450; font-size: 11.04px; color: var(--v-mut-2); }
 .v3 .search-foot kbd { font-family: inherit; margin-right: 4px; border: 0; background: none; padding: 0; border-radius: 0; box-shadow: none; font-size: inherit; color: inherit; }
 .v3 .search-foot span { display: inline-flex; align-items: center; }
+/* Search: a slimmer, less bulky panel on phones. */
+@media (max-width: 640px) {
+  .v3 .search-overlay { padding: 8vh 10px 10px; align-items: flex-start; }
+  .v3 .search-panel { max-height: 80vh; box-shadow: 0 18px 50px rgba(0,0,0,.4); }
+  .v3 .search-input-row { gap: 10px; padding: 13px 15px; }
+  .v3 .search-input-row input { font-size: 16px; }
+  .v3 .search-esc { display: none; }
+  .v3 .search-results { padding: 4px 0; }
+  .v3 .search-hint { padding: 9px 15px 4px; font-size: 10.5px; }
+  .v3 .search-item { padding: 10px 15px; gap: 12px; }
+  .v3 .search-item-main b { font-size: 14.5px; }
+  .v3 .search-item-main small { font-size: 12px; }
+  .v3 .search-item-sec { font-size: 10px; }
+  .v3 .search-foot { display: none; }
+}
 
 /* =====================================================================
    FOOTER + CTA BAND
@@ -734,15 +749,19 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .v-art-body .bp-table th { background: transparent; color: var(--v-mut-2); padding: 14px 16px 14px 0; font-family: var(--v-f2); font-stretch: 125%; font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid var(--v-ink); border-radius: 0 !important; }
 .v3 .v-art-body .bp-table td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--v-line); color: var(--v-ink-2); background: transparent !important; }
 .v3 .v-art-body .bp-tablewrap figcaption, .v3 .v-art-body .bp-figure figcaption { font-family: var(--v-sans); font-size: 13px; color: var(--v-mut-2); line-height: 1.5; margin-top: 12px; }
-.v3 .v-art-body .bp-figure {
-  margin: 12px 0 32px; background: #fff; border: 1px solid var(--v-line); border-radius: 0; padding: 20px;
-  /* re-map the figure palette to monochrome + red */
+.v3 {
+  /* legacy (pre-v3) palette remapped to monochrome + red, so every blog,
+     article and case-study element that still references these names renders
+     in the current theme wherever it sits (not only inside .bp-figure). */
   --terra: #D7262C; --terra-soft: #F6D3D4; --sage: #0E0E0D; --sage-soft: #D8D6CE;
   --butter: #B9B8B2; --butter-soft: #ECEAE4; --peri: #6A6964; --peri-soft: #E7E5DE;
   --plum: #46453F; --plum-soft: #E7E5DE; --brand: #D7262C; --brand-ink: #B01E23; --brand-soft: #F6D3D4;
   --paper: #FFFFFF; --paper-2: #F2F1EC; --paper-3: #E7E5DE; --ink: #0E0E0D; --ink-2: #2E2D29;
   --ink-mut: #6A6964; --ink-soft: #B9B8B2; --rule: #D8D6CE; --rule-strong: #C9C7BF;
   --display: var(--v-sans); --serif: var(--v-sans); --sans: var(--v-sans); --mono: var(--v-f2);
+}
+.v3 .v-art-body .bp-figure {
+  margin: 12px 0 32px; background: #fff; border: 1px solid var(--v-line); border-radius: 0; padding: 20px;
 }
 .v3 .v-art-body .bp-code { margin: 12px 0 32px; }
 .v3 .v-art-body .bp-code pre { border-radius: 0; background: var(--v-ink); }

@@ -58,8 +58,8 @@ export function CwvMeters() {
             <text x="70" y={y + 20} fill={MUT} fontSize="12">{m.sub}</text>
             {/* bar */}
             <rect x="210" y={y + 4} width="420" height="20" rx="10" fill="var(--paper-3)" stroke={INK} strokeWidth="1.2" />
-            <rect x="210" y={y + 4} width={420 * 0.45} height="20" rx="10" fill="#3D7D6E" opacity="0.85" />
-            <rect x={210 + 420 * 0.45} y={y + 4} width={420 * 0.28} height="20" fill="#C58A2E" opacity="0.75" />
+            <rect x="210" y={y + 4} width={420 * 0.45} height="20" rx="10" fill="var(--sage)" opacity="0.9" />
+            <rect x={210 + 420 * 0.45} y={y + 4} width={420 * 0.28} height="20" fill="var(--butter)" opacity="0.9" />
             <rect x={210 + 420 * 0.73} y={y + 4} width={420 * 0.27} height="20" fill={BRAND} opacity="0.75" />
             {/* marker */}
             <polygon
@@ -70,8 +70,8 @@ export function CwvMeters() {
           </g>
         )
       })}
-      <text x="212" y="222" fill="#3D7D6E" fontSize="11" fontWeight="700">GOOD</text>
-      <text x="404" y="222" fill="#C58A2E" fontSize="11" fontWeight="700">NEEDS WORK</text>
+      <text x="212" y="222" fill="var(--sage)" fontSize="11" fontWeight="700">GOOD</text>
+      <text x="404" y="222" fill="var(--butter)" fontSize="11" fontWeight="700">NEEDS WORK</text>
       <text x="556" y="222" fill={BRAND} fontSize="11" fontWeight="700">POOR</text>
     </svg>
   )

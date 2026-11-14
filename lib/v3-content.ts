@@ -50,6 +50,17 @@ const T = {
   solidworks: { name: 'SolidWorks', src: B + 'solidworks-mark.png' },
   fusion: { name: 'Fusion 360', src: B + 'fusion-mark.png' },
   inventor: { name: 'Inventor', src: B + 'inventor-mark.png' },
+  react: { name: 'React', src: B + 'react-mark.svg' },
+  nextjs: { name: 'Next.js', src: B + 'nextjs-mark.svg' },
+  wordpress: { name: 'WordPress', src: B + 'wordpress-mark.svg' },
+  shopify: { name: 'Shopify', src: B + 'shopify-mark.svg' },
+  figma: { name: 'Figma', src: B + 'figma-mark.svg' },
+  contentful: { name: 'Contentful', src: B + 'contentful-mark.svg' },
+  webflow: { name: 'Webflow', src: B + 'webflow-mark.svg' },
+  meta: { name: 'Meta Ads', src: B + 'meta-mark.svg' },
+  instagram: { name: 'Instagram', src: B + 'instagram-mark.svg' },
+  tiktok: { name: 'TikTok', src: B + 'tiktok-mark.svg' },
+  linkedin: { name: 'LinkedIn', src: B + 'linkedin-mark.svg' },
 }
 
 export const SERVICES_V3: ServiceV3[] = [
@@ -68,7 +79,7 @@ export const SERVICES_V3: ServiceV3[] = [
       ['Time', 'Around two weeks for a landing page. Four to six weeks for a full site.'],
       ['You keep', 'The code, the design files and every account.'],
     ],
-    tools: [T.google, T.microsoft, T.adobe, T.openai],
+    tools: [T.react, T.nextjs, T.wordpress, T.shopify, T.figma],
     posterSlot: 'service-web-poster',
   },
   {
@@ -104,7 +115,7 @@ export const SERVICES_V3: ServiceV3[] = [
       ['Shape', 'A one-off audit, or a monthly retainer with a three-month minimum.'],
       ['You keep', 'Ad accounts and content, in your name from day one.'],
     ],
-    tools: [T.gads, T.bing, T.gsc, T.ga4],
+    tools: [T.gads, T.bing, T.meta, T.gsc, T.ga4],
     posterSlot: 'service-seo-poster',
   },
   {
@@ -122,7 +133,7 @@ export const SERVICES_V3: ServiceV3[] = [
       ['Usually included', 'A monthly report and a creative review.'],
       ['You keep', 'Every account, asset and template.'],
     ],
-    tools: [T.adobe, T.google, T.openai, T.microsoft],
+    tools: [T.meta, T.instagram, T.tiktok, T.linkedin],
     posterSlot: 'service-social-poster',
   },
   {

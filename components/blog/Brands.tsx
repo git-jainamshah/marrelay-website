@@ -106,7 +106,7 @@ export function BrandMark({ k, size = 22 }: { k: BrandKey; size?: number }) {
       />
     )
   }
-  const chip = CHIPS[k] ?? { text: k.slice(0, 3).toUpperCase(), color: '#4A4A55' }
+  const chip = CHIPS[k] ?? { text: k.slice(0, 3).toUpperCase(), color: '#6A6964' }
   return (
     <span
       aria-hidden
