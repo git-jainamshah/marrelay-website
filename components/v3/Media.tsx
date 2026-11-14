@@ -64,10 +64,10 @@ export function SlotMedia({ src, poster, alt = '', eager = false }: { src: strin
   if (isVideo(src)) {
     return (
       <>
-        {poster && <img src={poster} alt={alt} loading={eager ? 'eager' : 'lazy'} />}
+        {poster && <img src={poster} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />}
         <BgVideo src={src} poster={poster} />
       </>
     )
   }
-  return <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} />
+  return <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
 }

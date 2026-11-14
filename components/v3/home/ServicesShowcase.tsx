@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { SlotMedia } from '../Media'
 
@@ -27,6 +27,17 @@ export type ShowcaseItem = {
 export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
   const [act, setAct] = useState(0)
   const [paused, setPaused] = useState(false)
+
+  // Decode every panel photo up front so the first switch to each one is
+  // instant instead of decoding a full-res image on the main thread mid-fade.
+  useEffect(() => {
+    items.forEach((s) => {
+      if (!s.media || /\.(mp4|webm|mov)$/i.test(s.media)) return
+      const img = new Image()
+      img.src = s.media
+      if (img.decode) img.decode().catch(() => {})
+    })
+  }, [items])
 
   return (
     <>
