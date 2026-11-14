@@ -409,11 +409,11 @@ body:has(> .v3) { background: #F2F1EC; }
 /* services showcase (desktop) */
 .v3 .v-show { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: clamp(32px, 4.4vw, 80px); align-items: stretch; border-top: 1px solid var(--v-ink); }
 .v3 .v-show-list { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; }
-.v3 .v-show-item { cursor: pointer; position: relative; display: flex; flex-direction: column; padding: clamp(18px, 1.8vw, 26px) 0; border-bottom: 1px solid var(--v-line); }
+.v3 .v-show-item { cursor: pointer; position: relative; display: flex; flex-direction: column; padding: clamp(14px, 1.4vw, 20px) 0; border-bottom: 1px solid var(--v-line); }
 .v3 .v-show-item:hover { color: inherit; }
 .v3 .v-show-item .row { display: flex; align-items: baseline; gap: 20px; }
 .v3 .v-show-item .n { font-family: var(--v-f2); font-stretch: 125%; font-weight: 450; font-size: 11.96px; color: var(--v-soft); width: 24px; flex: none; transition: color .4s; }
-.v3 .v-show-item .nm { font-size: clamp(26px, 2.8vw, 44px); font-weight: 500; letter-spacing: -.05em; line-height: 1; color: var(--v-soft-3); transition: color .5s; }
+.v3 .v-show-item .nm { font-size: clamp(24px, 2.4vw, 38px); font-weight: 500; letter-spacing: -.05em; line-height: 1; color: var(--v-soft-3); transition: color .5s; }
 .v3 .v-show-item .ds { display: grid; grid-template-rows: 0fr; overflow: hidden; opacity: 0; transition: grid-template-rows .7s var(--v-ease), opacity .5s; padding-left: 44px; }
 .v3 .v-show-item .ds span { display: block; min-height: 0; padding-top: 12px; font-size: 15px; line-height: 1.55; color: var(--v-mut); max-width: 30em; }
 .v3 .v-show-item .bar { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: var(--v-red); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--v-ease); }
@@ -423,27 +423,28 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .v-show-item.on .bar { transform: scaleX(1); }
 .v3 .v-show-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; color: var(--v-mut); }
 .v3 .v-show-foot a { color: var(--v-ink); border-bottom: 1px solid var(--v-ink); padding-bottom: 2px; }
-.v3 .v-show-stage { position: relative; min-height: clamp(560px, 46vw, 700px); overflow: hidden; background: var(--v-ink); color: var(--v-bg); isolation: isolate; }
-/* Image layers stay mounted and painted; we only cross-fade opacity, so none is
-   ever hidden and no image re-decodes on the way back in (no blank frame). */
-.v3 .v-stage-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .55s ease; }
-.v3 .v-stage-img.on { opacity: 1; }
-.v3 .v-show-stage .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(14,14,13,.62) 0%, rgba(14,14,13,.34) 32%, rgba(14,14,13,.42) 54%, rgba(14,14,13,.95) 100%); }
-.v3 .v-show-stage .body { position: absolute; inset: 0; padding: clamp(24px, 2.6vw, 40px); display: flex; flex-direction: column; justify-content: space-between; animation: vStage .5s var(--v-ease); }
-@keyframes vStage { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.v3 .v-show-stage .hd { display: flex; justify-content: space-between; gap: 16px; }
-.v3 .v-show-stage .hd span { font-family: var(--v-f2); font-stretch: 125%; font-weight: 500; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
-.v3 .v-show-stage .hd span + span { opacity: .75; }
-.v3 .v-show-stage .bt { display: flex; flex-direction: column; gap: 22px; }
-.v3 .v-show-stage .hook { font-size: clamp(36px, 4vw, 64px); font-weight: 500; letter-spacing: -.055em; line-height: .95; max-width: 9em; }
-.v3 .v-show-stage .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.v3 .v-show-stage .chips span { padding: 8px 14px; border: 1px solid rgba(242,241,236,.4); border-radius: 999px; font-size: 13px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); background: rgba(14,14,13,.25); }
-.v3 .v-show-stage .ft { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; border-top: 1px solid rgba(242,241,236,.25); padding-top: 20px; }
-.v3 .v-show-stage .ft .p { display: flex; flex-direction: column; gap: 4px; }
-.v3 .v-show-stage .ft .p .v-label { color: var(--v-soft-2); }
-.v3 .v-show-stage .ft .p b { font-size: clamp(28px, 2.6vw, 40px); font-weight: 500; letter-spacing: -.045em; line-height: 1; }
-.v3 .v-show-stage .ft .p b small { font-size: 14px; color: var(--v-soft-2); letter-spacing: 0; font-weight: 400; }
-.v3 .v-show-stage .ft .a { display: flex; gap: 10px; flex-wrap: wrap; }
+.v3 .v-show-stage { position: relative; min-height: clamp(440px, 36vw, 560px); overflow: hidden; background: var(--v-ink); color: var(--v-bg); isolation: isolate; }
+/* Every panel stays mounted and painted; we only cross-fade opacity, so the
+   image and its copy change together, nothing is ever hidden, and no image
+   has to re-decode on the way back in (no blank frame). */
+.v3 .v-panel { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+.v3 .v-panel.on { opacity: 1; pointer-events: auto; }
+.v3 .v-panel > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.v3 .v-panel .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(14,14,13,.6) 0%, rgba(14,14,13,.3) 32%, rgba(14,14,13,.4) 54%, rgba(14,14,13,.95) 100%); }
+.v3 .v-panel .body { position: absolute; inset: 0; padding: clamp(22px, 2.2vw, 34px); display: flex; flex-direction: column; justify-content: space-between; }
+.v3 .v-panel .hd { display: flex; justify-content: space-between; gap: 16px; }
+.v3 .v-panel .hd span { font-family: var(--v-f2); font-stretch: 125%; font-weight: 500; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.v3 .v-panel .hd span + span { opacity: .75; }
+.v3 .v-panel .bt { display: flex; flex-direction: column; gap: 18px; }
+.v3 .v-panel .hook { font-size: clamp(28px, 2.6vw, 44px); font-weight: 500; letter-spacing: -.04em; line-height: 1; max-width: 11em; }
+.v3 .v-panel .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.v3 .v-panel .chips span { padding: 7px 13px; border: 1px solid rgba(242,241,236,.4); border-radius: 999px; font-size: 12.5px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); background: rgba(14,14,13,.25); }
+.v3 .v-panel .ft { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; border-top: 1px solid rgba(242,241,236,.25); padding-top: 18px; }
+.v3 .v-panel .ft .p { display: flex; flex-direction: column; gap: 4px; }
+.v3 .v-panel .ft .p .v-label { color: var(--v-soft-2); }
+.v3 .v-panel .ft .p b { font-size: clamp(24px, 2vw, 32px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
+.v3 .v-panel .ft .p b small { font-size: 13px; color: var(--v-soft-2); letter-spacing: 0; font-weight: 400; }
+.v3 .v-panel .ft .a { display: flex; gap: 10px; flex-wrap: wrap; }
 /* services list (mobile / narrow) */
 .v3 .v-svc-list { border-top: 1px solid var(--v-ink); display: none; }
 .v3 .v-svc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 32px; padding: clamp(24px, 2.6vw, 36px) 0; border-bottom: 1px solid var(--v-ink); transition: padding .5s var(--v-ease), color .3s; }
