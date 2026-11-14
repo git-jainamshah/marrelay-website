@@ -166,7 +166,7 @@ export default function Header() {
                 aria-expanded={drop === k}
               >
                 {DROPS[k].label}
-                <span className="car" aria-hidden="true">▾</span>
+                <span className="car" aria-hidden="true"></span>
               </Link>
             </div>
           ))}
