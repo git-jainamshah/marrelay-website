@@ -32,7 +32,7 @@ export default async function ContactPage() {
           <span className="v-kick">Contact us</span>
           <h1 data-reveal data-delay="1">Let&apos;s talk about your project.</h1>
           <p data-reveal data-delay="2">
-            Tell us what you&apos;re building. A founder replies within one business day with a few times for a
+            Tell us what you&apos;re building. We reply within one business day with a few times for a
             30-minute discovery call.
           </p>
           <div className="v-next" data-reveal data-delay="3">

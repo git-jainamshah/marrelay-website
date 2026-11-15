@@ -67,7 +67,7 @@ export default function LegalPage({
           <div className="v-ask">
             <span>
               <b>Questions about this page?</b>
-              <span>Write to us and a founder will reply within one business day.</span>
+              <span>Write to us and we will reply within one business day.</span>
             </span>
             <a href="mailto:hello@marrelay.com" className="btn btn-dark">hello@marrelay.com</a>
           </div>

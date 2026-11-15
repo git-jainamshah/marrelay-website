@@ -103,7 +103,7 @@ export default function Footer() {
           </div>
 
           <div className="v-foot-base">
-            <span>© {new Date().getFullYear()} {company.name}. Founder-led digital studio, Toronto.</span>
+            <span>© {new Date().getFullYear()} {company.name}. Fixed-price digital studio, Toronto.</span>
             <div>
               <Link href="/privacy">Privacy</Link>
               <Link href="/terms">Terms</Link>

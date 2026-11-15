@@ -39,8 +39,8 @@ export default async function Home() {
         <div className="scrim"></div>
         <div className="v-wrap inner">
           <div className="meta" data-reveal>
-            <span>Founder-led digital studio</span>
-            <span>Toronto, Canada</span>
+            <span>Fixed-price digital studio</span>
+            <span>Toronto · Canada &amp; US</span>
           </div>
           <h1>
             <span data-reveal="line" data-delay="1"><span>We design, build</span></span>
@@ -49,8 +49,8 @@ export default async function Home() {
           </h1>
           <div className="foot" data-reveal data-delay="4">
             <p>
-              A founder-led studio for startups and small businesses. Web, data, marketing and engineering, at a
-              fixed price, with a working demo every Friday.
+              A digital studio for startups and small businesses in Canada and the US. Web, data, SEO, social and
+              engineering, for one fixed price agreed up front, with a working demo every Friday.
             </p>
             <div className="ctas">
               <Link href="/#start" className="btn btn-light">Tell us about your project <span aria-hidden="true">→</span></Link>
@@ -154,7 +154,7 @@ export default async function Home() {
           <div className="l">
             <span className="v-kick"><i>05</i>Start here</span>
             <h2>Tell us about your project.</h2>
-            <p>A founder reads every enquiry and replies within one business day with a few times for a 30-minute call.</p>
+            <p>We read every enquiry and reply within one business day with a few times for a 30-minute call. No obligation, no pitch deck.</p>
             <Link href="/contact" className="v-link">Prefer the full brief? Contact page →</Link>
           </div>
           <div className="r">

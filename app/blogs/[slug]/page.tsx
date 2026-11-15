@@ -182,7 +182,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
               <span className="v-kick">Work with us</span>
               <h3>Want this handled for you?</h3>
               <p>
-                We are a founder-led studio in Toronto. If you would rather not do this yourself, we set it up properly,
+                We are a small digital studio in Toronto. If you would rather not do this yourself, we set it up properly,
                 at a fixed price, and hand you everything.
               </p>
               <ArticleCta slug={post.slug} title={post.title} />

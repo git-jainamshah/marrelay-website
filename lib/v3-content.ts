@@ -182,7 +182,7 @@ export const PROCESS_V3 = [
 export const PRICING_NOTE = {
   kicker: 'How pricing works',
   title: 'Fixed starting points. Custom for everything else.',
-  body: 'The packages below are simple, fixed-price ways to start a small project with us. Most clients end up on a custom plan, because real projects have specific asks. Either way the price is agreed on one page before any work begins.',
+  body: 'You hire Marrelay for a project, not for hours. The packages below are simple, fixed-price ways to start something small; most clients end up on a custom plan, because real projects have specific asks. Either way the price is agreed on one page before any work begins, and it does not change with the hours the work takes.',
   examples: 'The items listed under each package are examples of the kind of work it covers, not a fixed checklist.',
   cta: 'Ask for a custom quote',
 }

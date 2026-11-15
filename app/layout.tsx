@@ -56,21 +56,22 @@ export const revalidate = 60
 const baseMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Marrelay - Web, Data, SEO & CAD Studio in Toronto',
+    default: 'Marrelay - Toronto Digital Studio for Web, Data, SEO & Engineering',
     template: 'Marrelay - %s',
   },
   description:
-    'Founder-led digital studio in Toronto. Web development, data & analytics, social, SEO & ads, and engineering/CAD for teams that sweat the details - fixed-price quotes, weekly demos, you own everything.',
+    'Marrelay is a Toronto digital studio: web, data, SEO, social and engineering for startups and small businesses in Canada and the US, at a fixed project price, not by the hour. Weekly demos, and you own everything.',
   keywords: [
-    'web development Toronto',
-    'startup web design',
-    'data analytics setup',
-    'social media management',
-    'SEO agency Toronto',
-    'Google Ads management',
-    'CAD drafting services',
-    'engineering drawings',
+    'Marrelay',
+    'Marrelay digital studio',
     'digital studio Toronto',
+    'fixed price web design',
+    'web development Toronto',
+    'startup web design Canada',
+    'data analytics setup',
+    'SEO and Google Ads agency',
+    'social media management',
+    'CAD drafting and engineering drawings',
   ],
   authors: [{ name: 'Marrelay' }],
   creator: 'Marrelay',
@@ -79,19 +80,19 @@ const baseMetadata: Metadata = {
   },
   openGraph: {
     siteName: 'Marrelay',
-    title: 'Marrelay - Web, Data, SEO & CAD Studio in Toronto',
+    title: 'Marrelay - Toronto Digital Studio for Web, Data, SEO & Engineering',
     description:
-      'Founder-led digital studio in Toronto. Web, data, social, SEO & ads, and engineering for teams that sweat the details - fixed-price quotes, weekly demos.',
+      'A Toronto digital studio for startups and small businesses in Canada and the US. Web, data, SEO, social and engineering, at a fixed project price, not by the hour. Weekly demos, and you own everything.',
     type: 'website',
     locale: 'en_CA',
     url: '/',
-    images: [{ url: '/assets/marrelay-header.png', width: 1200, height: 630, alt: 'Marrelay - digital studio' }],
+    images: [{ url: '/assets/marrelay-header.png', width: 1200, height: 630, alt: 'Marrelay - Toronto digital studio' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Marrelay - Web, Data, SEO & CAD Studio in Toronto',
+    title: 'Marrelay - Toronto Digital Studio for Web, Data, SEO & Engineering',
     description:
-      'Founder-led digital studio in Toronto. Web, data, social, SEO & ads, and engineering for teams that sweat the details.',
+      'A Toronto digital studio for startups in Canada and the US. Web, data, SEO, social and engineering, at a fixed project price, not by the hour.',
     images: ['/assets/marrelay-header.png'],
   },
   // QA and DEV are full copies of the site; letting them be indexed would create
@@ -135,8 +136,10 @@ const buildOrgLd = (c: { name: string; email: string; phone?: string; logoIcon: 
   '@type': 'ProfessionalService',
   '@id': `${SITE_URL}/#organization`,
   name: c.name,
+  alternateName: 'Marrelay Digital Studio',
   description:
-    'Toronto-based founder-led digital studio building websites, analytics, social, SEO & ads, and engineering/CAD deliverables. Serving Toronto and the GTA, and clients remotely worldwide.',
+    'Marrelay is a Toronto-based digital studio that designs, builds and grows websites, analytics, SEO, social and engineering/CAD work for startups and small businesses across Canada and the United States. Projects run on a fixed budget agreed up front, not hourly billing, and clients own all code, files and accounts.',
+  slogan: 'One fixed price, agreed before we start.',
   url: SITE_URL,
   logo: `${SITE_URL}${c.logoIcon || '/assets/marrelay-mark.png'}`,
   image: `${SITE_URL}${c.logoFull || '/assets/marrelay-header.png'}`,
@@ -151,13 +154,13 @@ const buildOrgLd = (c: { name: string; email: string; phone?: string; logoIcon: 
   geo: { '@type': 'GeoCoordinates', latitude: 43.6532, longitude: -79.3832 },
   areaServed: [
     { '@type': 'City', name: 'Toronto' },
-    { '@type': 'AdministrativeArea', name: 'Greater Toronto Area' },
     { '@type': 'AdministrativeArea', name: 'Ontario' },
     { '@type': 'Country', name: 'Canada' },
+    { '@type': 'Country', name: 'United States' },
   ],
   priceRange: '$$',
   sameAs: sameAs.length ? sameAs : SOCIALS.map((s) => s.href),
-  founder: { '@type': 'Person', name: 'Marrelay founders' },
+  knowsAbout: ['Web development', 'Data and analytics', 'SEO', 'Paid advertising', 'Social media', 'Engineering and CAD drafting'],
   makesOffer: [
     { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Web development', url: `${SITE_URL}/services/web-development` } },
     { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Data & analytics', url: `${SITE_URL}/services/data-analytics` } },
@@ -166,6 +169,19 @@ const buildOrgLd = (c: { name: string; email: string; phone?: string; logoIcon: 
     { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Engineering & CAD drafting', url: `${SITE_URL}/services/engineering` } },
   ],
 })
+
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: 'Marrelay',
+  alternateName: ['Marrelay Digital Studio'],
+  description:
+    'Marrelay is a Toronto digital studio that designs, builds and grows websites and digital products for startups and small businesses in Canada and the US, at a fixed project price.',
+  inLanguage: 'en',
+  publisher: { '@id': `${SITE_URL}/#organization` },
+}
 
 export default async function RootLayout({
   children,
@@ -187,6 +203,10 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
         />
         <HeadScripts />
       </head>

@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Marrelay - Web, Data, SEO & CAD Studio in Toronto',
     short_name: 'Marrelay',
     description:
-      'Toronto-based founder-led digital studio: web development, data & analytics, social, SEO & ads, and engineering/CAD.',
+      'Toronto digital studio: web, data, SEO, social and engineering/CAD for startups in Canada and the US, at a fixed project price.',
     start_url: '/',
     display: 'standalone',
     background_color: '#FBF6EC',

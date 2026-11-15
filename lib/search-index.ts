@@ -19,7 +19,7 @@ export const SEARCH_INDEX: SearchDoc[] = [
   },
   {
     title: 'About Us', url: '/about', section: 'Studio',
-    description: 'Who we are - a founder-led studio in Toronto that sweats the details.',
+    description: 'Who we are: a Toronto digital studio, fixed-price not hourly, that sweats the details.',
     keywords: ['about', 'team', 'founders', 'story', 'who we are', 'toronto'],
   },
   {

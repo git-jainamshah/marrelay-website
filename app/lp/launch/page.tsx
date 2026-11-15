@@ -6,11 +6,11 @@ import ContactLeadForm from '@/components/ContactLeadForm'
 export const metadata: Metadata = {
   title: 'Launch Offer',
   description:
-    'Our launch offer: a flat 30% off for the first 3 clients. Web, data & analytics, social, SEO & ads, and engineering/CAD. Founder-led, fixed-price, Toronto-based. Claim a spot below.',
+    'Our launch offer: a flat 30% off for the first 3 clients. Web, data & analytics, social, SEO & ads, and engineering/CAD. Fixed project price, not hourly, Toronto-based. Claim a spot below.',
   alternates: { canonical: '/lp/launch' },
   openGraph: {
     title: 'Marrelay - Launch Offer',
-    description: 'Flat 30% off for the first 3 clients. Claim a spot. Founder-led, fixed-price, Toronto-based.',
+    description: 'Flat 30% off for the first 3 clients. Claim a spot. Fixed-price, not hourly, Toronto-based.',
     url: '/lp/launch',
     images: [{ url: '/assets/marrelay-header.png', width: 1200, height: 630, alt: 'Marrelay launch offer' }],
   },
@@ -101,7 +101,7 @@ export default function LaunchPage({ searchParams }: { searchParams?: { hero?: s
               </h1>
               <p>
                 The first <b>3 clients</b> get a flat <b>30% off</b> any project, across every service we offer.
-                Founder-led, fixed-price, Toronto-based.
+                Fixed project price, not hourly. Toronto-based, remote across Canada and the US.
               </p>
             </div>
           </div>

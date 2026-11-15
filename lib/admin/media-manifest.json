@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-14T17:59:09.009Z",
+ "generatedAt": "2026-11-15T18:45:31.538Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -225,7 +225,7 @@
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 141
+    "line": 144
    },
    {
     "file": "app/page.tsx",
@@ -277,17 +277,17 @@
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 88
+    "line": 89
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 95
+    "line": 96
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 142
+    "line": 145
    },
    {
     "file": "app/lp/launch/page.tsx",
