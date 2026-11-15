@@ -480,7 +480,8 @@ async function migrateAndSeed() {
   // ---- Seed default settings ----
   const defaults: Record<string, unknown> = {
     announcement: {
-      // **bold** renders as bold on the site
+      // **bold** renders as bold on the site; `enabled:false` hides the whole top bar
+      enabled: true,
       default: {
         pill: 'New',
         text: 'We just launched a **fixed-price startup sprint**: a landing page in 14 days.',

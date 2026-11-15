@@ -165,7 +165,7 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .v-ann-row { padding-top: 9px; padding-bottom: 9px; display: flex; justify-content: space-between; align-items: center; gap: 8px 16px; flex-wrap: wrap; opacity: .85; }
 .v3 .v-ann-row > span { display: flex; align-items: center; gap: 10px; }
 .v3 .v-ann-row b { font-weight: 500; }
-.v3 .v-ann .v-pill { font-family: var(--v-f2); font-stretch: 125%; font-weight: 500; font-size: 11.04px; letter-spacing: .08em; text-transform: uppercase; border: 1px solid currentColor; padding: 2px 7px; border-radius: 999px; line-height: 1.4; }
+.v3 .v-ann .v-pill { font-family: var(--v-f2); font-stretch: 125%; font-weight: 500; font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; border: 1px solid currentColor; padding: 1.5px 6px; border-radius: 999px; line-height: 1.35; opacity: .85; }
 .v3 .v-hdr-row { height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .v3 .v-logo { display: flex; align-items: center; gap: 12px; }
 .v3 .v-logo img { width: 28px; height: 28px; object-fit: contain; }

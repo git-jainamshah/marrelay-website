@@ -12,7 +12,7 @@ import SiteSearch from '@/components/SiteSearch'
    The per-page copy below is only the fallback when the DB is unreachable.
    ------------------------------------------------------------------ */
 type BarCfg = { pill: string; text: string; ctaLabel: string; ctaHref: string; contactHref: string }
-type AnnouncementCfg = { default: BarCfg; overrides: (BarCfg & { path: string })[] }
+type AnnouncementCfg = { enabled?: boolean; default: BarCfg; overrides: (BarCfg & { path: string })[] }
 
 const FALLBACK_DEFAULT: BarCfg = {
   pill: 'New',
@@ -137,15 +137,17 @@ export default function Header() {
 
   return (
     <header className={`v-hdr ${tone}${scrolled ? ' scrolled' : ''}`} onMouseLeave={() => setDrop(null)}>
-      <div className="v-ann">
-        <div className="v-wrap v-ann-row">
-          <span>
-            {bar.pill && <span className="v-pill">{bar.pill}</span>}
-            <span>{renderBold(bar.text)}</span>
-          </span>
-          {bar.ctaLabel && <Link href={bar.ctaHref || '/pricing'}>{bar.ctaLabel} →</Link>}
+      {announcement?.enabled !== false && (
+        <div className="v-ann">
+          <div className="v-wrap v-ann-row">
+            <span>
+              {bar.pill && <span className="v-pill">{bar.pill}</span>}
+              <span>{renderBold(bar.text)}</span>
+            </span>
+            {bar.ctaLabel && <Link href={bar.ctaHref || '/pricing'}>{bar.ctaLabel} →</Link>}
+          </div>
         </div>
-      </div>
+      )}
 
       <nav className="v-wrap v-hdr-row" aria-label="Main">
         <Link href="/" className="v-logo" aria-label={`${brandName} home`}>

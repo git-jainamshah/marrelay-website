@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Save, Plus, Trash2 } from 'lucide-react'
 
 type Bar = { pill: string; text: string; ctaLabel: string; ctaHref: string; contactHref: string }
-type Announcement = { default: Bar; overrides: (Bar & { path: string })[] }
+type Announcement = { enabled?: boolean; default: Bar; overrides: (Bar & { path: string })[] }
 type Promo = {
   enabled: boolean; template: 'copy' | 'picture' | 'signup'
   title: string; body: string; imageUrl: string
@@ -67,7 +67,15 @@ export default function AnnouncementsPage() {
       {/* ---- Announcement bar ---- */}
       {ann && (
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Top announcement bar</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Top announcement bar</h2>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={ann.enabled !== false} onChange={(e) => setAnn({ ...ann, enabled: e.target.checked })} />
+              <span className={ann.enabled !== false ? 'text-[#35624d] font-semibold' : 'ad-mut'}>
+                {ann.enabled !== false ? 'Live on site' : 'Off'}
+              </span>
+            </label>
+          </div>
           <div className="ad-card space-y-3">
             <div className="text-xs uppercase tracking-widest ad-mut">Default (all pages)</div>
             {barFields(ann.default, (p) => setAnn({ ...ann, default: { ...ann.default, ...p } }))}
@@ -93,7 +101,7 @@ export default function AnnouncementsPage() {
               className="flex items-center gap-2 text-sm border border-[#C9BEA3] rounded-lg px-4 py-2 hover:bg-[#F4EDDD]">
               <Plus className="w-4 h-4" /> Add page override
             </button>
-            <button onClick={() => save('announcement', ann, 'Announcement bar saved - live within a minute.')}
+            <button onClick={() => save('announcement', ann, ann.enabled !== false ? 'Announcement bar saved and LIVE - updates within a minute.' : 'Announcement bar saved (currently hidden).')}
               className="ad-btn">
               <Save className="w-4 h-4" /> Save announcement bar
             </button>
