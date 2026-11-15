@@ -154,6 +154,19 @@ async function migrateAndSeed() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`)
   await run(`CREATE INDEX IF NOT EXISTS settings_history_key_idx ON settings_history (key, id DESC)`)
+  // Who signed in and out of the admin, and when. Admin-only view. Additive.
+  await run(`
+  CREATE TABLE IF NOT EXISTS login_events (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    user_email TEXT,
+    user_name TEXT,
+    event TEXT NOT NULL,
+    ip TEXT,
+    user_agent TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`)
+  await run(`CREATE INDEX IF NOT EXISTS login_events_created_idx ON login_events (created_at DESC)`)
   await run(`
   CREATE TABLE IF NOT EXISTS leads_offline (
     id SERIAL PRIMARY KEY,
@@ -628,6 +641,16 @@ export async function getSettingVersion(key: string, id: number): Promise<Settin
     [key, id]
   )
   return r ? { ...r, value: JSON.parse(r.value) } : null
+}
+
+export type LoginEventKind = 'login' | 'logout' | 'failed'
+export async function recordLoginEvent(e: { userId?: number | null; email?: string | null; name?: string | null; event: LoginEventKind; ip?: string | null; userAgent?: string | null }): Promise<void> {
+  try {
+    await run(
+      'INSERT INTO login_events (user_id, user_email, user_name, event, ip, user_agent) VALUES ($1, $2, $3, $4, $5, $6)',
+      [e.userId ?? null, e.email ?? null, e.name ?? null, e.event, e.ip ?? null, (e.userAgent ?? '').slice(0, 300) || null]
+    )
+  } catch { /* never block sign-in on logging */ }
 }
 
 export async function audit(userEmail: string | null, action: string, detail?: string): Promise<void> {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ensureDb, audit } from '@/lib/admin/db'
+import { ensureDb, audit, recordLoginEvent } from '@/lib/admin/db'
 import { q1, run } from '@/lib/admin/pg'
 import { verifyPassword, createSession, SESSION_COOKIE, sessionCookieOptions } from '@/lib/admin/auth'
 
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
 
     if (!user || !verifyPassword(password, user.password_hash)) {
       attempts.set(ip, { n: (a?.n ?? 0) + 1, ts: Date.now() })
+      await recordLoginEvent({ userId: user?.id ?? null, email: String(email).trim().toLowerCase(), name: user ? `${user.first_name} ${user.last_name}` : null, event: 'failed', ip, userAgent: req.headers.get('user-agent') })
       return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 })
     }
 
@@ -37,6 +38,7 @@ export async function POST(req: NextRequest) {
     await run('UPDATE users SET last_login = now() WHERE id = $1', [user.id])
     const token = await createSession(user.id)
     await audit(user.email, 'login')
+    await recordLoginEvent({ userId: user.id, email: user.email, name: `${user.first_name} ${user.last_name}`, event: 'login', ip, userAgent: req.headers.get('user-agent') })
 
     const res = NextResponse.json({
       ok: true,

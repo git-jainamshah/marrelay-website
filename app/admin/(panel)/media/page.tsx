@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { RefreshCw, Upload, FolderOpen, Replace } from 'lucide-react'
 import { Modal, Section } from '@/components/admin/ui'
 import { SLOT_DEFS, SlotDef } from '@/lib/media-slots'
+import StorageMeter from '@/components/admin/StorageMeter'
 
 type Media = {
   id: number; filename: string; relPath: string; kind: 'photo' | 'video'
@@ -22,7 +23,7 @@ const PAGES = [...new Map(SLOT_DEFS.map((s) => [s.page, s.pageUrl])).entries()]
 function Thumb({ path, kind, size = 78 }: { path: string; kind: 'photo' | 'video'; size?: number }) {
   return (
     <div className={isTransparentCapable(path) ? 'ad-checker' : ''}
-      style={{ width: size * 1.66, height: size, flexShrink: 0, borderRadius: 10, overflow: 'hidden', background: isTransparentCapable(path) ? undefined : 'var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      style={{ width: size * 1.66, height: size, flexShrink: 0, overflow: 'hidden', background: isTransparentCapable(path) ? undefined : 'var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {kind === 'video'
         ? <video src={path} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted playsInline preload="metadata" />
         : <img src={path} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />}
@@ -112,8 +113,8 @@ export default function ManageMediaPage() {
     <div style={{ maxWidth: 980 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 22 }}>
         <div>
-          <div className="ad-kicker">Content</div>
-          <h1>Manage <span className="it">Media</span></h1>
+          <div className="ad-kicker">Site Content</div>
+          <h1>Manage Media</h1>
           <p className="ad-mut" style={{ fontSize: 14, marginTop: 8, maxWidth: 580 }}>
             Every media spot on the site, page by page. Point any spot at any file from Storage -
             the same file can be used in as many places as you like, and changes are live within a minute.
@@ -123,6 +124,7 @@ export default function ManageMediaPage() {
       </div>
 
       {toast && <div className={`ad-alert ${toast.kind}`} style={{ marginBottom: 16 }}>{toast.msg}</div>}
+      <div style={{ marginBottom: 18 }}><StorageMeter media={media} compact /></div>
       {loading && <p className="ad-mut" style={{ fontSize: 14 }}>Loading…</p>}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

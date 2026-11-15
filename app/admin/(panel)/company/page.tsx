@@ -7,6 +7,7 @@ import PageHeader from '@/components/admin/PageHeader'
 import SaveBar from '@/components/admin/SaveBar'
 import { HistoryButton } from '@/components/admin/HistoryDrawer'
 import { loadSetting, saveSetting } from '@/lib/admin/client'
+import { MediaField } from '@/components/admin/MediaPicker'
 
 type Company = {
   name: string; tagline: string
@@ -17,15 +18,11 @@ type Company = {
 
 export default function CompanyPage() {
   const [c, setC] = useState<Company | null>(null)
-  const [photos, setPhotos] = useState<{ id: number; relPath: string; filename: string }[]>([])
   const [saved, setSaved] = useState('')
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     loadSetting<Company>('company').then((v) => { if (v) { setC(v); setSaved(JSON.stringify(v)) } })
-    fetch('/api/admin/media').then((r) => r.json()).then((d) =>
-      setPhotos((d.media || []).filter((m: any) => m.kind === 'photo'))
-    )
   }, [])
 
   const dirty = !!c && JSON.stringify(c) !== saved
@@ -39,21 +36,7 @@ export default function CompanyPage() {
   if (!c) return <p className="ad-mut" style={{ fontSize: 14 }}>Loading…</p>
 
   const logoPicker = (field: 'logoFull' | 'logoIcon', label: string, hint: string) => (
-    <div>
-      <label className="ad-label">{label}</label>
-      <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-        <div style={{ width: 84, height: 84, border: '1px solid var(--rule)', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-          {c[field] ? <img src={c[field]} alt={label} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span className="ad-soft" style={{ fontSize: 11 }}>none</span>}
-        </div>
-        <div style={{ flex: 1 }}>
-          <select className="ad-input" value={c[field]} onChange={(e) => setC({ ...c, [field]: e.target.value })}>
-            <option value="">- pick from Storage -</option>
-            {photos.map((p) => <option key={p.id} value={p.relPath}>{p.filename}</option>)}
-          </select>
-          <p className="ad-soft" style={{ fontSize: 12, marginTop: 6 }}>{hint}</p>
-        </div>
-      </div>
-    </div>
+    <MediaField label={label} value={c[field]} onChange={(p) => setC({ ...c, [field]: p })} hint={hint} />
   )
 
   return (

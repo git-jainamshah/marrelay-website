@@ -1,238 +1,137 @@
 'use client'
 
+/**
+ * Home. Three numbers, one chart, what needs attention, latest leads, and the
+ * handful of things people open the admin to do. Everything else lives on the
+ * Leads and Revenue dashboards.
+ */
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { TrendCard, AreaChart, HBarChart, ShareBar, Donut, Panel } from '@/components/admin/charts'
+import { ArrowRight, RefreshCw } from 'lucide-react'
+import { Kpi, LineChart, Panel, Seg } from '@/components/admin/viz'
 import { fmtDateTime, fmtRelative } from '@/lib/admin/dates'
 import { isProduction, envLabel, SITE_URL } from '@/lib/env'
 import { QUICK_ACTIONS } from '@/components/admin/nav'
-import { ArrowRight } from 'lucide-react'
 
-/** Host of the site this admin panel manages, e.g. "qa.marrelay.com". */
 const SITE_HOST = SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')
 
 type Stats = {
   kpis: {
-    totalLeads: number; newLeads: number; mediaFiles: number; activeScripts: number
-    tagManagers: number; activeUsers: number
-    last7: number; prev7: number; delta7: number | null
-    last30: number; prev30: number; delta30: number | null
+    totalLeads: number; newLeads: number; mediaFiles: number; activeScripts: number; tagManagers: number; activeUsers: number
+    last7: number; prev7: number; delta7: number | null; last30: number; prev30: number; delta30: number | null
     stale: number; blogViews: number
   }
   series: { date: string; value: number }[]
-  byStatus: { label: string; value: number }[]
-  byForm: { label: string; value: number }[]
   byChannel: { label: string; value: number }[]
-  byPage: { label: string; value: number }[]
-  topPosts: { label: string; value: number }[]
   recent: any[]
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  new: 'New', contacted: 'Contacted', qualified: 'Qualified',
-  won: 'Won', lost: 'Lost', spam: 'Spam',
-}
-const FORM_LABELS: Record<string, string> = {
-  contact: 'Contact form', 'promo-banner': 'Promo banner', other: 'Other',
-}
-const STATUS_TONE: Record<string, string> = {
-  new: '#8390C8', contacted: '#F2CC8F', qualified: '#6B9080',
-  won: '#2F6B4F', lost: '#C8141B', spam: '#6E6A62',
-}
+const STATUS_LABELS: Record<string, string> = { new: 'New', contacted: 'Contacted', qualified: 'Qualified', won: 'Won', lost: 'Lost', spam: 'Spam' }
+const FORM_LABELS: Record<string, string> = { contact: 'Contact form', 'promo-banner': 'Promo pop-up', offline: 'Offline', pitch: 'Pitch', other: 'Other' }
+const STATUS_CLASS: Record<string, string> = { new: 'blue', contacted: 'amber', qualified: 'green', won: 'green', lost: 'red', spam: 'grey' }
 
 export default function DashboardView({ firstName }: { firstName: string }) {
   const [s, setS] = useState<Stats | null>(null)
+  const [days, setDays] = useState<'7' | '30' | '90'>('30')
   const [err, setErr] = useState('')
+  const [updated, setUpdated] = useState<Date | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    // no-store: the route is already force-dynamic server-side, this stops the
-    // browser serving a cached copy after a back/forward navigation.
-    fetch('/api/admin/dashboard', { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('Could not load dashboard data.'))))
-      .then(setS)
+  const load = (d = days) => {
+    setLoading(true)
+    fetch(`/api/admin/dashboard?days=${d}`, { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('Could not load the dashboard.'))))
+      .then((j) => { setS(j); setUpdated(new Date()); setErr('') })
       .catch((e) => setErr(e.message))
-  }, [])
+      .finally(() => setLoading(false))
+  }
+  useEffect(() => { load(days) }, [days]) // eslint-disable-line react-hooks/exhaustive-deps
+  // Live: refresh every 60s while the tab is visible.
+  useEffect(() => {
+    const t = setInterval(() => { if (document.visibilityState === 'visible') load() }, 60_000)
+    return () => clearInterval(t)
+  }, [days]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const greeting = (() => {
-    const h = Number(new Date().toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: 'America/Toronto' }))
-    if (h < 12) return 'Good morning'
-    if (h < 18) return 'Good afternoon'
-    return 'Good evening'
-  })()
+  const hour = Number(new Date().toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: 'America/Toronto' }))
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
   if (err) return <div className="ad-alert err">{err}</div>
 
-  if (!s) {
-    return (
-      <div className="space-y-6 max-w-6xl">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm ad-mut mt-1">Loading your numbers…</p>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="ad-card" style={{ padding: 18, height: 118, opacity: 0.5 }} />
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  const k = s.kpis
-  const spark = s.series.slice(-14).map((d) => d.value)
-  const busiestDay = [...s.series].sort((a, b) => b.value - a.value)[0]
-
+  const k = s?.kpis
   return (
-    <div className="space-y-6 max-w-6xl">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{greeting}, {firstName}</h1>
-          {/* Name the site this data actually came from. Hardcoding marrelay.com
-              made QA and DEV claim to be showing production while reading their
-              own database - the fastest way to act on the wrong numbers. */}
-          <p className="text-sm ad-mut mt-1">
-            Here is how {SITE_HOST} is doing. All times shown in Eastern.
+    <div className="ad-page ad-dash">
+      <div className="ad-page-head" style={{ marginBottom: 22 }}>
+        <div className="ad-page-head-main">
+          <div className="ad-kicker">Overview</div>
+          <h1>{greeting}, {firstName}</h1>
+          <p className="ad-page-desc">
+            {SITE_HOST} · Eastern time{!isProduction && <> · <b>{envLabel} data, not the live site</b></>}
+            {updated && <span className="ad-soft"> · updated {fmtRelative(updated.toISOString())}</span>}
           </p>
-          {/* Deliberately no database name here: this is a client component and
-              the connection string is server-only. The env ribbon at the top of
-              the page already shows which database is connected. */}
-          {!isProduction && (
-            <p className="text-xs ad-mut mt-1" style={{ fontFamily: 'var(--mono)' }}>
-              {envLabel} data · not the live site
-            </p>
-          )}
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button type="button" className="ad-btn-ghost" onClick={() => window.dispatchEvent(new Event('admin:palette'))}>Find anything <kbd className="ad-kbd">⌘K</kbd></button>
-          <Link href="/admin/leads" className="ad-btn">View all leads</Link>
+        <div className="ad-page-actions">
+          <button type="button" className="ad-btn-ghost sm" onClick={() => load()} disabled={loading} title="Refresh now"><RefreshCw size={14} className={loading ? 'spin' : ''} /> Refresh</button>
+          <button type="button" className="ad-btn-ghost sm" onClick={() => window.dispatchEvent(new Event('admin:palette'))}>Find anything <kbd className="ad-kbd">⌘K</kbd></button>
         </div>
       </div>
 
-      {/* Needs attention */}
-      {k.stale > 0 && (
-        <Link href="/admin/leads?status=new" className="ad-alert" style={{ display: 'block', textDecoration: 'none' }}>
-          <b>{k.stale} lead{k.stale === 1 ? '' : 's'} still marked New after 48 hours.</b>{' '}
-          <span className="ad-mut">Worth a follow-up before they go cold.</span>
+      {k && k.stale > 0 && (
+        <Link href="/admin/leads?status=new" className="ad-attn">
+          <b>{k.stale} lead{k.stale === 1 ? '' : 's'} still marked New after 48 hours.</b> Worth a reply before they go cold. <ArrowRight size={14} />
         </Link>
       )}
 
-      {/* Quick actions: the handful of things people open the admin to do */}
-      <div className="ad-quick">
-        {QUICK_ACTIONS.map((a) => {
-          const Icon = a.icon
-          return (
-            <Link key={a.href} href={a.href} className="ad-quick-item">
-              <span className="ic"><Icon size={16} /></span>
-              <span className="tx"><b>{a.label}</b><small>{a.hint}</small></span>
-              <ArrowRight size={14} className="go" />
-            </Link>
-          )
-        })}
+      <div className="ad-kpis three">
+        <Kpi label="Leads this week" value={k ? k.last7 : '–'} delta={k?.delta7} deltaLabel="vs the week before" sub={k ? `${k.prev7} the week before` : undefined} href="/admin/leads" />
+        <Kpi label="Leads, last 30 days" value={k ? k.last30 : '–'} delta={k?.delta30} deltaLabel="vs the previous 30 days" sub={k ? `${k.prev30} the previous 30` : undefined} href="/admin/leads" />
+        <Kpi label="Waiting for a first reply" value={k ? k.newLeads : '–'} sub={k ? `${k.totalLeads} leads all time` : undefined} href="/admin/leads?status=new" tone={k && k.newLeads > 0 ? 'red' : undefined} />
       </div>
 
-      {/* KPI row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <TrendCard
-          label="Leads this week" value={k.last7} delta={k.delta7} spark={spark}
-          sub={`vs ${k.prev7} the week before`} href="/admin/leads"
-        />
-        <TrendCard
-          label="Leads last 30 days" value={k.last30} delta={k.delta30}
-          sub={`vs ${k.prev30} the previous 30`} href="/admin/leads"
-        />
-        <TrendCard label="New / unactioned" value={k.newLeads} sub="Waiting for a first reply" href="/admin/leads" />
-        <TrendCard label="Total leads" value={k.totalLeads} sub="All time, stored permanently" href="/admin/leads" />
-      </div>
-
-      {/* Trend */}
-      <Panel
-        title="Leads over the last 30 days"
-        subtitle={busiestDay && busiestDay.value > 0 ? `Busiest day: ${busiestDay.date} with ${busiestDay.value}` : 'Hover a point for the daily count'}
-      >
-        <AreaChart data={s.series} />
+      <Panel title="Leads over time" sub="Hover a day for the count"
+        right={<Seg small value={days} onChange={setDays} options={[{ v: '7', l: '7 days' }, { v: '30', l: '30 days' }, { v: '90', l: '90 days' }]} />}>
+        {s ? <LineChart series={[{ name: 'Leads', data: s.series }]} height={200} /> : <div className="ad-skel" style={{ height: 200 }} />}
       </Panel>
 
-      {/* Two-up breakdowns */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Panel title="Where leads come from" subtitle="Channel of the visit that produced the lead">
-          {s.byChannel.length ? <ShareBar data={s.byChannel} /> : <p className="ad-soft" style={{ fontSize: 13 }}>No channel data yet.</p>}
-        </Panel>
-
-        <Panel title="Pipeline by status" subtitle="Every lead, by where it stands">
-          <Donut data={s.byStatus.map((r) => ({ ...r, label: STATUS_LABELS[r.label] ?? r.label }))} />
-        </Panel>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Panel title="Top landing pages" subtitle="The page a lead was on when they submitted">
-          <HBarChart data={s.byPage} />
-        </Panel>
-
-        <Panel title="Which form they used" subtitle="Contact form vs promo banner">
-          <HBarChart data={s.byForm.map((r) => ({ ...r, label: FORM_LABELS[r.label] ?? r.label }))} />
-        </Panel>
-      </div>
-
-      {/* Blog */}
-      {k.blogViews > 0 && (
-        <Panel
-          title="Blog reads" subtitle={`${k.blogViews} article view${k.blogViews === 1 ? '' : 's'} so far`}
-          action={<Link href="/blogs" target="_blank" className="ad-mut" style={{ fontSize: 12.5 }}>Open blog →</Link>}
-        >
-          <HBarChart data={s.topPosts.map((p) => ({ ...p, label: p.label.replace(/-/g, ' ') }))} />
-        </Panel>
-      )}
-
-      {/* Recent leads */}
-      <Panel
-        title="Latest leads"
-        action={<Link href="/admin/leads" className="ad-mut" style={{ fontSize: 12.5 }}>See all →</Link>}
-      >
-        {s.recent.length === 0 ? (
-          <p className="ad-soft" style={{ fontSize: 13 }}>
-            No leads yet - they will appear here as soon as a visitor submits a form.
-          </p>
-        ) : (
-          <div className="ad-table-wrap" style={{ border: 0 }}>
-            <table className="w-full text-sm">
+      <div className="ad-two">
+        <Panel title="Latest leads" right={<Link href="/admin/leads" className="ad-more">See all <ArrowRight size={13} /></Link>}>
+          {!s ? <div className="ad-skel" style={{ height: 180 }} /> : s.recent.length === 0 ? (
+            <div className="ad-viz-empty">No leads yet. They appear here the moment a visitor submits a form.</div>
+          ) : (
+            <table className="ad-table plain">
               <tbody>
-                {s.recent.map((l: any) => (
-                  <tr key={l.id} className="border-b border-[#E2D9C4] last:border-0">
-                    <td className="px-3 py-3">
-                      <div className="font-medium">{l.name || 'Unnamed'}</div>
-                      <div className="ad-soft text-xs">{l.email}</div>
-                    </td>
-                    <td className="px-3 py-3 ad-mut" style={{ fontSize: 12.5 }}>
-                      {FORM_LABELS[l.form_type] ?? l.form_type ?? '-'}
-                    </td>
-                    <td className="px-3 py-3">
-                      <span style={{
-                        fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 999,
-                        background: (STATUS_TONE[l.status] ?? '#6E6A62') + '22',
-                        color: STATUS_TONE[l.status] ?? '#6E6A62',
-                      }}>
-                        {STATUS_LABELS[l.status] ?? l.status ?? 'New'}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3 ad-soft" style={{ fontSize: 12, whiteSpace: 'nowrap' }}
-                      title={fmtDateTime(l.created_at)}>
-                      <div>{fmtDateTime(l.created_at)}</div>
-                      <div style={{ fontSize: 11, opacity: 0.75 }}>{fmtRelative(l.created_at)}</div>
-                    </td>
+                {s.recent.slice(0, 6).map((l: any) => (
+                  <tr key={l.id}>
+                    <td><div style={{ fontWeight: 500 }}>{l.name || 'Unnamed'}</div><div className="ad-soft" style={{ fontSize: 12 }}>{l.company || FORM_LABELS[l.form_type] || l.form_type || ''}</div></td>
+                    <td><span className={`ad-badge ${STATUS_CLASS[l.status] || 'grey'}`}>{STATUS_LABELS[l.status] ?? l.status ?? 'New'}</span></td>
+                    <td className="ad-soft" style={{ fontSize: 12, whiteSpace: 'nowrap', textAlign: 'right' }} title={fmtDateTime(l.created_at)}>{fmtRelative(l.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        )}
-      </Panel>
+          )}
+        </Panel>
 
-      {/* System row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <TrendCard label="Media files" value={k.mediaFiles} href="/admin/storage" />
-        <TrendCard label="Active scripts" value={k.activeScripts} href="/admin/analytics" />
-        <TrendCard label="Tag managers linked" value={k.tagManagers} href="/admin/analytics" />
-        <TrendCard label="Users with access" value={k.activeUsers} href="/admin/users" />
+        <Panel title="Do something" sub="The usual jobs, one click away">
+          <div className="ad-quick col">
+            {QUICK_ACTIONS.map((a) => {
+              const Icon = a.icon
+              return (
+                <Link key={a.href} href={a.href} className="ad-quick-item">
+                  <span className="ic"><Icon size={15} /></span>
+                  <span className="tx"><b>{a.label}</b><small>{a.hint}</small></span>
+                  <ArrowRight size={14} className="go" />
+                </Link>
+              )
+            })}
+          </div>
+        </Panel>
+      </div>
+
+      <div className="ad-foot-links">
+        <Link href="/admin/leads/dashboard">Leads dashboard <ArrowRight size={13} /></Link>
+        <Link href="/admin/finance/revenue">Revenue dashboard <ArrowRight size={13} /></Link>
+        <Link href="/admin/storage">Storage <ArrowRight size={13} /></Link>
+        <Link href="/admin/users">Access <ArrowRight size={13} /></Link>
       </div>
     </div>
   )

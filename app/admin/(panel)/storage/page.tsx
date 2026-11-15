@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Trash2, Lock, Upload, Film, Image as ImageIcon } from 'lucide-react'
 import { fmtDate } from '@/lib/admin/dates'
+import PageHeader from '@/components/admin/PageHeader'
+import StorageMeter, { fmtBytes } from '@/components/admin/StorageMeter'
+import { useToast } from '@/components/admin/Toast'
 
 type Media = {
   id: number; filename: string; relPath: string; kind: 'photo' | 'video'
@@ -13,7 +16,7 @@ type Media = {
 type SortKey = 'addedAt' | 'modifiedAt' | 'size' | 'filename'
 type GroupKey = 'none' | 'addedAt' | 'modifiedAt'
 
-const fmtSize = (b: number) => b > 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`
+const fmtSize = fmtBytes
 const dayOf = (iso: string) => fmtDate(iso)
 const isTransparentCapable = (p: string) => ['png', 'svg', 'webp', 'avif', 'gif'].includes(p.split('.').pop()?.toLowerCase() ?? '')
 
@@ -27,9 +30,11 @@ export default function StoragePage() {
   const [blocked, setBlocked] = useState<{ msg: string; links: { label: string }[] } | null>(null)
   const [busy, setBusy] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const [role, setRole] = useState('')
+  const { toast } = useToast()
 
-  const load = () => fetch('/api/admin/media').then((r) => r.json()).then((d) => setMedia(d.media || []))
-  useEffect(() => { load() }, [])
+  const load = () => fetch('/api/admin/media', { cache: 'no-store' }).then((r) => r.json()).then((d) => setMedia(d.media || []))
+  useEffect(() => { load(); fetch('/api/admin/me').then((r) => r.json()).then((d) => setRole(d.user?.role || '')).catch(() => {}) }, [])
 
   const filtered = useMemo(() => {
     const list = media.filter((m) => m.kind === tab)
@@ -72,8 +77,11 @@ export default function StoragePage() {
     setBusy(true)
     const fd = new FormData()
     fd.append('file', f)
-    await fetch('/api/admin/media', { method: 'POST', body: fd })
+    const r = await fetch('/api/admin/media', { method: 'POST', body: fd })
+    const d = await r.json().catch(() => ({}))
     setBusy(false)
+    if (!r.ok) toast({ kind: 'err', title: 'Upload refused', detail: d.error || 'Try again.' })
+    else toast({ title: 'Uploaded', detail: `${f.name} (${fmtBytes(f.size)}) is in Storage.` })
     load()
   }
 
@@ -84,23 +92,18 @@ export default function StoragePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Storage</h1>
-          <p className="text-sm ad-mut mt-1">
-            {totals.photo} photos · {totals.video} videos · {fmtSize(totals.bytes)} total. Files linked on the live site are protected from deletion.
-          </p>
-        </div>
-        <div>
+    <div className="ad-page space-y-6">
+      <PageHeader kicker="Site Content" title="Storage"
+        description="Every photo and video the site can use. Files in use on the live site are locked against deletion; swap them from Manage Media instead."
+        actions={<>
           <input ref={fileRef} type="file" accept="image/*,video/*" className="hidden"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) doUpload(f); e.target.value = '' }} />
-          <button onClick={() => fileRef.current?.click()} disabled={busy}
-            className="ad-btn">
-            <Upload className="w-4 h-4" /> {busy ? 'Working…' : 'Upload media'}
+          <button onClick={() => fileRef.current?.click()} disabled={busy} className="ad-btn sm">
+            <Upload size={14} /> {busy ? 'Working…' : 'Upload a file'}
           </button>
-        </div>
-      </div>
+        </>} />
+
+      <StorageMeter media={media} role={role} />
 
       {/* Tabs + filters */}
       <div className="flex items-center gap-3 flex-wrap">
@@ -113,20 +116,19 @@ export default function StoragePage() {
             </button>
           ))}
         </div>
-        <select value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="bg-[#FFFDF7] border border-[#C9BEA3] rounded-lg px-3 py-2 text-sm">
+        <select value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)} className="ad-select-sm">
           <option value="addedAt">Sort: Date added</option>
           <option value="modifiedAt">Sort: Date modified</option>
           <option value="size">Sort: File size</option>
           <option value="filename">Sort: Name</option>
         </select>
         <select value={dir} onChange={(e) => setDir(e.target.value as 'asc' | 'desc')}
-          className="bg-[#FFFDF7] border border-[#C9BEA3] rounded-lg px-3 py-2 text-sm">
+          className="ad-select-sm">
           <option value="desc">Descending</option>
           <option value="asc">Ascending</option>
         </select>
         <select value={group} onChange={(e) => setGroup(e.target.value as GroupKey)}
-          className="bg-[#FFFDF7] border border-[#C9BEA3] rounded-lg px-3 py-2 text-sm">
+          className="ad-select-sm">
           <option value="none">Group: None</option>
           <option value="addedAt">Group: Date added</option>
           <option value="modifiedAt">Group: Date modified</option>

@@ -63,7 +63,7 @@ function LoginForm() {
     <div className="ad-login">
       {/* ---- stage: the company, at full bleed ---- */}
       <section className="ad-login-stage" aria-hidden="true">
-        <img className="bg" src="/assets/office-dark-hero.png" alt="" />
+        <img className="bg" src="/assets/arch-tunnel.jpg" alt="" />
         <div className="veil" />
         <div className="grain" />
         <header className="top">

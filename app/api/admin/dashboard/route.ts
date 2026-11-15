@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { requireUser } from '@/lib/admin/auth'
 import { ensureDb } from '@/lib/admin/db'
 import { q, q1 } from '@/lib/admin/pg'
@@ -26,7 +26,7 @@ function delta(current: number, previous: number): number | null {
  * Everything the admin dashboard needs, in one call.
  * Available to any signed-in user; the page itself decides what to show per role.
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   const auth = await requireUser()
   if ('error' in auth) return auth.error
   await ensureDb()
@@ -54,9 +54,11 @@ export async function GET() {
     `SELECT COUNT(*)::int AS c FROM leads WHERE ${LIVE} AND created_at >= now() - interval '60 days' AND created_at < now() - interval '30 days'`
   )
 
-  // ---- daily series (last 30 days, grouped in Eastern time) ----
+  // ---- daily series (7 / 30 / 90 days, grouped in Eastern time) ----
+  const daysParam = Number(req.nextUrl.searchParams.get('days'))
+  const days = [7, 30, 90].includes(daysParam) ? daysParam : 30
   const rawDays = (await q<{ created_at: any }>(
-    `SELECT created_at FROM leads WHERE ${LIVE} AND created_at >= now() - interval '30 days'`
+    `SELECT created_at FROM leads WHERE ${LIVE} AND created_at >= now() - ($1 || ' days')::interval`, [String(days)]
   )) ?? []
   const dayCounts = new Map<string, number>()
   for (const r of rawDays) {
@@ -64,7 +66,7 @@ export async function GET() {
     if (k) dayCounts.set(k, (dayCounts.get(k) ?? 0) + 1)
   }
   const series: { date: string; value: number }[] = []
-  for (let i = 29; i >= 0; i--) {
+  for (let i = days - 1; i >= 0; i--) {
     const d = new Date(Date.now() - i * 86400000)
     const key = d.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' })
     series.push({ date: key, value: dayCounts.get(key) ?? 0 })

@@ -8,6 +8,7 @@ import SaveBar from '@/components/admin/SaveBar'
 import { HistoryButton } from '@/components/admin/HistoryDrawer'
 import { Toggle } from '@/components/admin/ui'
 import { loadSetting, saveSetting } from '@/lib/admin/client'
+import { MediaField } from '@/components/admin/MediaPicker'
 
 type Bar = { pill: string; text: string; ctaLabel: string; ctaHref: string; contactHref: string }
 type Announcement = { enabled?: boolean; default: Bar; overrides: (Bar & { path: string })[] }
@@ -155,10 +156,13 @@ export default function AnnouncementsPage() {
             </div>
             <div className="ad-block-tools">
               <HistoryButton settingKey="announcement" onRestored={(v) => { setAnn(v); setSavedAnn(JSON.stringify(v)) }} />
-              <label className="ad-live-toggle">
-                <Toggle checked={ann.enabled !== false} onChange={(v) => setAnn({ ...ann, enabled: v })} ariaLabel="Show the top bar on the site" />
-                <span className={ann.enabled !== false ? 'on' : ''}>{ann.enabled !== false ? 'Live on site' : 'Off'}</span>
-              </label>
+              <div className="ad-live-ctl">
+                <Toggle checked={ann.enabled !== false} onChange={(v) => setAnn({ ...ann, enabled: v })} ariaLabel="Enable the top bar on the live site" />
+                <span className={ann.enabled !== false ? 'on' : ''}>{ann.enabled !== false ? 'Enabled on LIVE site' : 'Not shown on the live site'}</span>
+                {ann.enabled !== false
+                  ? <button type="button" className="ad-btn-ghost sm danger" onClick={() => setAnn({ ...ann, enabled: false })}>End / disable bar now</button>
+                  : <button type="button" className="ad-btn sm" onClick={() => setAnn({ ...ann, enabled: true })}>Enable on LIVE site</button>}
+              </div>
             </div>
           </header>
 
@@ -217,10 +221,13 @@ export default function AnnouncementsPage() {
             </div>
             <div className="ad-block-tools">
               <HistoryButton settingKey="promo_banner" onRestored={(v) => { setPromo(v); setSavedPromo(JSON.stringify(v)) }} />
-              <label className="ad-live-toggle">
-                <Toggle checked={promo.enabled} onChange={(v) => setPromo({ ...promo, enabled: v })} ariaLabel="Show the pop-up on the site" />
-                <span className={promo.enabled ? 'on' : ''}>{promo.enabled ? 'Live on site' : 'Off'}</span>
-              </label>
+              <div className="ad-live-ctl">
+                <Toggle checked={promo.enabled} onChange={(v) => setPromo({ ...promo, enabled: v })} ariaLabel="Enable the pop-up on the live site" />
+                <span className={promo.enabled ? 'on' : ''}>{promo.enabled ? 'Enabled on LIVE site' : 'Not shown on the live site'}</span>
+                {promo.enabled
+                  ? <button type="button" className="ad-btn-ghost sm danger" onClick={() => setPromo({ ...promo, enabled: false })}>End / disable pop-up now</button>
+                  : <button type="button" className="ad-btn sm" onClick={() => setPromo({ ...promo, enabled: true })}>Enable on LIVE site</button>}
+              </div>
             </div>
           </header>
 
@@ -246,8 +253,10 @@ export default function AnnouncementsPage() {
                   <div className="span2"><label className="ad-label">Text</label>
                     <textarea rows={2} className={input} value={promo.body} onChange={(e) => setPromo({ ...promo, body: e.target.value })} /></div>
                   {promo.template === 'picture' && (
-                    <div className="span2"><label className="ad-label">Image address (upload in Storage first, then paste the path, e.g. /uploads/promo.jpg)</label>
-                      <input className={`${input} mono`} value={promo.imageUrl} onChange={(e) => setPromo({ ...promo, imageUrl: e.target.value })} /></div>
+                    <div className="span2">
+                      <MediaField label="Picture" value={promo.imageUrl} onChange={(p) => setPromo({ ...promo, imageUrl: p })}
+                        hint="Pick one already in Storage, or upload from this computer. Landscape images look best." />
+                    </div>
                   )}
                   <div><label className="ad-label">{promo.template === 'signup' ? 'Submit button' : 'Main button'}</label>
                     <input className={input} value={promo.primaryLabel} onChange={(e) => setPromo({ ...promo, primaryLabel: e.target.value })} /></div>

@@ -20,6 +20,13 @@ export async function PUT(req: NextRequest) {
   const { key, value } = await req.json().catch(() => ({}))
   if (!isSettingKey(key)) return NextResponse.json({ error: 'Unknown setting.' }, { status: 400 })
 
+  // The storage ceiling is an administrator decision.
+  if (key === 'storage') {
+    if (auth.user.role !== 'admin') return NextResponse.json({ error: 'Only administrators can change the storage limit.' }, { status: 403 })
+    const gb = Number(value?.limitBytes) / (1024 * 1024 * 1024)
+    if (!isFinite(gb) || gb < 0.1 || gb > 100) return NextResponse.json({ error: 'Storage limit must be between 0.1 and 100 GB.' }, { status: 400 })
+  }
+
   let toStore = value
   if (key === 'legal_terms' || key === 'legal_privacy') {
     const { sanitizeHtml } = require('@/lib/admin/legal-defaults') as typeof import('@/lib/admin/legal-defaults')

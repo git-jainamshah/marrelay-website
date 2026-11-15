@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { audit } from '@/lib/admin/db'
+import { audit, getSetting } from '@/lib/admin/db'
+import { DEFAULT_STORAGE_LIMIT_BYTES, type StorageCfg } from '@/lib/admin/settings-keys'
 import { q, run } from '@/lib/admin/pg'
 import { requireUser, requireEditor } from '@/lib/admin/auth'
 import { findAssetReferences, syncMediaIndex, invalidateRefCache, hasWritableStorage, READONLY_STORAGE_MSG } from '@/lib/admin/media'
@@ -59,6 +60,14 @@ export async function POST(req: NextRequest) {
   const file = form.get('file') as File | null
   if (!file) return NextResponse.json({ error: 'No file provided.' }, { status: 400 })
   if (file.size > 200 * 1024 * 1024) return NextResponse.json({ error: 'File exceeds 200 MB limit.' }, { status: 400 })
+
+  // Site storage ceiling (admin-editable in Storage). Refuse uploads that would cross it.
+  const limit = (await getSetting<StorageCfg>('storage'))?.limitBytes || DEFAULT_STORAGE_LIMIT_BYTES
+  const used = Number((await q<{ s: string }>('SELECT COALESCE(SUM(size), 0)::bigint AS s FROM media'))[0]?.s || 0)
+  if (used + file.size > limit) {
+    const mb = (n: number) => `${(n / 1048576).toFixed(0)} MB`
+    return NextResponse.json({ error: `Not enough storage. ${mb(used)} of ${mb(limit)} is used and this file is ${mb(file.size)}. Delete something you no longer need, or ask an administrator to raise the limit.` }, { status: 413 })
+  }
 
   const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
   fs.mkdirSync(uploadsDir, { recursive: true })

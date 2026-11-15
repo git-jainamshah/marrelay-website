@@ -1,6 +1,6 @@
 /** Settings keys the admin may read and write through /api/admin/settings. */
 export const ALLOWED_SETTING_KEYS = [
-  'announcement', 'promo_banner', 'robots_txt', 'seo', 'company', 'socials', 'legal_terms', 'legal_privacy', 'media_slots',
+  'announcement', 'promo_banner', 'robots_txt', 'seo', 'company', 'socials', 'legal_terms', 'legal_privacy', 'media_slots', 'storage',
 ] as const
 
 export type SettingKey = (typeof ALLOWED_SETTING_KEYS)[number]
@@ -16,7 +16,12 @@ export const SETTING_LABELS: Record<SettingKey, string> = {
   legal_terms: 'Terms of Service',
   legal_privacy: 'Privacy Policy',
   media_slots: 'Media slots',
+  storage: 'Storage limit',
 }
+
+/** Site storage ceiling, in bytes. 1 GB by default; only admins may change it. */
+export const DEFAULT_STORAGE_LIMIT_BYTES = 1024 * 1024 * 1024
+export type StorageCfg = { limitBytes: number }
 
 export function isSettingKey(k: string): k is SettingKey {
   return (ALLOWED_SETTING_KEYS as readonly string[]).includes(k)

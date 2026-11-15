@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { TrendingUp } from 'lucide-react'
-import { StatCard } from '@/components/admin/charts'
+import Link from 'next/link'
+import { ArrowRight, Plus } from 'lucide-react'
+import PageHeader from '@/components/admin/PageHeader'
+import { Kpi, BarChart, LineChart, Panel, Seg, Breakdown } from '@/components/admin/viz'
 import { fmtMoney, fmtMoneyShort } from '@/lib/admin/finance'
 import { INVOICE_STATUS_LABELS, INVOICE_STATUS_COLOR } from '@/lib/admin/billing'
 import { fmtDate } from '@/lib/admin/dates'
@@ -15,101 +17,93 @@ type Stats = {
   recent: { id: number; invoice_number: string; client_name: string; total: number; amount_paid: number; currency: string; status: string; issue_date: string; due_date: string | null }[]
 }
 const badge: Record<string, string> = { grey: 'grey', blue: 'blue', amber: 'amber', green: 'green', red: 'red' }
+const money = (n: number) => fmtMoneyShort(n)
+const MONTH = (ym: string) => new Date(`${ym}-15`).toLocaleDateString('en-CA', { month: 'short' })
 
 export default function RevenueDashboard() {
   const [s, setS] = useState<Stats | null>(null)
-  useEffect(() => { fetch('/api/admin/finance/revenue/stats').then((r) => r.json()).then(setS).catch(() => {}) }, [])
-  if (!s) return <div className="ad-soft" style={{ padding: 20 }}>Loading…</div>
+  const [view, setView] = useState<'bars' | 'line' | 'cum'>('bars')
+  const [tab, setTab] = useState<'clients' | 'owed' | 'status'>('clients')
+  useEffect(() => { fetch('/api/admin/finance/revenue/stats', { cache: 'no-store' }).then((r) => r.json()).then(setS).catch(() => {}) }, [])
+
+  const k = s?.kpis
+  const labels = s?.series12.map((d) => MONTH(d.month)) ?? []
+  const cum = (arr: number[]) => arr.reduce<number[]>((acc, v, i) => [...acc, (acc[i - 1] || 0) + v], [])
 
   return (
-    <div className="max-w-6xl">
-      <div className="ad-kicker">Finance</div>
-      <h1 className="text-2xl font-bold tracking-tight" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><TrendingUp size={22} /> Revenue Dashboard</h1>
-      <p className="ad-mut" style={{ fontSize: 14, marginTop: 6 }}>Client revenue and payment status, converted to CAD. Billed = invoiced; collected = paid.</p>
+    <div className="ad-page ad-dash">
+      <PageHeader kicker="Billing & Revenue" title="Revenue"
+        description="What you have invoiced, what has been paid, and who still owes. Everything converted to CAD."
+        actions={<>
+          <Link href="/admin/finance/clients" className="ad-btn-ghost sm">Clients</Link>
+          <Link href="/admin/finance/invoices" className="ad-btn sm"><Plus size={14} /> New invoice</Link>
+        </>} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 12, marginTop: 18 }}>
-        <StatCard label="Total billed" value={fmtMoneyShort(s.kpis.billed)} exact={fmtMoney(s.kpis.billed)} sub="all non-void invoices" />
-        <StatCard label="Collected" value={fmtMoneyShort(s.kpis.collected)} exact={fmtMoney(s.kpis.collected)} sub={`${s.kpis.collectionRate}% collection rate`} />
-        <StatCard label="Outstanding" value={fmtMoneyShort(s.kpis.outstanding)} exact={fmtMoney(s.kpis.outstanding)} sub="billed − collected" />
-        <StatCard label="Overdue" value={fmtMoneyShort(s.kpis.overdue)} exact={fmtMoney(s.kpis.overdue)} sub="past due, unpaid" />
-        <StatCard label="Invoices" value={String(s.kpis.invoices)} sub={`${s.kpis.clients} clients · ${s.kpis.projects} projects`} />
+      <div className="ad-kpis four">
+        <Kpi label="Billed" value={k ? money(k.billed) : '–'} exact={k ? fmtMoney(k.billed) : undefined} sub="all invoices, not void" />
+        <Kpi label="Collected" value={k ? money(k.collected) : '–'} exact={k ? fmtMoney(k.collected) : undefined} sub={k ? `${k.collectionRate}% of billed` : undefined} tone="ok" />
+        <Kpi label="Outstanding" value={k ? money(k.outstanding) : '–'} exact={k ? fmtMoney(k.outstanding) : undefined} sub="billed, not yet paid" />
+        <Kpi label="Overdue" value={k ? money(k.overdue) : '–'} exact={k ? fmtMoney(k.overdue) : undefined} sub="past the due date" tone={k && k.overdue > 0 ? 'red' : undefined} href="/admin/finance/invoices?status=overdue" />
       </div>
 
-      <Card title="Billed vs collected - last 12 months (CAD)">
-        <GroupedBars data={s.series12} />
-        <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
-          <Leg c="#ED1C24" l="Billed" /><Leg c="#6B9080" l="Collected" />
-        </div>
-      </Card>
+      <Panel title="Billed vs collected, last 12 months" sub="Hover a month. Click a legend item to hide it."
+        right={<Seg small value={view} onChange={setView} options={[{ v: 'bars', l: 'Monthly' }, { v: 'line', l: 'Trend' }, { v: 'cum', l: 'Running total' }]} />}>
+        {!s ? <div className="ad-skel" style={{ height: 230 }} /> : view === 'bars' ? (
+          <BarChart labels={labels} series={[{ name: 'Billed', values: s.series12.map((d) => d.billed) }, { name: 'Collected', values: s.series12.map((d) => d.collected) }]} format={money} height={230} />
+        ) : view === 'line' ? (
+          <LineChart series={[{ name: 'Billed', data: s.series12.map((d) => ({ date: MONTH(d.month), value: d.billed })) }, { name: 'Collected', data: s.series12.map((d) => ({ date: MONTH(d.month), value: d.collected })) }]} format={money} height={230} />
+        ) : (
+          <LineChart series={[{ name: 'Billed to date', data: cum(s.series12.map((d) => d.billed)).map((v, i) => ({ date: labels[i], value: v })) }, { name: 'Collected to date', data: cum(s.series12.map((d) => d.collected)).map((v, i) => ({ date: labels[i], value: v })) }]} format={money} height={230} />
+        )}
+      </Panel>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 16, marginTop: 16 }}>
-        <Card title="By payment status">
-          <table className="ad-table" style={{ width: '100%' }}>
-            <thead><tr><th>Status</th><th>Count</th><th style={{ textAlign: 'right' }}>Billed (CAD)</th></tr></thead>
-            <tbody>
-              {s.byStatus.length ? s.byStatus.map((r) => (
-                <tr key={r.label}><td><span className={`ad-badge ${badge[INVOICE_STATUS_COLOR[r.label]] || 'grey'}`}>{INVOICE_STATUS_LABELS[r.label] || r.label}</span></td><td>{r.count}</td><td style={{ textAlign: 'right' }}>{fmtMoney(r.value)}</td></tr>
-              )) : <tr><td colSpan={3} className="ad-soft" style={{ textAlign: 'center', padding: 16 }}>No invoices yet.</td></tr>}
-            </tbody>
-          </table>
-        </Card>
-        <Card title="Top clients by revenue (CAD)">
-          <table className="ad-table" style={{ width: '100%' }}>
-            <thead><tr><th>Client</th><th style={{ textAlign: 'right' }}>Billed</th><th style={{ textAlign: 'right' }}>Paid</th><th style={{ textAlign: 'right' }}>Owed</th></tr></thead>
-            <tbody>
-              {s.byClient.length ? s.byClient.map((r) => (
-                <tr key={r.label}><td style={{ fontWeight: 600 }}>{r.label}</td><td style={{ textAlign: 'right' }}>{fmtMoney(r.billed)}</td><td style={{ textAlign: 'right' }}>{fmtMoney(r.collected)}</td><td style={{ textAlign: 'right', color: r.outstanding > 0.005 ? 'var(--brand-ink)' : undefined }}>{fmtMoney(r.outstanding)}</td></tr>
-              )) : <tr><td colSpan={4} className="ad-soft" style={{ textAlign: 'center', padding: 16 }}>No invoices yet.</td></tr>}
-            </tbody>
-          </table>
-        </Card>
+      <div className="ad-two wide-left">
+        <Panel title="Clients" sub={tab === 'clients' ? 'Ranked by revenue billed' : tab === 'owed' ? 'Who still owes you' : 'Invoices by payment status'}
+          right={<Seg small value={tab} onChange={setTab} options={[{ v: 'clients', l: 'Top clients' }, { v: 'owed', l: 'Owed' }, { v: 'status', l: 'By status' }]} />}>
+          {!s ? <div className="ad-skel" style={{ height: 240 }} /> : tab === 'clients' ? (
+            <Breakdown data={s.byClient.map((c) => ({ label: c.label, value: c.billed }))} format={money} mono />
+          ) : tab === 'owed' ? (
+            <Breakdown data={s.byClient.filter((c) => c.outstanding > 0.005).sort((a, b) => b.outstanding - a.outstanding).map((c) => ({ label: c.label, value: c.outstanding }))} format={money} />
+          ) : (
+            <table className="ad-table plain">
+              <thead><tr><th>Status</th><th>Invoices</th><th style={{ textAlign: 'right' }}>Billed</th></tr></thead>
+              <tbody>
+                {s.byStatus.length ? s.byStatus.map((r) => (
+                  <tr key={r.label}><td><span className={`ad-badge ${badge[INVOICE_STATUS_COLOR[r.label]] || 'grey'}`}>{INVOICE_STATUS_LABELS[r.label] || r.label}</span></td><td>{r.count}</td><td style={{ textAlign: 'right' }}>{fmtMoney(r.value)}</td></tr>
+                )) : <tr><td colSpan={3}><div className="ad-viz-empty">No invoices yet.</div></td></tr>}
+              </tbody>
+            </table>
+          )}
+        </Panel>
+        <Panel title="At a glance">
+          <dl className="ad-facts">
+            <div><dt>Invoices</dt><dd>{k?.invoices ?? '–'}</dd></div>
+            <div><dt>Clients</dt><dd>{k?.clients ?? '–'}</dd></div>
+            <div><dt>Projects</dt><dd>{k?.projects ?? '–'}</dd></div>
+            <div><dt>Collection rate</dt><dd>{k ? `${k.collectionRate}%` : '–'}</dd></div>
+          </dl>
+        </Panel>
       </div>
 
-      <Card title="Recent invoices">
-        <table className="ad-table" style={{ width: '100%' }}>
-          <thead><tr><th>Invoice</th><th>Client</th><th>Issued</th><th>Status</th><th style={{ textAlign: 'right' }}>Total</th><th></th></tr></thead>
-          <tbody>
-            {s.recent.length ? s.recent.map((r) => (
-              <tr key={r.id}>
-                <td style={{ fontWeight: 600 }}>{r.invoice_number}</td>
-                <td className="ad-mut" style={{ fontSize: 12.5 }}>{r.client_name}</td>
-                <td className="ad-soft" style={{ fontSize: 12 }}>{fmtDate(r.issue_date)}</td>
-                <td><span className={`ad-badge ${badge[INVOICE_STATUS_COLOR[r.status]] || 'grey'}`}>{INVOICE_STATUS_LABELS[r.status] || r.status}</span></td>
-                <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>{fmtMoney(r.total, r.currency)}</td>
-                <td style={{ textAlign: 'right' }}><a href={`/admin/receipt/${r.id}`} target="_blank" className="ad-btn-ghost" style={{ fontSize: 12 }}>Receipt</a></td>
-              </tr>
-            )) : <tr><td colSpan={6} className="ad-soft" style={{ textAlign: 'center', padding: 16 }}>No invoices yet.</td></tr>}
-          </tbody>
-        </table>
-      </Card>
-    </div>
-  )
-}
-
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
-  return <div className="ad-card" style={{ padding: 18, marginTop: 16 }}><div className="ad-kicker" style={{ marginBottom: 12 }}>{title}</div>{children}</div>
-}
-function Leg({ c, l }: { c: string; l: string }) {
-  return <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}><i style={{ width: 10, height: 10, borderRadius: 3, background: c }} />{l}</span>
-}
-function GroupedBars({ data }: { data: { month: string; billed: number; collected: number }[] }) {
-  const max = Math.max(1, ...data.map((d) => Math.max(d.billed, d.collected)))
-  const H = 150, group = 44, bw = 16, w = Math.max(320, data.length * group)
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <svg width={w} height={H + 26} style={{ display: 'block' }}>
-        {data.map((d, i) => {
-          const x = i * group + 6
-          const hb = (d.billed / max) * H, hc = (d.collected / max) * H
-          return (
-            <g key={d.month}>
-              <rect x={x} y={H - hb} width={bw} height={hb} rx={3} fill="#ED1C24"><title>{d.month} billed: {fmtMoney(d.billed)}</title></rect>
-              <rect x={x + bw + 3} y={H - hc} width={bw} height={hc} rx={3} fill="#6B9080"><title>{d.month} collected: {fmtMoney(d.collected)}</title></rect>
-              <text x={x + bw} y={H + 14} textAnchor="middle" style={{ fontSize: 8.5, fill: 'var(--ink-soft)' }}>{d.month.slice(2)}</text>
-            </g>
-          )
-        })}
-      </svg>
+      <Panel title="Recent invoices" right={<Link href="/admin/finance/invoices" className="ad-more">All invoices <ArrowRight size={13} /></Link>}>
+        {!s ? <div className="ad-skel" style={{ height: 160 }} /> : (
+          <table className="ad-table plain">
+            <thead><tr><th>Invoice</th><th>Client</th><th>Issued</th><th>Status</th><th style={{ textAlign: 'right' }}>Total</th><th></th></tr></thead>
+            <tbody>
+              {s.recent.length ? s.recent.map((r) => (
+                <tr key={r.id}>
+                  <td style={{ fontWeight: 500 }}>{r.invoice_number}</td>
+                  <td className="ad-mut" style={{ fontSize: 12.5 }}>{r.client_name}</td>
+                  <td className="ad-soft" style={{ fontSize: 12 }}>{fmtDate(r.issue_date)}</td>
+                  <td><span className={`ad-badge ${badge[INVOICE_STATUS_COLOR[r.status]] || 'grey'}`}>{INVOICE_STATUS_LABELS[r.status] || r.status}</span></td>
+                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>{fmtMoney(r.total, r.currency)}</td>
+                  <td style={{ textAlign: 'right' }}><a href={`/admin/receipt/${r.id}`} target="_blank" className="ad-more">Receipt <ArrowRight size={12} /></a></td>
+                </tr>
+              )) : <tr><td colSpan={6}><div className="ad-viz-empty">No invoices yet. Create the first one from Invoices & Receipts.</div></td></tr>}
+            </tbody>
+          </table>
+        )}
+      </Panel>
     </div>
   )
 }

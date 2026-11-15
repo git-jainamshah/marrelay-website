@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Image as ImageIcon, HardDrive, BarChart3, DollarSign,
   Megaphone, Users, Inbox, Building2, Share2, ScrollText,
   LineChart, PhoneCall, Presentation, Wallet, Receipt, PieChart, TrendingUp,
-  FileText, Briefcase, Workflow, UserCog,
+  FileText, Briefcase, Workflow, UserCog, History,
 } from 'lucide-react'
 
 export type NavItem = {
@@ -29,7 +29,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: '/admin/pricing', label: 'Pricing & Packages', icon: DollarSign, hint: 'Package prices shown on the site', keywords: 'price cost plans' },
       { href: '/admin/legal', label: 'Terms & Privacy', icon: ScrollText, hint: 'Edit the legal pages', keywords: 'policy legal tos' },
       { href: '/admin/media', label: 'Manage Media', icon: ImageIcon, hint: 'Swap the photos and videos used on each page', keywords: 'images photos video slots hero' },
-      { href: '/admin/storage', label: 'Storage', icon: HardDrive, hint: 'Upload and organise files', keywords: 'upload files assets' },
+      { href: '/admin/storage', label: 'Storage', icon: HardDrive, hint: 'Space used, uploads, and every file', keywords: 'upload files assets space usage' },
     ],
   },
   {
@@ -61,6 +61,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: '/admin/company', label: 'Company Profile', icon: Building2, hint: 'Name, address, contact details, logos' },
       { href: '/admin/socials', label: 'Social Links', icon: Share2, hint: 'Which platforms show on the site', keywords: 'instagram linkedin' },
       { href: '/admin/users', label: 'Access Management', icon: Users, hint: 'Who can sign in and what they can do', keywords: 'team roles permissions invite' },
+      { href: '/admin/users/activity', label: 'Sign-in Activity', icon: History, hint: 'Who signed in and out, and when (admins only)', keywords: 'login history audit security' },
       { href: '/admin/account', label: 'My Account', icon: UserCog, hint: 'Your name and password', keywords: 'profile password' },
     ],
   },
@@ -80,7 +81,7 @@ export function visibleGroups(role: string): NavGroup[] {
     } else if (role === 'leads_view' || role === 'leads_edit') {
       items = items.filter((i) => i.href === '/admin' || i.href === '/admin/account' || isLeads(i.href))
     } else {
-      items = items.filter((i) => i.href !== '/admin/users' && !isFinance(i.href))
+      items = items.filter((i) => !i.href.startsWith('/admin/users') && !isFinance(i.href))
     }
     return { ...g, items }
   }).filter((g) => g.items.length > 0)
