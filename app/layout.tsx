@@ -56,11 +56,11 @@ export const revalidate = 60
 const baseMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Marrelay - Toronto Digital Studio for Web, Data, SEO & Engineering',
+    default: 'Marrelay - Fixed-Price Web, Data & SEO Studio in Toronto',
     template: 'Marrelay - %s',
   },
   description:
-    'Marrelay is a Toronto digital studio: web, data, SEO, social and engineering for startups and small businesses in Canada and the US, at a fixed project price, not by the hour. Weekly demos, and you own everything.',
+    'Marrelay is a Toronto digital studio. Websites, data, SEO, social and CAD for startups in Canada and the US, at one fixed price. Book a free call.',
   keywords: [
     'Marrelay',
     'Marrelay digital studio',
@@ -80,7 +80,7 @@ const baseMetadata: Metadata = {
   },
   openGraph: {
     siteName: 'Marrelay',
-    title: 'Marrelay - Toronto Digital Studio for Web, Data, SEO & Engineering',
+    title: 'Marrelay - Fixed-Price Web, Data & SEO Studio in Toronto',
     description:
       'A Toronto digital studio for startups and small businesses in Canada and the US. Web, data, SEO, social and engineering, at a fixed project price, not by the hour. Weekly demos, and you own everything.',
     type: 'website',
@@ -90,7 +90,7 @@ const baseMetadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Marrelay - Toronto Digital Studio for Web, Data, SEO & Engineering',
+    title: 'Marrelay - Fixed-Price Web, Data & SEO Studio in Toronto',
     description:
       'A Toronto digital studio for startups in Canada and the US. Web, data, SEO, social and engineering, at a fixed project price, not by the hour.',
     images: ['/assets/marrelay-header.png'],

@@ -171,7 +171,7 @@ export const CASES_V3 = [
 export const PROCESS_V3 = [
   { n: '01', title: 'Quick call', body: 'Thirty minutes, no pitch deck. If we are not the right fit, we will say so and point you somewhere better.', when: 'Same week, free' },
   { n: '02', title: 'One-page plan', body: 'Scope, price, timeline and what success looks like, on a single page.', when: 'Within a few days, free' },
-  { n: '03', title: 'Build and demo', body: 'Short sprints. A working demo most Fridays, adjustments on Monday.', when: 'Most projects, four to six weeks' },
+  { n: '03', title: 'Build and demo', body: 'Short sprints. A working demo every Friday, adjustments on Monday.', when: 'Typically four to six weeks' },
   { n: '04', title: 'Launch and grow', body: 'Everything handed over. We stay on to measure and improve if you want us to.', when: 'Ongoing, monthly' },
 ]
 
@@ -182,7 +182,7 @@ export const PROCESS_V3 = [
 export const PRICING_NOTE = {
   kicker: 'How pricing works',
   title: 'Fixed starting points. Custom for everything else.',
-  body: 'You hire Marrelay for a project, not for hours. The packages below are simple, fixed-price ways to start something small; most clients end up on a custom plan, because real projects have specific asks. Either way the price is agreed on one page before any work begins, and it does not change with the hours the work takes.',
+  body: 'You hire Marrelay for a project, not for hours. The packages below are simple, fixed-price ways to start something small; most projects need a custom plan, because real work has specific asks. Either way the price is agreed on one page before any work begins, and it does not change with the hours the work takes.',
   examples: 'The items listed under each package are examples of the kind of work it covers, not a fixed checklist.',
   cta: 'Ask for a custom quote',
 }

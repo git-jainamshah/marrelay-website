@@ -59,7 +59,7 @@ export default function Footer() {
             <div className="v-band-r" data-reveal data-delay="1">
               <a href={`mailto:${email}`} className="mail">{email}</a>
               <Link href="/contact" className="btn btn-light btn-sm">
-                Contact us <span aria-hidden="true">→</span>
+                Book a free call <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>

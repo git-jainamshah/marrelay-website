@@ -418,6 +418,7 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .v-hero .foot { gap: 28px; padding-top: 28px; }
 .v3 .v-hero .foot p { font-size: clamp(16px, 1.3vw, 19px); max-width: 30em; }
 .v3 .v-hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.v3 .v-hero .ctas .v-cta-note { flex-basis: 100%; font-size: 13px; color: var(--v-soft-2, #B9B8B2); }
 
 .v3 .v-statement p { font-size: clamp(24px, 3.2vw, 48px); line-height: 1.1; letter-spacing: -.04em; max-width: 20em; text-wrap: pretty; }
 

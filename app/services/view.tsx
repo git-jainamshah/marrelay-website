@@ -17,7 +17,7 @@ export default function ServicesView({ items }: { items: ServiceListItem[] }) {
             <h1 className="v-big" data-reveal data-delay="1">Five disciplines. One small team.</h1>
           </div>
           <p data-reveal data-delay="2">
-            Pick a discipline to see what the work looks like, how it runs and where prices start. Most clients begin
+            Pick a discipline to see what the work looks like, how it runs and where prices start. Begin
             with one and add another once it works.
           </p>
         </div>

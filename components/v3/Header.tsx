@@ -53,7 +53,7 @@ export const CASE_NAV = [
   { label: 'Drawings that leave no room to guess.', sub: 'Engineering & CAD', href: '/projects/engineering-drawings' },
 ]
 const DROPS = {
-  services: { label: 'Services', href: '/services', kicker: 'Services', blurb: 'Five disciplines under one roof. Most clients start with one and add another once it works.', items: SERVICE_NAV },
+  services: { label: 'Services', href: '/services', kicker: 'Services', blurb: 'Five disciplines under one roof. Start with one and add another once it works.', items: SERVICE_NAV },
   cases: { label: 'Case studies', href: '/case-studies', kicker: 'Case studies', blurb: 'Worked examples of how we approach real problems, end to end.', items: CASE_NAV },
 } as const
 type DropKey = keyof typeof DROPS
@@ -180,7 +180,7 @@ export default function Header() {
         <div className="v-hdr-cta">
           <SiteSearch variant="pill" />
           <Link href={bar.contactHref || '/contact'} className="btn v-book">
-            Book a call <span aria-hidden="true">↗</span>
+            Book a free call <span aria-hidden="true">↗</span>
           </Link>
           <button
             type="button"
@@ -237,7 +237,7 @@ export default function Header() {
             ))}
           </div>
           <Link href={bar.contactHref || '/contact'} className="btn btn-light v-book-m" onClick={() => setMenu(false)}>
-            Book a call
+            Book a free call
           </Link>
           <span className="v-menu-mail">
             or email <a href="mailto:hello@marrelay.com">hello@marrelay.com</a>

@@ -21,7 +21,9 @@ export default async function Home() {
   ])
 
   const showcase: ShowcaseItem[] = SERVICES_V3.map((s, i) => {
-    const { price, unit } = startingPrice(svcPkgs[i])
+    const sp = startingPrice(svcPkgs[i])
+    const price = sp.price
+    const unit = sp.unit || (s.key === 'eng' ? 'per drawing' : '')
     const poster = slots[s.posterSlot]
     return {
       key: s.key, n: `0${i + 1}`, full: s.full, short: s.short, intro: s.intro, url: s.url, param: s.param,
@@ -39,22 +41,23 @@ export default async function Home() {
         <div className="scrim"></div>
         <div className="v-wrap inner">
           <div className="meta" data-reveal>
-            <span>Fixed-price digital studio</span>
+            <span>Digital studio</span>
             <span>Toronto · Canada &amp; US</span>
           </div>
           <h1>
-            <span data-reveal="line" data-delay="1"><span>We design, build</span></span>
-            <span data-reveal="line" data-delay="2"><span>and grow digital</span></span>
-            <span data-reveal="line" data-delay="3"><span className="v-muted">products.</span></span>
+            <span data-reveal="line" data-delay="1"><span>Websites, data and</span></span>
+            <span data-reveal="line" data-delay="2"><span>marketing, for one</span></span>
+            <span data-reveal="line" data-delay="3"><span className="v-muted">fixed price.</span></span>
           </h1>
           <div className="foot" data-reveal data-delay="4">
             <p>
-              A digital studio for startups and small businesses in Canada and the US. Web, data, SEO, social and
-              engineering, for one fixed price agreed up front, with a working demo every Friday.
+              A Toronto digital studio for startups and small businesses in Canada and the US. Web, data, SEO,
+              social and engineering. The price is agreed before we start, and you see a working demo every Friday.
             </p>
             <div className="ctas">
-              <Link href="/#start" className="btn btn-light">Tell us about your project <span aria-hidden="true">→</span></Link>
-              <Link href="/#work" className="btn btn-ghost-light">See the work</Link>
+              <Link href="/#start" className="btn btn-light">Book a free 30-minute call <span aria-hidden="true">→</span></Link>
+              <Link href="/#work" className="btn btn-ghost-light">See worked examples</Link>
+              <span className="v-cta-note">Free call, then a fixed quote on one page. No obligation.</span>
             </div>
           </div>
         </div>
@@ -74,7 +77,7 @@ export default async function Home() {
       <section id="what" className="v-wrap v-sec">
         <div className="v-head" data-reveal>
           <div>
-            <span className="v-kick"><i>01</i>Services</span>
+            <span className="v-kick"><i>01</i>Services: web, data, SEO, social and CAD</span>
             <h2 className="v-h2"><span>Five disciplines.</span><span>One small team.</span></h2>
           </div>
           <p className="v-body">
@@ -90,12 +93,12 @@ export default async function Home() {
         <div className="v-wrap" style={{ paddingTop: 'clamp(80px,10vw,140px)', paddingBottom: 'clamp(80px,10vw,140px)' }}>
           <div className="v-head" style={{ marginBottom: 48 }} data-reveal>
             <div>
-              <span className="v-kick"><i>02</i>Case studies</span>
+              <span className="v-kick"><i>02</i>Worked examples</span>
               <h2 className="v-h2">How we would approach it.</h2>
             </div>
             <p className="v-body" style={{ maxWidth: '28em' }}>
-              Worked examples, end to end. We&apos;re a young studio, so instead of borrowed logos we show exactly how
-              we think.
+              We&apos;re a young studio, so instead of borrowed logos we show exactly how we think. Each one is a
+              worked example of a typical project, start to finish.
             </p>
           </div>
           <div className="v-work-grid">
@@ -104,7 +107,7 @@ export default async function Home() {
                 <div className="m" data-reveal="wipe">
                   <SlotMedia src={slots[c.poster]} />
                   <div className="cap">
-                    <span className="v-label">{c.cat}</span>
+                    <span className="v-label">Worked example · {c.cat}</span>
                     <span className="arr" aria-hidden="true">→</span>
                   </div>
                 </div>
@@ -123,8 +126,8 @@ export default async function Home() {
             <span className="v-kick"><i>03</i>Process</span>
             <h2 className="v-h2">Four steps. No surprises.</h2>
             <p className="v-body">
-              Most projects take four to six weeks. You&apos;ll know the price, the timeline and who&apos;s doing the
-              work before you pay anything.
+              A typical project is planned for four to six weeks. You&apos;ll know the price, the timeline and
+              who&apos;s doing the work before you pay anything.
             </p>
           </div>
           <div className="r v-steps">
@@ -153,8 +156,8 @@ export default async function Home() {
         <div className="v-start" data-reveal>
           <div className="l">
             <span className="v-kick"><i>05</i>Start here</span>
-            <h2>Tell us about your project.</h2>
-            <p>We read every enquiry and reply within one business day with a few times for a 30-minute call. No obligation, no pitch deck.</p>
+            <h2>Book a free 30-minute call.</h2>
+            <p>Tell us a little about the project. We reply within one business day with a few times to talk, then send a fixed quote on one page. No obligation, no pitch deck.</p>
             <Link href="/contact" className="v-link">Prefer the full brief? Contact page →</Link>
           </div>
           <div className="r">

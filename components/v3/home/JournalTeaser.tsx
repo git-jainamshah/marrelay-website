@@ -32,8 +32,8 @@ export default async function JournalTeaser({ image }: { image: string }) {
           <span className="v-kick"><i>04</i>Journal</span>
           <h2 className="v-h2">Read this before you hire anyone.</h2>
           <p className="v-body" style={{ fontSize: 17, maxWidth: '34em' }}>
-            Straight answers on costs, platforms and tracking, written by the people who do the work. Most readers
-            never need to call us. Some do.
+            Straight answers on costs, platforms and tracking, written by the people who do the work. Useful
+            whether or not you ever call us.
           </p>
         </div>
         <Link href="/blogs" className="v-link">All {POSTS.length} articles →</Link>
@@ -52,7 +52,7 @@ export default async function JournalTeaser({ image }: { image: string }) {
         <MediaCard href={`/blogs/${feat.slug}`} className="v-feat" data-reveal>
           <div className="m" data-reveal="wipe">
             <img src={image} alt="" loading="lazy" />
-            <span className="badges"><span>Most read</span><span>{feat.readMinutes} min read</span></span>
+            <span className="badges"><span>Featured</span><span>{feat.readMinutes} min read</span></span>
             <span className="arr" aria-hidden="true">→</span>
           </div>
           <span className="v-label cat">{feat.category}</span>

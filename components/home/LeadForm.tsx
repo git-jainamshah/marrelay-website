@@ -106,14 +106,14 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
     }
   }
 
-  const firstName = name.trim().split(' ')[0] || 'friend'
+  const firstName = name.trim().split(' ')[0]
 
   return (
     <form className={`lead-form${done ? ' done' : ''}`} noValidate onSubmit={handleSubmit} onFocusCapture={onFirstInteract} id="home-lead-form">
       <div className="form-body">
         <div className="form-head">
           <h3>
-            Start the <span className="it">conversation</span>
+            Book your <span className="it">free call</span>
           </h3>
           <p>Four quick fields. The rest we&apos;ll cover on the call.</p>
         </div>
@@ -237,7 +237,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
         {submitError && <p style={{ color: '#c0392b', fontSize: 14, marginBottom: 12 }}>{submitError}</p>}
 
         <button type="submit" className="form-submit" disabled={sending}>
-          {sending ? 'Sending…' : 'Request my call'}
+          {sending ? 'Sending…' : 'Book my free call'}
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M3 11 L11 3 M5 3 H11 V9" />
           </svg>
@@ -251,11 +251,10 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
           </svg>
         </div>
         <h3>
-          Got it, <span className="it">{firstName}</span>.
+          {firstName ? <>Thanks, <span className="it">{firstName}</span>.</> : 'Thanks, got it.'}
         </h3>
         <p>
-          Your request landed in our inbox. We&apos;ll reply from a real human address within a few hours to lock in a
-          time.
+          Your request is in. We&apos;ll reply within one business day with a few times for your 30-minute call.
         </p>
       </div>
     </form>

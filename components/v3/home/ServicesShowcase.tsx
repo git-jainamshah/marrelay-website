@@ -92,7 +92,7 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
                     <div className="ft">
                       {s.price && (
                         <span className="p">
-                          <span className="v-label">Starting at</span>
+                          <span className="v-label">Starting at · CAD</span>
                           <b>{s.price}{s.unit && <small> {s.unit}</small>}</b>
                         </span>
                       )}
@@ -122,7 +122,7 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
                 <span className="hook">{s.hook}</span>
                 <span className="chips">{s.chips.slice(0, 3).map((c) => <span key={c}>{c}</span>)}</span>
                 <span className="ft">
-                  {s.price ? <span className="p"><span className="v-label">Starting at</span><b>{s.price}{s.unit && <small> {s.unit}</small>}</b></span> : <span />}
+                  {s.price ? <span className="p"><span className="v-label">Starting at · CAD</span><b>{s.price}{s.unit && <small> {s.unit}</small>}</b></span> : <span />}
                   <span className="go">Explore {s.short} →</span>
                 </span>
               </span>
