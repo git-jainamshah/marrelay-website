@@ -18,7 +18,7 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: any }
     items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard }],
   },
   {
-    label: 'Content',
+    label: 'Site Content',
     items: [
       { href: '/admin/media', label: 'Manage Media', icon: ImageIcon },
       { href: '/admin/storage', label: 'Storage', icon: HardDrive },
@@ -28,7 +28,7 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: any }
     ],
   },
   {
-    label: 'Growth',
+    label: 'Leads & Pitches',
     items: [
       { href: '/admin/leads/dashboard', label: 'Leads Dashboard', icon: BarChart3 },
       { href: '/admin/leads', label: 'Leads', icon: Inbox },
@@ -40,7 +40,7 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: any }
     ],
   },
   {
-    label: 'Finance',
+    label: 'Billing & Revenue',
     items: [
       { href: '/admin/finance/revenue', label: 'Revenue Dashboard', icon: TrendingUp },
       { href: '/admin/finance/invoices', label: 'Invoices & Receipts', icon: FileText },

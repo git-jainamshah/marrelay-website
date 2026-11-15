@@ -366,3 +366,67 @@
 .adm h1 { font-weight: 500; letter-spacing: -.04em; }
 .adm h1 .it { font-style: normal; }
 .adm h2 { font-weight: 500; letter-spacing: -.02em; }
+
+/* =====================================================================
+   v3 LOOK REFINEMENT - aligns the admin to the public site's flat, square,
+   editorial feel: sharp corners, hairline rules, white cards, Archivo
+   labels, flat buttons. Skin only - no markup, data, API or behaviour
+   change. Delete this block to revert to the softer look.
+   ===================================================================== */
+.adm { --label-font: var(--font-archivo, 'Archivo'), system-ui, sans-serif; }
+
+/* technical labels -> Archivo expanded, matching the site's kickers */
+.adm .ad-label,
+.adm .ad-kicker,
+.adm .ad-nav-group-label,
+.adm .ad-table th { font-family: var(--label-font); font-stretch: 125%; }
+.adm .ad-kicker,
+.adm .ad-nav-group-label { font-weight: 500; letter-spacing: .1em; }
+
+/* sharp, flat surfaces (the site uses square panels + hairline rules, not
+   soft rounded cards). Pills stay pills: buttons, badges, chips, switches. */
+.adm .ad-card,
+.adm .ad-section,
+.adm .ad-table-wrap,
+.adm .ad-tile,
+.adm .ad-thumb,
+.adm .ad-input,
+.adm textarea.ad-input,
+.adm select,
+.adm .ad-rte,
+.adm .ad-rte-toolbar,
+.adm .ad-alert,
+.adm .ad-waiting,
+.adm .ad-note,
+.adm .ad-mention-pop,
+.adm .ad-bell-pop,
+.adm .ad-toast,
+.adm .ad-icon-btn,
+.adm .ad-modal,
+.adm .ad-nav-item,
+.adm .ad-collapse-btn { border-radius: 0; }
+
+/* white cards on the paper canvas, hairline borders, no soft glow */
+.adm .ad-card,
+.adm .ad-section,
+.adm .ad-table-wrap,
+.adm .ad-tile,
+.adm .ad-rte,
+.adm .ad-note.reply,
+.adm .ad-mention-pop,
+.adm .ad-bell-pop { background: #fff; }
+.adm .ad-card { box-shadow: none; }
+.adm .ad-tile:hover { box-shadow: none; border-color: var(--ink); }
+.adm .ad-modal { box-shadow: 0 40px 90px -28px rgba(14, 14, 13, .5); }
+
+/* flat buttons (drop the 3D brand shadow and the hover lift) */
+.adm .ad-btn,
+.adm .ad-btn.brand { box-shadow: none; }
+.adm .ad-btn:hover { transform: none; }
+
+/* the sidebar reads as part of the same paper surface */
+.adm .ad-side { background: var(--paper); }
+
+/* headings sized to the site's scale */
+.adm h1 { font-size: 30px; letter-spacing: -.045em; }
+.adm h2 { font-size: 19px; }
