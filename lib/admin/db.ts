@@ -187,6 +187,22 @@ async function migrateAndSeed() {
   )`)
   await run(`CREATE INDEX IF NOT EXISTS page_views_created_idx ON page_views (created_at DESC)`)
   await run(`CREATE INDEX IF NOT EXISTS page_views_session_idx ON page_views (session_id)`)
+  // Form interactions: seen, started, each field filled, validation errors,
+  // submitted, converted. Feeds the form funnel. Additive.
+  await run(`
+  CREATE TABLE IF NOT EXISTS form_events (
+    id SERIAL PRIMARY KEY,
+    visitor_id TEXT,
+    session_id TEXT,
+    form_id TEXT NOT NULL,
+    form_type TEXT,
+    event TEXT NOT NULL,
+    field TEXT,
+    path TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`)
+  await run(`CREATE INDEX IF NOT EXISTS form_events_created_idx ON form_events (created_at DESC)`)
+  await run(`CREATE INDEX IF NOT EXISTS form_events_form_idx ON form_events (form_id, event)`)
   await run(`
   CREATE TABLE IF NOT EXISTS leads_offline (
     id SERIAL PRIMARY KEY,

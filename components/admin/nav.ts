@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Image as ImageIcon, HardDrive, BarChart3, DollarSign,
   Megaphone, Users, Inbox, Building2, Share2, ScrollText,
   LineChart, PhoneCall, Presentation, Wallet, Receipt, PieChart, TrendingUp,
-  FileText, Briefcase, Workflow, UserCog, History, Activity,
+  FileText, Briefcase, Workflow, UserCog, History, Activity, Filter,
 } from 'lucide-react'
 
 export type NavItem = {
@@ -20,7 +20,11 @@ export type NavGroup = { label: string; items: NavItem[] }
 export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Overview',
-    items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard, hint: 'Leads, trends and what needs attention', keywords: 'home overview stats' }],
+    items: [
+      { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, hint: 'Leads, trends and what needs attention', keywords: 'home overview stats' },
+      { href: '/admin/analytics/site', label: 'Site Analytics', icon: Activity, hint: 'Users, sessions and channels, measured by the site itself', keywords: 'traffic visitors pageviews sessions ga4 analytics' },
+      { href: '/admin/analytics/forms', label: 'Form Funnel', icon: Filter, hint: 'Where people give up on your forms, and conversion rates', keywords: 'funnel friction drop off conversion forms' },
+    ],
   },
   {
     label: 'Site Content',
@@ -41,7 +45,6 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: '/admin/leads/marketing', label: 'Lead Marketing', icon: Megaphone, hint: 'Campaign and channel attribution', keywords: 'utm campaign' },
       { href: '/admin/leads/offline', label: 'Offline Leads', icon: PhoneCall, hint: 'Add a lead from a call, referral or event', keywords: 'manual phone referral add lead' },
       { href: '/admin/leads/pitches', label: 'Pitches', icon: Presentation, hint: 'Proposals and pitches in flight', keywords: 'proposal deck' },
-      { href: '/admin/analytics/site', label: 'Site Analytics', icon: Activity, hint: 'Users, sessions and channels, measured by the site itself', keywords: 'traffic visitors pageviews ga4 analytics' },
       { href: '/admin/analytics', label: 'Tracking & SEO', icon: LineChart, hint: 'Tracking scripts and tag managers', keywords: 'gtm ga4 scripts tags' },
     ],
   },
@@ -78,9 +81,9 @@ export function visibleGroups(role: string): NavGroup[] {
     if (role === 'admin') {
       // everything
     } else if (role === 'manager') {
-      items = items.filter((i) => i.href === '/admin' || i.href === '/admin/account' || isLeads(i.href) || isFinance(i.href))
+      items = items.filter((i) => i.href === '/admin' || i.href === '/admin/account' || i.href.startsWith('/admin/analytics/') || isLeads(i.href) || isFinance(i.href))
     } else if (role === 'leads_view' || role === 'leads_edit') {
-      items = items.filter((i) => i.href === '/admin' || i.href === '/admin/account' || isLeads(i.href))
+      items = items.filter((i) => i.href === '/admin' || i.href === '/admin/account' || i.href.startsWith('/admin/analytics/') || isLeads(i.href))
     } else {
       items = items.filter((i) => !i.href.startsWith('/admin/users') && !isFinance(i.href))
     }

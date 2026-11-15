@@ -261,3 +261,32 @@ export function Share({ data, format = fmtN }: { data: { label: string; value: n
     </div>
   )
 }
+
+/* ---------------- funnel ---------------- */
+
+export type FunnelStep = { key: string; label: string; count: number; ofTop: number; dropFromPrev: number; dropPct: number; optional?: boolean; errors?: number }
+
+/** Vertical funnel: each step's width is its share of the top, with the
+ *  people lost since the previous required step called out beside it. */
+export function Funnel({ steps }: { steps: FunnelStep[] }) {
+  if (!steps.length || steps[0].count === 0) return <Empty text="No form activity yet in this period." />
+  return (
+    <div className="ad-funnel">
+      {steps.map((s, i) => (
+        <div key={s.key} className={`ad-fn-step${s.optional ? ' opt' : ''}${i === steps.length - 1 ? ' last' : ''}`}>
+          <div className="hd">
+            <span className="lb">{s.label}{s.optional && <em> optional</em>}</span>
+            <span className="ct"><b>{fmtN(s.count)}</b><small>{s.ofTop}%</small></span>
+          </div>
+          <div className="tr"><i style={{ width: `${Math.max(s.ofTop, s.count > 0 ? 1.5 : 0)}%` }} /></div>
+          {s.dropFromPrev > 0 && !s.optional && (
+            <div className="dp">
+              <span className="x">−{fmtN(s.dropFromPrev)}</span> left here ({s.dropPct}% of the step before)
+              {!!s.errors && <span className="er">{fmtN(s.errors)} hit a validation error</span>}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}

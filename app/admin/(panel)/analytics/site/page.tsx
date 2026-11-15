@@ -62,11 +62,11 @@ export default function SiteAnalyticsPage() {
 
   return (
     <div className="ad-page ad-dash">
-      <PageHeader kicker="Leads & Pitches" title="Site Analytics"
+      <PageHeader kicker="Overview" title="Site Analytics"
         description="Traffic measured by the site itself: no tag manager, nothing lost to ad blockers, and the same channel grouping your leads carry. Times in Eastern."
         actions={<>
           <Link href="/admin/analytics" className="ad-btn-ghost sm"><Settings2 size={14} /> Tracking scripts</Link>
-          <Link href="/admin/leads/dashboard" className="ad-btn sm">Leads dashboard <ArrowRight size={14} /></Link>
+          <Link href="/admin/analytics/forms" className="ad-btn sm">Form funnel <ArrowRight size={14} /></Link>
         </>} />
 
       <div className="ad-filters">

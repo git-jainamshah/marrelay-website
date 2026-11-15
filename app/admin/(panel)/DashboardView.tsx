@@ -129,6 +129,7 @@ export default function DashboardView({ firstName }: { firstName: string }) {
 
       <div className="ad-foot-links">
         <Link href="/admin/analytics/site">Site analytics <ArrowRight size={13} /></Link>
+        <Link href="/admin/analytics/forms">Form funnel <ArrowRight size={13} /></Link>
         <Link href="/admin/leads/dashboard">Leads dashboard <ArrowRight size={13} /></Link>
         <Link href="/admin/finance/revenue">Revenue dashboard <ArrowRight size={13} /></Link>
         <Link href="/admin/storage">Storage <ArrowRight size={13} /></Link>

@@ -843,3 +843,20 @@
 .adm .ad-ev .when b { font-weight: 500; }
 .adm .ad-ev .when small { color: var(--ink-soft); font-size: 11px; }
 @media (max-width: 760px) { .adm .ad-ev { grid-template-columns: 26px 1fr 100px; } .adm .ad-ev .what, .adm .ad-ev .meta { display: none; } }
+
+/* ---- form funnel ---- */
+.adm .ad-funnel { display: grid; gap: 2px; }
+.adm .ad-fn-step { padding: 10px 0 4px; }
+.adm .ad-fn-step .hd { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.adm .ad-fn-step .lb { font-size: 13.5px; }
+.adm .ad-fn-step .lb em { font-style: normal; font-size: 11px; color: var(--ink-soft); margin-left: 6px; }
+.adm .ad-fn-step .ct { white-space: nowrap; }
+.adm .ad-fn-step .ct b { font-size: 16px; font-weight: 500; }
+.adm .ad-fn-step .ct small { font-size: 11.5px; color: var(--ink-soft); margin-left: 7px; }
+.adm .ad-fn-step .tr { height: 22px; background: var(--paper-2); }
+.adm .ad-fn-step .tr i { display: block; height: 100%; background: var(--ink); transition: width .5s var(--v-ease, ease); }
+.adm .ad-fn-step.opt .tr i { background: var(--ink-soft); }
+.adm .ad-fn-step.last .tr i { background: var(--brand); }
+.adm .ad-fn-step .dp { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 12px; color: var(--ink-soft); padding: 7px 0 2px; }
+.adm .ad-fn-step .dp .x { color: var(--brand-ink); font-weight: 600; }
+.adm .ad-fn-step .dp .er { color: #8a6116; }

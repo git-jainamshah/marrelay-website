@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { X } from 'lucide-react'
 import { getTrafficData } from '@/analytics/traffic-identification'
 import { trackFormView, trackFormStart, trackLead } from '@/analytics/events'
+import { createFormTracker } from '@/lib/form-funnel'
 
 type PromoCfg = {
   enabled: boolean
@@ -32,10 +33,12 @@ export default function PromoBanner() {
   const [phoneErr, setPhoneErr] = useState(false)
   const [busy, setBusy] = useState(false)
   const startedRef = useRef(false)
+  const funnel = useMemo(() => createFormTracker('promo-signup', 'promo-banner'), [])
   const onFirstInteract = () => {
     if (startedRef.current) return
     startedRef.current = true
     trackFormStart({ formId: 'promo-signup', formType: 'promo-banner' })
+    funnel.start()
   }
 
   useEffect(() => {
@@ -49,12 +52,12 @@ export default function PromoBanner() {
         const t = setTimeout(() => {
           setOpen(true)
           sessionStorage.setItem(SEEN_KEY, '1')
-          if (c.template === 'signup') trackFormView({ formId: 'promo-signup', formType: 'promo-banner', location: 'promo' })
+          if (c.template === 'signup') { trackFormView({ formId: 'promo-signup', formType: 'promo-banner', location: 'promo' }); funnel.view() }
         }, Math.max(0, (c.delaySeconds ?? 3) * 1000))
         return () => clearTimeout(t)
       })
       .catch(() => {})
-  }, [])
+  }, [funnel])
 
   if (!cfg || !open) return null
 
@@ -62,13 +65,16 @@ export default function PromoBanner() {
     e.preventDefault()
     if ((form.phone.match(/\d/g) ?? []).length < 7) {
       setPhoneErr(true)
+      funnel.error(['phone'])
       return
     }
     if (!consent) {
       setConsentErr(true)
+      funnel.error(['consent'])
       return
     }
     setBusy(true)
+    funnel.submit()
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
@@ -83,6 +89,7 @@ export default function PromoBanner() {
       })
       const d = await res.json().catch(() => ({}))
       await trackLead({ name: form.name, email: form.email, phone: form.phone, formType: 'promo-banner', publicId: d.leadId, consent: true })
+      funnel.success()
       setSent(true)
     } finally {
       setBusy(false)
@@ -108,18 +115,20 @@ export default function PromoBanner() {
           sent ? (
             <p style={{ fontSize: 14, fontWeight: 600 }}>Thanks - you&apos;re on the list. Talk soon!</p>
           ) : (
-            <form onSubmit={submitSignup} onFocusCapture={onFirstInteract} style={{ display: 'grid', gap: 10 }}>
-              <input required placeholder="Your name" value={form.name}
+            <form onSubmit={submitSignup} onFocusCapture={onFirstInteract}
+              onBlurCapture={funnel.handlers.onBlurCapture} onChangeCapture={funnel.handlers.onChangeCapture}
+              style={{ display: 'grid', gap: 10 }}>
+              <input required name="name" placeholder="Your name" value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} />
-              <input required type="email" placeholder="Email address" value={form.email}
+              <input required type="email" name="email" placeholder="Email address" value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })} style={inputStyle} />
-              <input required type="tel" placeholder="Phone number" value={form.phone}
+              <input required type="tel" name="phone" placeholder="Phone number" value={form.phone}
                 onChange={(e) => { setForm({ ...form, phone: e.target.value }); setPhoneErr(false) }} style={inputStyle} />
               {phoneErr && (
                 <p style={{ color: '#c0392b', fontSize: 12.5, margin: 0 }}>Please enter a valid phone number.</p>
               )}
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12.5, lineHeight: 1.45, color: '#444', cursor: 'pointer' }}>
-                <input type="checkbox" checked={consent}
+                <input type="checkbox" name="consent" checked={consent}
                   onChange={(e) => { setConsent(e.target.checked); setConsentErr(false) }}
                   style={{ marginTop: 2, width: 15, height: 15, flexShrink: 0 }} />
                 <span>

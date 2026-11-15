@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef, FormEvent } from 'react'
+import { useState, useEffect, useRef, useMemo, FormEvent } from 'react'
+import { createFormTracker } from '@/lib/form-funnel'
 import { useSearchParams } from 'next/navigation'
 import { getTrafficData } from '@/analytics/traffic-identification'
 import {
@@ -40,13 +41,16 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
   }, [searchParams])
 
   const startedRef = useRef(false)
+  const funnel = useMemo(() => createFormTracker('home-lead-form', 'home'), [])
   useEffect(() => {
     trackFormView({ formId: 'home-lead-form', formType: 'home', location: 'home' })
-  }, [])
+    funnel.view()
+  }, [funnel])
   const onFirstInteract = () => {
     if (startedRef.current) return
     startedRef.current = true
     trackFormStart({ formId: 'home-lead-form', formType: 'home' })
+    funnel.start()
     trackBeginCheckout(services, '', 'home')
   }
 
@@ -71,7 +75,9 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
     setInvalid(bad)
     const form = e.target as HTMLFormElement
     if (bad.name || bad.email || bad.phone || bad.services || bad.consent) {
-      trackFormError({ formId: 'home-lead-form', formType: 'home', errorFields: Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k]) })
+      const badFields = Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k])
+      trackFormError({ formId: 'home-lead-form', formType: 'home', errorFields: badFields })
+      funnel.error(badFields)
       const firstBad = form.querySelector('.field.invalid') || form
       const top = firstBad.getBoundingClientRect().top + window.pageYOffset - 140
       window.scrollTo({ top, behavior: 'smooth' })
@@ -79,6 +85,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
     }
     setSending(true)
     setSubmitError('')
+    funnel.submit()
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
@@ -96,6 +103,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
         return
       }
       await trackLead({ name, email, phone, services, formType: 'home', publicId: d.leadId, consent })
+      funnel.success()
       setDone(true)
       const top = form.getBoundingClientRect().top + window.pageYOffset - 120
       window.scrollTo({ top, behavior: 'smooth' })
@@ -109,7 +117,8 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
   const firstName = name.trim().split(' ')[0]
 
   return (
-    <form className={`lead-form${done ? ' done' : ''}`} noValidate onSubmit={handleSubmit} onFocusCapture={onFirstInteract} id="home-lead-form">
+    <form className={`lead-form${done ? ' done' : ''}`} noValidate onSubmit={handleSubmit} onFocusCapture={onFirstInteract} id="home-lead-form"
+      onBlurCapture={funnel.handlers.onBlurCapture} onChangeCapture={funnel.handlers.onChangeCapture}>
       <div className="form-body">
         <div className="form-head">
           <h3>
