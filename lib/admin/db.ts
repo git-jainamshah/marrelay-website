@@ -141,6 +141,19 @@ async function migrateAndSeed() {
     value TEXT NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`)
+  // Append-only version history of every settings save, so any change made
+  // in the admin can be reviewed and restored. Additive table: the live
+  // `settings` row is still the single source of truth for the site.
+  await run(`
+  CREATE TABLE IF NOT EXISTS settings_history (
+    id SERIAL PRIMARY KEY,
+    key TEXT NOT NULL,
+    value TEXT NOT NULL,
+    changed_by TEXT,
+    note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`)
+  await run(`CREATE INDEX IF NOT EXISTS settings_history_key_idx ON settings_history (key, id DESC)`)
   await run(`
   CREATE TABLE IF NOT EXISTS leads_offline (
     id SERIAL PRIMARY KEY,
@@ -574,6 +587,47 @@ export async function setSetting(key: string, value: unknown): Promise<void> {
      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
     [key, JSON.stringify(value)]
   )
+}
+
+export type SettingVersion = { id: number; key: string; value: unknown; changed_by: string | null; note: string | null; created_at: string }
+
+/**
+ * Record a version of a setting. On the first save of a key, the value that
+ * was live before the change is captured as a baseline first, so there is
+ * always something to go back to.
+ */
+export async function recordSettingVersion(key: string, value: unknown, changedBy: string | null, note?: string): Promise<void> {
+  try {
+    const has = await q1<{ id: number }>('SELECT id FROM settings_history WHERE key = $1 LIMIT 1', [key])
+    if (!has) {
+      const live = await q1<{ value: string }>('SELECT value FROM settings WHERE key = $1', [key])
+      if (live) await run('INSERT INTO settings_history (key, value, changed_by, note) VALUES ($1, $2, NULL, $3)', [key, live.value, 'Before first edit'])
+    }
+    await run('INSERT INTO settings_history (key, value, changed_by, note) VALUES ($1, $2, $3, $4)', [key, JSON.stringify(value), changedBy, note ?? null])
+    // Keep the table bounded: the 60 most recent versions per key.
+    await run(
+      `DELETE FROM settings_history WHERE key = $1 AND id NOT IN (SELECT id FROM settings_history WHERE key = $1 ORDER BY id DESC LIMIT 60)`,
+      [key]
+    )
+  } catch { /* history must never break the save */ }
+}
+
+export async function listSettingVersions(key: string, limit = 40): Promise<SettingVersion[]> {
+  await ensureDb()
+  const rows = await q<{ id: number; key: string; value: string; changed_by: string | null; note: string | null; created_at: string }>(
+    'SELECT id, key, value, changed_by, note, created_at FROM settings_history WHERE key = $1 ORDER BY id DESC LIMIT $2',
+    [key, limit]
+  )
+  return rows.map((r) => ({ ...r, value: JSON.parse(r.value) }))
+}
+
+export async function getSettingVersion(key: string, id: number): Promise<SettingVersion | null> {
+  await ensureDb()
+  const r = await q1<{ id: number; key: string; value: string; changed_by: string | null; note: string | null; created_at: string }>(
+    'SELECT id, key, value, changed_by, note, created_at FROM settings_history WHERE key = $1 AND id = $2',
+    [key, id]
+  )
+  return r ? { ...r, value: JSON.parse(r.value) } : null
 }
 
 export async function audit(userEmail: string | null, action: string, detail?: string): Promise<void> {

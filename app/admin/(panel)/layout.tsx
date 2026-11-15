@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getSessionUser } from '@/lib/admin/auth'
 import Sidebar from '@/components/admin/Sidebar'
 import RoleGate from '@/components/admin/RoleGate'
+import PanelChrome from '@/components/admin/PanelChrome'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,10 +35,12 @@ export default async function PanelLayout({ children }: { children: React.ReactN
         : undefined
 
   return (
-    <div className="ad-shell">
-      <RoleGate allowedPrefixes={allowedPrefixes} />
-      <Sidebar userName={`${user.first_name} ${user.last_name}`} userEmail={user.email} role={user.role} />
-      <main className="ad-main">{children}</main>
-    </div>
+    <PanelChrome role={user.role}>
+      <div className="ad-shell">
+        <RoleGate allowedPrefixes={allowedPrefixes} />
+        <Sidebar userName={`${user.first_name} ${user.last_name}`} userEmail={user.email} role={user.role} />
+        <main className="ad-main">{children}</main>
+      </div>
+    </PanelChrome>
   )
 }

@@ -1,8 +1,11 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+/* eslint-disable @next/next/no-img-element */
+import { useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { ArrowRight } from 'lucide-react'
 import { PasswordInput } from '@/components/admin/ui'
+import { isProduction, envLabel } from '@/lib/env'
 
 function LoginForm() {
   const router = useRouter()
@@ -11,6 +14,14 @@ function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [clock, setClock] = useState('')
+
+  useEffect(() => {
+    const tick = () => setClock(new Date().toLocaleTimeString('en-CA', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Toronto' }))
+    tick()
+    const t = setInterval(tick, 30_000)
+    return () => clearInterval(t)
+  }, [])
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -24,7 +35,7 @@ function LoginForm() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error || 'Login failed.')
+        setError(data.error || 'That email and password did not match. Check both and try again.')
         return
       }
       // Internal-only: a single lightweight dataLayer push on successful admin login.
@@ -42,35 +53,62 @@ function LoginForm() {
       router.push(data.mustChangePassword ? '/admin/change-password' : (params.get('next') || '/admin'))
       router.refresh()
     } catch {
-      setError('Network error. Please try again.')
+      setError('We could not reach the server. Check your connection and try again.')
     } finally {
       setBusy(false)
     }
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <form onSubmit={submit} className="ad-card" style={{ width: '100%', maxWidth: 400, padding: 34 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/marrelay-mark.png" alt="Marrelay" width={44} height={44} style={{ borderRadius: 11, marginBottom: 16 }} />
-        <h1 style={{ fontSize: 28, marginBottom: 4 }}>Marrelay <span className="it">Admin</span></h1>
-        <p className="ad-mut" style={{ fontSize: 14, marginBottom: 22 }}>Sign in to manage the website.</p>
-
-        {error && <div className="ad-alert err" style={{ marginBottom: 16 }}>{error}</div>}
-
-        <div style={{ marginBottom: 16 }}>
-          <label className="ad-label">Email</label>
-          <input type="email" required className="ad-input" value={email} autoComplete="username"
-            onChange={(e) => setEmail(e.target.value)} />
+    <div className="ad-login">
+      {/* ---- stage: the company, at full bleed ---- */}
+      <section className="ad-login-stage" aria-hidden="true">
+        <img className="bg" src="/assets/office-dark-hero.png" alt="" />
+        <div className="veil" />
+        <div className="grain" />
+        <header className="top">
+          <img src="/assets/marrelay-logo-white.png" alt="Marrelay" className="logo" />
+          <span className="env">{isProduction ? 'Studio portal' : `${envLabel} portal`}</span>
+        </header>
+        <div className="mid">
+          <div className="kick">Marrelay · Toronto</div>
+          <h2>
+            Websites, data and<br />marketing, for one<br /><em>fixed price.</em>
+          </h2>
+          <p>Everything that runs the studio, in one place. Leads, pitches, billing, and the words on the site.</p>
         </div>
-        <div style={{ marginBottom: 22 }}>
-          <label className="ad-label">Password</label>
+        <footer className="bot">
+          <span>Toronto {clock && <>· {clock} ET</>}</span>
+          <span>marrelay.com</span>
+        </footer>
+      </section>
+
+      {/* ---- panel: sign in ---- */}
+      <section className="ad-login-panel">
+        <form onSubmit={submit} className="ad-login-form" noValidate>
+          <img src="/assets/marrelay-mark.png" alt="" width={40} height={40} className="mark" />
+          <div className="ad-kicker">Welcome back</div>
+          <h1>Sign in to <span className="it">Marrelay</span></h1>
+          <p className="lede">Use the email and password you were given. Forgotten it? Ask an administrator to reset it from Access Management.</p>
+
+          {error && <div className="ad-alert err" role="alert">{error}</div>}
+
+          <label className="ad-label" htmlFor="login-email">Email</label>
+          <input id="login-email" type="email" required className="ad-input" value={email} autoComplete="username" autoFocus
+            placeholder="you@marrelay.com" onChange={(e) => setEmail(e.target.value)} />
+
+          <label className="ad-label" htmlFor="login-password" style={{ marginTop: 16 }}>Password</label>
           <PasswordInput value={password} onChange={setPassword} autoComplete="current-password" required />
-        </div>
-        <button disabled={busy} className="ad-btn brand" style={{ width: '100%', justifyContent: 'center' }}>
-          {busy ? 'Signing in…' : 'Sign in'}
-        </button>
-      </form>
+
+          <button disabled={busy || !email || !password} className="ad-btn brand go">
+            {busy ? 'Signing in…' : <>Sign in <ArrowRight size={16} /></>}
+          </button>
+
+          <p className="fine">
+            Private system. Access is logged. {!isProduction && <>This is the <b>{envLabel}</b> environment; changes here do not affect the live site.</>}
+          </p>
+        </form>
+      </section>
     </div>
   )
 }

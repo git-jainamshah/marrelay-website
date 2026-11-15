@@ -2,8 +2,11 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
-import { Save } from 'lucide-react'
 import { Field } from '@/components/admin/ui'
+import PageHeader from '@/components/admin/PageHeader'
+import SaveBar from '@/components/admin/SaveBar'
+import { HistoryButton } from '@/components/admin/HistoryDrawer'
+import { loadSetting, saveSetting } from '@/lib/admin/client'
 
 type Company = {
   name: string; tagline: string
@@ -15,26 +18,22 @@ type Company = {
 export default function CompanyPage() {
   const [c, setC] = useState<Company | null>(null)
   const [photos, setPhotos] = useState<{ id: number; relPath: string; filename: string }[]>([])
-  const [toast, setToast] = useState('')
+  const [saved, setSaved] = useState('')
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
-    fetch('/api/admin/settings?key=company').then((r) => r.json()).then((d) => d.value && setC(d.value))
+    loadSetting<Company>('company').then((v) => { if (v) { setC(v); setSaved(JSON.stringify(v)) } })
     fetch('/api/admin/media').then((r) => r.json()).then((d) =>
       setPhotos((d.media || []).filter((m: any) => m.kind === 'photo'))
     )
   }, [])
 
+  const dirty = !!c && JSON.stringify(c) !== saved
   async function save() {
     if (!c) return
     setBusy(true)
-    const res = await fetch('/api/admin/settings', {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'company', value: c }),
-    })
+    if (await saveSetting('company', c)) setSaved(JSON.stringify(c))
     setBusy(false)
-    setToast(res.ok ? 'Company profile saved - live within a minute.' : 'Save failed.')
-    setTimeout(() => setToast(''), 4000)
   }
 
   if (!c) return <p className="ad-mut" style={{ fontSize: 14 }}>Loading…</p>
@@ -43,7 +42,7 @@ export default function CompanyPage() {
     <div>
       <label className="ad-label">{label}</label>
       <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-        <div style={{ width: 84, height: 84, borderRadius: 14, border: '1px solid var(--rule)', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+        <div style={{ width: 84, height: 84, border: '1px solid var(--rule)', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
           {c[field] ? <img src={c[field]} alt={label} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span className="ad-soft" style={{ fontSize: 11 }}>none</span>}
         </div>
         <div style={{ flex: 1 }}>
@@ -58,19 +57,10 @@ export default function CompanyPage() {
   )
 
   return (
-    <div style={{ maxWidth: 760 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
-        <div>
-          <div className="ad-kicker">Settings</div>
-          <h1>Company <span className="it">Profile</span></h1>
-          <p className="ad-mut" style={{ fontSize: 14, marginTop: 8 }}>
-            The company details used across the site - footer, navigation, contact info, and search-engine data.
-          </p>
-        </div>
-        <button onClick={save} disabled={busy} className="ad-btn"><Save size={15} /> {busy ? 'Saving…' : 'Save profile'}</button>
-      </div>
-
-      {toast && <div className="ad-alert ok" style={{ marginBottom: 16 }}>{toast}</div>}
+    <div className="ad-page" style={{ maxWidth: 820 }}>
+      <PageHeader kicker="Settings" title="Company Profile"
+        description="The company details used across the site: footer, navigation, contact info and search-engine data."
+        actions={<HistoryButton settingKey="company" onRestored={(v) => { setC(v); setSaved(JSON.stringify(v)) }} />} />
 
       <div className="ad-card" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
         <Field label="Company name">
@@ -96,6 +86,7 @@ export default function CompanyPage() {
           {logoPicker('logoIcon', 'Icon / mark', 'Square mark - used in the navigation bar and footer.')}
         </div>
       </div>
+      <SaveBar dirty={dirty} busy={busy} onSave={save} onDiscard={() => saved && setC(JSON.parse(saved))} label="Save profile" />
     </div>
   )
 }

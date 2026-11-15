@@ -1,8 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Save, Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import { Toggle } from '@/components/admin/ui'
+import PageHeader from '@/components/admin/PageHeader'
+import SaveBar from '@/components/admin/SaveBar'
+import { HistoryButton } from '@/components/admin/HistoryDrawer'
+import { loadSetting, saveSetting } from '@/lib/admin/client'
 
 type Social = { platform: string; label: string; href: string; enabled: boolean }
 
@@ -10,22 +14,18 @@ const KNOWN_PLATFORMS = ['Instagram', 'LinkedIn', 'X', 'Facebook', 'YouTube', 'T
 
 export default function SocialsPage() {
   const [socials, setSocials] = useState<Social[] | null>(null)
-  const [toast, setToast] = useState('')
+  const [saved, setSaved] = useState('')
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
-    fetch('/api/admin/settings?key=socials').then((r) => r.json()).then((d) => setSocials(d.value || []))
+    loadSetting<Social[]>('socials').then((v) => { const list = v || []; setSocials(list); setSaved(JSON.stringify(list)) })
   }, [])
 
+  const dirty = !!socials && JSON.stringify(socials) !== saved
   async function save() {
     setBusy(true)
-    const res = await fetch('/api/admin/settings', {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'socials', value: socials }),
-    })
+    if (await saveSetting('socials', socials)) setSaved(JSON.stringify(socials))
     setBusy(false)
-    setToast(res.ok ? 'Social links saved - live within a minute.' : 'Save failed.')
-    setTimeout(() => setToast(''), 4000)
   }
 
   const set = (i: number, patch: Partial<Social>) =>
@@ -34,20 +34,10 @@ export default function SocialsPage() {
   if (!socials) return <p className="ad-mut" style={{ fontSize: 14 }}>Loading…</p>
 
   return (
-    <div style={{ maxWidth: 760 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
-        <div>
-          <div className="ad-kicker">Settings</div>
-          <h1>Social <span className="it">Links</span></h1>
-          <p className="ad-mut" style={{ fontSize: 14, marginTop: 8, maxWidth: 520 }}>
-            Your handles across platforms. Toggle a platform off and it disappears from the live site
-            (header, footer, mobile menu) - toggle on to bring it back.
-          </p>
-        </div>
-        <button onClick={save} disabled={busy} className="ad-btn"><Save size={15} /> {busy ? 'Saving…' : 'Save links'}</button>
-      </div>
-
-      {toast && <div className="ad-alert ok" style={{ marginBottom: 16 }}>{toast}</div>}
+    <div className="ad-page" style={{ maxWidth: 820 }}>
+      <PageHeader kicker="Settings" title="Social Links"
+        description="Your handles across platforms. Switch a platform off and it disappears from the live site (header, footer, mobile menu); switch it on to bring it back."
+        actions={<HistoryButton settingKey="socials" onRestored={(v) => { setSocials(v); setSaved(JSON.stringify(v)) }} />} />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {socials.map((s, i) => (
@@ -77,6 +67,7 @@ export default function SocialsPage() {
         onClick={() => setSocials([...socials, { platform: 'Instagram', label: '', href: '', enabled: false }])}>
         <Plus size={15} /> Add platform
       </button>
+      <SaveBar dirty={dirty} busy={busy} onSave={save} onDiscard={() => saved && setSocials(JSON.parse(saved))} label="Save links" />
     </div>
   )
 }

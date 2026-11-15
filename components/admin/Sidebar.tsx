@@ -4,69 +4,19 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 /* eslint-disable @next/next/no-img-element */
-import {
-  LayoutDashboard, Image as ImageIcon, HardDrive, BarChart3, DollarSign,
-  Megaphone, Users, Inbox, LogOut, Globe, Building2, Share2, ScrollText,
-  PanelLeftClose, PanelLeftOpen, LineChart, PhoneCall, Presentation,
-  Wallet, Receipt, PieChart, TrendingUp, FileText, Briefcase, UserCog, Workflow,
-} from 'lucide-react'
+import { LogOut, Globe, PanelLeftClose, PanelLeftOpen, Search } from 'lucide-react'
 import NotificationBell from './NotificationBell'
-
-const GROUPS: { label: string; items: { href: string; label: string; icon: any }[] }[] = [
-  {
-    label: 'Overview',
-    items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard }],
-  },
-  {
-    label: 'Site Content',
-    items: [
-      { href: '/admin/media', label: 'Manage Media', icon: ImageIcon },
-      { href: '/admin/storage', label: 'Storage', icon: HardDrive },
-      { href: '/admin/pricing', label: 'Pricing & Packages', icon: DollarSign },
-      { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
-      { href: '/admin/legal', label: 'Terms & Privacy', icon: ScrollText },
-    ],
-  },
-  {
-    label: 'Leads & Pitches',
-    items: [
-      { href: '/admin/leads/dashboard', label: 'Leads Dashboard', icon: BarChart3 },
-      { href: '/admin/leads', label: 'Leads', icon: Inbox },
-      { href: '/admin/leads/pipeline', label: 'Pipeline', icon: Workflow },
-      { href: '/admin/leads/marketing', label: 'Lead Marketing', icon: Megaphone },
-      { href: '/admin/leads/offline', label: 'Offline Leads', icon: PhoneCall },
-      { href: '/admin/leads/pitches', label: 'Pitches', icon: Presentation },
-      { href: '/admin/analytics', label: 'Analytics & SEO', icon: LineChart },
-    ],
-  },
-  {
-    label: 'Billing & Revenue',
-    items: [
-      { href: '/admin/finance/revenue', label: 'Revenue Dashboard', icon: TrendingUp },
-      { href: '/admin/finance/invoices', label: 'Invoices & Receipts', icon: FileText },
-      { href: '/admin/finance/clients', label: 'Clients & Projects', icon: Briefcase },
-      { href: '/admin/finance/dashboard', label: 'Expenses Dashboard', icon: PieChart },
-      { href: '/admin/finance/expenses', label: 'Expenses', icon: Receipt },
-      { href: '/admin/finance/accounts', label: 'Billing Accounts', icon: Wallet },
-    ],
-  },
-  {
-    label: 'Settings',
-    items: [
-      { href: '/admin/company', label: 'Company Profile', icon: Building2 },
-      { href: '/admin/socials', label: 'Social Links', icon: Share2 },
-      { href: '/admin/users', label: 'Access Management', icon: Users },
-    ],
-  },
-]
+import { NAV_GROUPS, visibleGroups } from './nav'
 
 export default function Sidebar({ userName, userEmail, role = 'admin' }: { userName: string; userEmail: string; role?: string }) {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
+  const [isMac, setIsMac] = useState(true)
 
   useEffect(() => {
     setCollapsed(localStorage.getItem('marrelay_admin_sidebar') === 'collapsed')
+    setIsMac(/Mac|iPhone|iPad/.test(navigator.platform))
   }, [])
 
   function toggle() {
@@ -80,6 +30,9 @@ export default function Sidebar({ userName, userEmail, role = 'admin' }: { userN
     router.push('/admin/login')
     router.refresh()
   }
+
+  const allHrefs = NAV_GROUPS.flatMap((gr) => gr.items.map((i) => i.href))
+  const groups = visibleGroups(role)
 
   return (
     <aside className={`ad-side ${collapsed ? 'collapsed' : ''}`}>
@@ -97,29 +50,20 @@ export default function Sidebar({ userName, userEmail, role = 'admin' }: { userN
         </button>
       </div>
 
+      <div className="ad-side-search">
+        <button type="button" className="ad-search-trigger" onClick={() => window.dispatchEvent(new Event('admin:palette'))}
+          title="Search pages and actions">
+          <Search size={15} />
+          {!collapsed && <><span>Find anything…</span><kbd>{isMac ? '⌘' : 'Ctrl'} K</kbd></>}
+        </button>
+      </div>
+
       <nav className="ad-nav">
         <NotificationBell collapsed={collapsed} />
-        {GROUPS.map((rawGroup) => {
-          const isLeads = (h: string) => h.startsWith('/admin/leads')
-          const isFinance = (h: string) => h.startsWith('/admin/finance')
-          let items = rawGroup.items
-          if (role === 'admin') {
-            // sees everything
-          } else if (role === 'manager') {
-            items = items.filter((i) => i.href === '/admin' || isLeads(i.href) || isFinance(i.href))
-          } else if (role === 'leads_view' || role === 'leads_edit') {
-            items = items.filter((i) => i.href === '/admin' || isLeads(i.href))
-          } else {
-            // editor / viewer: everything except Access Management and Finance
-            items = items.filter((i) => i.href !== '/admin/users' && !isFinance(i.href))
-          }
-          const g = { ...rawGroup, items }
-          if (!g.items.length) return null
-          return (
+        {groups.map((g) => (
           <div key={g.label} className="ad-nav-group">
             <div className="ad-nav-group-label">{g.label}</div>
-            {g.items.map(({ href, label, icon: Icon }) => {
-              const allHrefs = GROUPS.flatMap((gr) => gr.items.map((i) => i.href))
+            {g.items.filter((i) => i.href !== '/admin/account').map(({ href, label, icon: Icon }) => {
               const active = href === '/admin'
                 ? pathname === '/admin'
                 : pathname === href ||
@@ -134,13 +78,12 @@ export default function Sidebar({ userName, userEmail, role = 'admin' }: { userN
               )
             })}
           </div>
-          )
-        })}
+        ))}
       </nav>
 
       <div className="ad-side-foot">
         <Link href="/admin/account" className={`ad-nav-item${pathname === '/admin/account' ? ' active' : ''}`} title="My account">
-          <UserCog />
+          <span className="ad-avatar" aria-hidden="true">{(userName || '?').trim().charAt(0).toUpperCase()}</span>
           {!collapsed && 'My Account'}
         </Link>
         <a href="/" target="_blank" className="ad-nav-item" title="View site">

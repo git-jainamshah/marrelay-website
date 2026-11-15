@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { TrendCard, AreaChart, HBarChart, ShareBar, Donut, Panel } from '@/components/admin/charts'
 import { fmtDateTime, fmtRelative } from '@/lib/admin/dates'
 import { isProduction, envLabel, SITE_URL } from '@/lib/env'
+import { QUICK_ACTIONS } from '@/components/admin/nav'
+import { ArrowRight } from 'lucide-react'
 
 /** Host of the site this admin panel manages, e.g. "qa.marrelay.com". */
 const SITE_HOST = SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')
@@ -100,7 +102,10 @@ export default function DashboardView({ firstName }: { firstName: string }) {
             </p>
           )}
         </div>
-        <Link href="/admin/leads" className="ad-btn">View all leads</Link>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button type="button" className="ad-btn-ghost" onClick={() => window.dispatchEvent(new Event('admin:palette'))}>Find anything <kbd className="ad-kbd">⌘K</kbd></button>
+          <Link href="/admin/leads" className="ad-btn">View all leads</Link>
+        </div>
       </div>
 
       {/* Needs attention */}
@@ -110,6 +115,20 @@ export default function DashboardView({ firstName }: { firstName: string }) {
           <span className="ad-mut">Worth a follow-up before they go cold.</span>
         </Link>
       )}
+
+      {/* Quick actions: the handful of things people open the admin to do */}
+      <div className="ad-quick">
+        {QUICK_ACTIONS.map((a) => {
+          const Icon = a.icon
+          return (
+            <Link key={a.href} href={a.href} className="ad-quick-item">
+              <span className="ic"><Icon size={16} /></span>
+              <span className="tx"><b>{a.label}</b><small>{a.hint}</small></span>
+              <ArrowRight size={14} className="go" />
+            </Link>
+          )
+        })}
+      </div>
 
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
