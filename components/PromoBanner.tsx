@@ -74,6 +74,7 @@ export default function PromoBanner() {
       return
     }
     setBusy(true)
+    funnel.snapshot((e.target as HTMLFormElement) || null)
     funnel.submit()
     try {
       const res = await fetch('/api/leads', {

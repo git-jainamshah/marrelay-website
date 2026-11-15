@@ -45,6 +45,12 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
   useEffect(() => {
     trackFormView({ formId: 'home-lead-form', formType: 'home', location: 'home' })
     funnel.view()
+    // Capture how far they got even if they close the tab or switch away.
+    const flush = () => funnel.snapshot(document.getElementById('home-lead-form') as HTMLFormElement | null)
+    const onHide = () => { if (document.visibilityState === 'hidden') flush() }
+    window.addEventListener('pagehide', flush)
+    document.addEventListener('visibilitychange', onHide)
+    return () => { flush(); window.removeEventListener('pagehide', flush); document.removeEventListener('visibilitychange', onHide) }
   }, [funnel])
   const onFirstInteract = () => {
     if (startedRef.current) return
@@ -85,6 +91,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
     }
     setSending(true)
     setSubmitError('')
+    funnel.snapshot(form)
     funnel.submit()
     try {
       const res = await fetch('/api/leads', {

@@ -48,6 +48,26 @@ export function createFormTracker(formId: string, formType: string) {
     submit: () => track('submit'),
     success: () => track('success'),
     /**
+     * Read the whole form and report every field that now has a value.
+     * Belt and braces: blur events can be missed (autofill, a submit that
+     * steals focus, a visitor closing the tab), and abandonment data is the
+     * entire point of the funnel, so we also snapshot on the way out.
+     */
+    snapshot: (formEl: HTMLFormElement | null) => {
+      if (!formEl) return
+      try {
+        const els = formEl.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input[name], textarea[name], select[name]')
+        els.forEach((el) => {
+          const input = el as HTMLInputElement
+          const name = input.name === 'service' ? 'services' : input.name
+          if (!name) return
+          const filled = input.type === 'checkbox' || input.type === 'radio' ? input.checked : !!(input.value && input.value.trim())
+          if (filled) once(`f:${name}`, () => track('field', name))
+        })
+      } catch { /* never break a form */ }
+    },
+
+    /**
      * Attach to a form element to capture field completion without touching
      * every input: onBlurCapture for text fields, onChangeCapture for choices.
      */
