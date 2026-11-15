@@ -167,6 +167,26 @@ async function migrateAndSeed() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`)
   await run(`CREATE INDEX IF NOT EXISTS login_events_created_idx ON login_events (created_at DESC)`)
+  // First-party page views. No cookies: ids live in the visitor's own browser
+  // storage. Feeds the Site Analytics dashboard. Additive.
+  await run(`
+  CREATE TABLE IF NOT EXISTS page_views (
+    id SERIAL PRIMARY KEY,
+    visitor_id TEXT,
+    session_id TEXT,
+    path TEXT NOT NULL,
+    title TEXT,
+    referrer TEXT,
+    channel TEXT,
+    source TEXT,
+    medium TEXT,
+    campaign TEXT,
+    device TEXT,
+    country TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`)
+  await run(`CREATE INDEX IF NOT EXISTS page_views_created_idx ON page_views (created_at DESC)`)
+  await run(`CREATE INDEX IF NOT EXISTS page_views_session_idx ON page_views (session_id)`)
   await run(`
   CREATE TABLE IF NOT EXISTS leads_offline (
     id SERIAL PRIMARY KEY,

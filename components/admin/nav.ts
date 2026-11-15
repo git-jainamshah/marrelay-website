@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Image as ImageIcon, HardDrive, BarChart3, DollarSign,
   Megaphone, Users, Inbox, Building2, Share2, ScrollText,
   LineChart, PhoneCall, Presentation, Wallet, Receipt, PieChart, TrendingUp,
-  FileText, Briefcase, Workflow, UserCog, History,
+  FileText, Briefcase, Workflow, UserCog, History, Activity,
 } from 'lucide-react'
 
 export type NavItem = {
@@ -41,7 +41,8 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: '/admin/leads/marketing', label: 'Lead Marketing', icon: Megaphone, hint: 'Campaign and channel attribution', keywords: 'utm campaign' },
       { href: '/admin/leads/offline', label: 'Offline Leads', icon: PhoneCall, hint: 'Add a lead from a call, referral or event', keywords: 'manual phone referral add lead' },
       { href: '/admin/leads/pitches', label: 'Pitches', icon: Presentation, hint: 'Proposals and pitches in flight', keywords: 'proposal deck' },
-      { href: '/admin/analytics', label: 'Analytics & SEO', icon: LineChart, hint: 'Tracking scripts and tag managers', keywords: 'gtm ga4 scripts tags' },
+      { href: '/admin/analytics/site', label: 'Site Analytics', icon: Activity, hint: 'Users, sessions and channels, measured by the site itself', keywords: 'traffic visitors pageviews ga4 analytics' },
+      { href: '/admin/analytics', label: 'Tracking & SEO', icon: LineChart, hint: 'Tracking scripts and tag managers', keywords: 'gtm ga4 scripts tags' },
     ],
   },
   {
