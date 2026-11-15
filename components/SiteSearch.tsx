@@ -89,52 +89,76 @@ export default function SiteSearch({ variant = 'icon' }: { variant?: 'icon' | 'd
   useEffect(() => { setPortalEl(document.querySelector('.v3') || document.body) }, [])
 
   const overlay = open && (
-        <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Site search" onClick={close}>
-          <div className="search-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="search-input-row">
-              <SearchIcon />
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Search pages, services, case studies, guides…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={onInputKey}
-                aria-label="Search query"
-              />
-              <button type="button" className="search-esc" onClick={close} aria-label="Close">ESC</button>
-            </div>
-
-            <div className="search-results">
-              {!query.trim() && <div className="search-hint">POPULAR</div>}
-              {query.trim() && results.length > 0 && <div className="search-hint">RESULTS</div>}
-              {query.trim() && results.length === 0 && (
-                <div className="search-empty">No matches for “{query}”. Try “web”, “analytics”, “CAD”, or “pricing”.</div>
-              )}
-              {list.map((d, i) => (
-                <button
-                  key={d.url}
-                  type="button"
-                  className={`search-item${i === active ? ' active' : ''}`}
-                  onMouseEnter={() => setActive(i)}
-                  onClick={() => go(d.url, i)}
-                >
-                  <span className="search-item-main">
-                    <b>{d.title}</b>
-                    <small>{shortDesc(d.description)}</small>
-                  </span>
-                  <span className="search-item-sec">{d.section}</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="search-foot">
-              <span>↑↓ navigate</span>
-              <span>↵ open</span>
-              <span>esc close</span>
-            </div>
+    <>
+      <div className="search-scrim" aria-hidden="true" onClick={close} />
+      <div className="search-sheet" role="dialog" aria-modal="true" aria-label="Site search">
+        <div className="search-bar">
+          <div className="search-bar-in">
+            <SearchIcon size={17} />
+            <input
+              ref={inputRef}
+              type="search"
+              enterKeyHint="search"
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="How can Marrelay help you?"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={onInputKey}
+              aria-label="Search the site"
+            />
+            {query.trim() && (
+              <button
+                type="button"
+                className="search-clear"
+                onClick={() => { setQuery(''); inputRef.current?.focus() }}
+                aria-label="Clear search"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+                </svg>
+              </button>
+            )}
+            <span className="search-div" aria-hidden="true" />
+            <button type="button" className="search-close" onClick={close}>Esc</button>
           </div>
         </div>
+
+        <div className="search-body">
+          <div className="search-body-in">
+            {!query.trim() && (
+              <div className="search-pop">
+                <span className="lbl">POPULAR</span>
+                {QUICK.map((t) => {
+                  const d = SEARCH_INDEX.find((x) => x.title === t)
+                  return d ? (
+                    <button key={t} type="button" className="chip" onClick={() => go(d.url, 0)}>{t}</button>
+                  ) : null
+                })}
+              </div>
+            )}
+            {query.trim() && results.length === 0 && (
+              <div className="search-empty">No matches for &ldquo;{query}&rdquo;. Try &ldquo;web&rdquo;, &ldquo;analytics&rdquo;, &ldquo;CAD&rdquo;, or &ldquo;pricing&rdquo;.</div>
+            )}
+            {query.trim() && list.map((d, i) => (
+              <a
+                key={d.url}
+                className={`search-row${i === active ? ' on' : ''}`}
+                onMouseEnter={() => setActive(i)}
+                onClick={() => go(d.url, i)}
+              >
+                <svg className="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
+                </svg>
+                <span className="tx"><b>{d.title}</b><span className="muted"> {shortDesc(d.description)}</span></span>
+                <span className="tag">{d.section}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   )
 
   return (
