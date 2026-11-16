@@ -93,12 +93,22 @@ export function isValidPhone(digits: string, code: string): boolean {
   return n >= c.min && n <= c.max
 }
 
-/** What the lead record stores: "+1 4165550123". */
+/** What the lead record stores, in E.164: "+14165550123". */
 export function toStoredPhone(digits: string, code: string): string {
   const c = countryByCode(code)
   const d = digitsOf(digits)
   if (!d) return ''
-  return `${c.dial === '+' ? '+' : c.dial} ${d}`.trim()
+  return `+${digitsOf(c.dial)}${d}`
+}
+
+/**
+ * Any stored phone written as E.164: "+14165550123". Leads saved before this
+ * existed hold all sorts of formatting, so it works from the digits rather
+ * than trusting the shape.
+ */
+export function toE164(v: unknown): string {
+  const d = digitsOf(v as string)
+  return d ? `+${d}` : ''
 }
 
 /** Tidy a value for display: no runs of whitespace, no stray ends. */

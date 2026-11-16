@@ -9,7 +9,7 @@
  */
 import { LeadForAlert } from '@/lib/lead-alerts'
 import { displayHost } from '@/lib/env'
-import { tidy, tidyMultiline } from '@/lib/form-validate'
+import { tidy, tidyMultiline, toE164 } from '@/lib/form-validate'
 
 export type EmailTemplateCfg = {
   subject: string
@@ -117,7 +117,7 @@ export function templateVars(lead: LeadForAlert & { budget?: string; timeline?: 
     company,
     company_paren: company ? ` (${company})` : '',
     email: tidy(lead.email),
-    phone: tidy(lead.phone),
+    phone: toE164(lead.phone),
     form,
     form_lower: form.toLowerCase(),
     budget: tidy(lead.budget),
@@ -250,7 +250,7 @@ export function renderLeadEmail(opts: {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin-top:20px;border-top:1px solid ${RULE};border-collapse:collapse">
             ${row('Name', esc(lead.name))}
             ${row('Email', lead.email ? link(`mailto:${lead.email}`, lead.email) : '')}
-            ${row('Phone', lead.phone ? link(`tel:${lead.phone}`, lead.phone) : '')}
+            ${toE164(lead.phone) ? row('Phone', link(`tel:${toE164(lead.phone)}`, toE164(lead.phone))) : ''}
             ${row('Page', esc(lead.sourcePage))}
             ${row('Source', esc(where))}
             ${row('Campaign', esc(clean(lead.campaign)))}
