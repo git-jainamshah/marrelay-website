@@ -860,3 +860,7 @@
 .adm .ad-fn-step .dp { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 12px; color: var(--ink-soft); padding: 7px 0 2px; }
 .adm .ad-fn-step .dp .x { color: var(--brand-ink); font-weight: 600; }
 .adm .ad-fn-step .dp .er { color: #8a6116; }
+
+/* amber alert state, for "not connected yet" notices */
+.adm .ad-alert.warn { background: #FDF6E7; border-color: #E7D3A3; color: #6b4e12; }
+.adm .ad-input.invalid { border-color: var(--brand); }

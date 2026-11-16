@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Image as ImageIcon, HardDrive, BarChart3, DollarSign,
   Megaphone, Users, Inbox, Building2, Share2, ScrollText,
   LineChart, PhoneCall, Presentation, Wallet, Receipt, PieChart, TrendingUp,
-  FileText, Briefcase, Workflow, UserCog, History, Activity, Filter,
+  FileText, Briefcase, Workflow, UserCog, History, Activity, Filter, BellRing,
 } from 'lucide-react'
 
 export type NavItem = {
@@ -64,6 +64,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: '/admin/company', label: 'Company Profile', icon: Building2, hint: 'Name, address, contact details, logos' },
       { href: '/admin/socials', label: 'Social Links', icon: Share2, hint: 'Which platforms show on the site', keywords: 'instagram linkedin' },
+      { href: '/admin/notifications', label: 'Lead Alerts', icon: BellRing, hint: 'Email the team when a lead arrives', keywords: 'email notification alert outlook microsoft 365 new lead' },
       { href: '/admin/users', label: 'Access Management', icon: Users, hint: 'Who can sign in and what they can do', keywords: 'team roles permissions invite' },
       { href: '/admin/users/activity', label: 'Sign-in Activity', icon: History, hint: 'Who signed in and out, and when (admins only)', keywords: 'login history audit security' },
       { href: '/admin/account', label: 'My Account', icon: UserCog, hint: 'Your name and password', keywords: 'profile password' },

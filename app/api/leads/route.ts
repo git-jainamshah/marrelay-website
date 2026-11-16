@@ -4,6 +4,8 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 import { budgetToRange } from '@/lib/admin/leads'
+import { notifyNewLead } from '@/lib/lead-alerts'
+import { SITE_URL } from '@/lib/env'
 
 // naive rate limit: 20 submissions / hour / IP
 const hits = new Map<string, { n: number; ts: number }>()
@@ -128,6 +130,33 @@ export async function POST(req: NextRequest) {
       )
     } catch (e) {
       console.error('marketing snapshot failed (lead saved)', e)
+    }
+
+    // Tell the team a lead landed. Awaited so the send completes before the
+    // serverless function ends, but it can never fail the submission: a
+    // problem here is logged, and the lead is already saved either way.
+    try {
+      const t = body.traffic ?? {}
+      const alert = await notifyNewLead(
+        {
+          id: leadId,
+          publicId,
+          name, email, phone,
+          company: String(body.company ?? '').trim(),
+          message: String(body.message ?? '').trim(),
+          services: Array.isArray(body.services) ? body.services.map(String) : [],
+          formType: String(body.formType ?? ''),
+          sourcePage: String(body.sourcePage ?? ''),
+          channel: t.sessionChannelGroup || t.firstChannelGroup || '',
+          source: t.sessionSource || t.firstSource || '',
+          medium: t.sessionMedium || t.firstMedium || '',
+          campaign: t.sessionCampaign || t.firstCampaign || '',
+        },
+        SITE_URL
+      )
+      if (!alert.sent) console.warn('lead alert not sent:', alert.reason)
+    } catch (e) {
+      console.error('lead alert failed (lead saved)', e)
     }
 
     // Return the DB-generated public lead id so the client can stamp it onto
