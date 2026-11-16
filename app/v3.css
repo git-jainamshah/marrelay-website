@@ -601,7 +601,7 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .lead-form .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
 .v3 .lead-form .form-row.split-contact { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
 /* a row whose field count changes as the form is filled in */
-.v3 .lead-form .form-row.fluid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.v3 .lead-form .form-row.fluid { grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); }
 .v3 .lead-form .field > label .opt { color: var(--v-soft); }
 @media (max-width: 620px) {
   .v3 .lead-form .form-row,
@@ -1043,34 +1043,34 @@ body:has(> .v3) { background: #F2F1EC; }
 /* the number itself takes everything that is left */
 .v3 .lead-form .field .phone-field .phone-input { flex: 1 1 auto; width: 100%; min-width: 0; }
 
-.phone-field .dial-pop {
+.sel-pop {
   position: absolute; z-index: 40; top: calc(100% + 6px); left: 0;
-  width: min(330px, 100%); background: #fff;
+  width: max(100%, min(290px, 86vw)); max-width: 86vw; background: #fff;
   border: 1px solid var(--v-rule, #D8D6CE); box-shadow: 0 18px 44px rgba(14, 14, 13, .14);
 }
-.phone-field .dial-search {
+.sel-search {
   width: 100%; font-family: var(--v-sans, inherit); font-size: 15px; color: var(--v-ink, #0E0E0D);
   background: transparent; border: 0; border-bottom: 1px solid var(--v-rule, #D8D6CE);
   padding: 12px 14px; outline: none; border-radius: 0;
 }
 /* the picker lives inside a .field, so keep the form's input styling off it */
-.v3 .lead-form .field .phone-field input.dial-search {
+.v3 .lead-form .field input.sel-search {
   font-size: 15px; border-bottom: 1px solid var(--v-rule, #D8D6CE);
   background-image: none; padding: 12px 14px; box-shadow: none;
 }
-.v3 .lead-form .field .phone-field input.dial-search:focus {
+.v3 .lead-form .field input.sel-search:focus {
   border-bottom-color: var(--v-rule, #D8D6CE); box-shadow: none;
 }
-.phone-field .dial-list { max-height: 264px; overflow-y: auto; margin: 0; padding: 4px 0; list-style: none; background: #fff; }
-.phone-field .dial-opt {
+.sel-list { max-height: 264px; overflow-y: auto; margin: 0; padding: 4px 0; list-style: none; background: #fff; }
+.sel-opt {
   display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer;
   font-family: var(--v-sans, inherit); font-size: 15px; color: var(--v-ink, #0E0E0D);
 }
-.phone-field .dial-opt .nm { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.phone-field .dial-opt .dl { flex: 0 0 auto; color: var(--v-mut-2, #6A6964); font-variant-numeric: tabular-nums; }
-.phone-field .dial-opt.active { background: rgba(14, 14, 13, .06); }
-.phone-field .dial-opt.current { font-weight: 500; }
-.phone-field .dial-empty { padding: 14px; font-family: var(--v-sans, inherit); font-size: 14px; color: var(--v-mut-2, #6A6964); }
+.sel-opt .nm { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sel-opt .dl { flex: 0 0 auto; color: var(--v-mut-2, #6A6964); font-variant-numeric: tabular-nums; }
+.sel-opt.active { background: rgba(14, 14, 13, .06); }
+.sel-opt.current { font-weight: 500; }
+.sel-empty { padding: 14px; font-family: var(--v-sans, inherit); font-size: 14px; color: var(--v-mut-2, #6A6964); }
 
 /* ---- live validation: a red line under a field being fixed, a tick when it is right ---- */
 .v3 .lead-form .field.ok input[type=text],
@@ -1092,9 +1092,9 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .lead-form .field.ok .phone-field .dial-btn { border-bottom-color: #1E7F4A; }
 .v3 .lead-form .field.invalid .phone-field .dial-btn { border-bottom-color: var(--v-red); }
 /* the search box lives inside a .field, so keep the form's input styling off it */
-.v3 .lead-form .field.ok .phone-field .dial-pop input.dial-search,
-.v3 .lead-form .field.invalid .phone-field .dial-pop input.dial-search,
-.v3 .lead-form .field .phone-field .dial-pop input.dial-search {
+.v3 .lead-form .field.ok .sel-pop input.sel-search,
+.v3 .lead-form .field.invalid .sel-pop input.sel-search,
+.v3 .lead-form .field .sel-pop input.sel-search {
   font-size: 15px; background: transparent; background-image: none; padding: 12px 14px;
   box-shadow: none; border: 0; border-bottom: 1px solid var(--v-rule, #D8D6CE);
 }
@@ -1264,3 +1264,29 @@ body:has(> .v3) { background: #F2F1EC; }
 /* promo pop-up: the two name inputs share a line like the site forms do */
 .promo-names { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 @media (max-width: 460px) { .promo-names { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- the site's dropdown: the phone picker's popover, for any list ---- */
+.v3 .mselect { position: relative; }
+.v3 .lead-form .field .mselect .sel-btn {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-align: left;
+  font-family: var(--v-sans); font-size: 17px; color: var(--v-ink);
+  background: transparent; border: 0; border-bottom: 1px solid var(--v-ink); border-radius: 0;
+  padding: 10px 0; cursor: pointer; line-height: 1.35;
+}
+.v3 .lead-form .field .mselect .sel-btn.empty .val { color: var(--v-soft); }
+.v3 .lead-form .field .mselect .sel-btn .val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.v3 .lead-form .field .mselect .sel-btn .caret { flex: none; color: var(--v-mut-2); transition: transform .18s ease; }
+.v3 .mselect.open .sel-btn .caret { transform: rotate(180deg); }
+.v3 .lead-form .field .mselect .sel-btn:hover .caret { color: var(--v-ink); }
+.v3 .lead-form .field .mselect .sel-btn:focus-visible { border-bottom-color: var(--v-red); box-shadow: 0 1px 0 0 var(--v-red); outline: none; }
+.v3 .lead-form .field .mselect .sel-btn:disabled { color: var(--v-soft); cursor: not-allowed; }
+.v3 .lead-form .field.invalid .mselect .sel-btn { border-bottom-color: var(--v-red); }
+.v3 .lead-form .field.ok .mselect .sel-btn { border-bottom-color: #1E7F4A; }
+
+/* a list that would hang off the bottom of the page opens upward instead */
+.sel-pop.up { top: auto; bottom: calc(100% + 6px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .v3 .lead-form .field .mselect .sel-btn .caret { transition: none; }
+}

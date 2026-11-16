@@ -8,6 +8,7 @@ import {
 } from '@/analytics/events'
 import { COUNTRIES, PROVINCES } from '@/lib/locations'
 import PhoneField from '@/components/forms/PhoneField'
+import SelectField from '@/components/forms/SelectField'
 import {
   DEFAULT_COUNTRY, isValidEmail, isValidPhone, normalizeEmail, toStoredPhone, tidy, tidyMultiline,
   checkName, checkEmail, checkPhone, checkMessage, type FieldState,
@@ -315,40 +316,54 @@ export default function ContactLeadForm() {
             <label htmlFor="c-country">
               Company location <span className="opt">(optional)</span>
             </label>
-            <select id="c-country" name="companyCountry" value={companyCountry}
-              onChange={(e) => { setCompanyCountry(e.target.value); setCompanyProvince('') }}>
-              <option value="">Select country…</option>
-              {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <SelectField
+              id="c-country"
+              name="companyCountry"
+              value={companyCountry}
+              onChange={(v) => { setCompanyCountry(v); setCompanyProvince('') }}
+              options={COUNTRIES.map((c) => ({ value: c, label: c }))}
+              placeholder="Choose a country"
+              ariaLabel="Country"
+            />
           </div>
           {companyCountry && (
             <div className="field">
               <label htmlFor="c-province">
-                {PROVINCES[companyCountry] ? 'Province / State' : 'Province / Region'}
+                {PROVINCES[companyCountry] ? 'Province or state' : 'Region'}
               </label>
               {PROVINCES[companyCountry] ? (
-                <select id="c-province" name="companyProvince" value={companyProvince}
-                  onChange={(e) => setCompanyProvince(e.target.value)}>
-                  <option value="">Select…</option>
-                  {PROVINCES[companyCountry].map((p) => <option key={p} value={p}>{p}</option>)}
-                </select>
+                <SelectField
+                  id="c-province"
+                  name="companyProvince"
+                  value={companyProvince}
+                  onChange={setCompanyProvince}
+                  options={PROVINCES[companyCountry].map((p) => ({ value: p, label: p }))}
+                  placeholder="Choose one"
+                  ariaLabel="Province or state"
+                />
               ) : (
-                <input type="text" id="c-province" name="companyProvince" placeholder="Province or region"
+                <input type="text" id="c-province" name="companyProvince" placeholder="Region"
                   value={companyProvince} onChange={(e) => setCompanyProvince(e.target.value)} />
               )}
             </div>
           )}
           <div className="field">
             <label htmlFor="c-remote">
-              Remote team? <span className="opt">(optional)</span>
+              How the team works <span className="opt">(optional)</span>
             </label>
-            <select id="c-remote" name="companyRemote" value={companyRemote}
-              onChange={(e) => setCompanyRemote(e.target.value)}>
-              <option value="">Select…</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-              <option value="Hybrid">Hybrid</option>
-            </select>
+            <SelectField
+              id="c-remote"
+              name="companyRemote"
+              value={companyRemote}
+              onChange={setCompanyRemote}
+              options={[
+                { value: 'Yes', label: 'Fully remote' },
+                { value: 'No', label: 'Based in an office' },
+                { value: 'Hybrid', label: 'Hybrid' },
+              ]}
+              placeholder="Choose one"
+              ariaLabel="How the team works"
+            />
           </div>
         </div>
 
@@ -436,16 +451,23 @@ export default function ContactLeadForm() {
 
         <div className="field">
           <label htmlFor="c-referral">How did you hear about us?</label>
-          <select id="c-referral" name="referral" value={referral} onChange={(e) => setReferral(e.target.value)}>
-            <option value="">Select one…</option>
-            <option value="referral">A friend / referral</option>
-            <option value="google">Google search</option>
-            <option value="instagram">Instagram</option>
-            <option value="linkedin">LinkedIn</option>
-            <option value="twitter">X / Twitter</option>
-            <option value="event">An event or meetup</option>
-            <option value="other">Other</option>
-          </select>
+          <SelectField
+            id="c-referral"
+            name="referral"
+            value={referral}
+            onChange={setReferral}
+            options={[
+              { value: 'referral', label: 'Someone referred us' },
+              { value: 'google', label: 'Google search' },
+              { value: 'instagram', label: 'Instagram' },
+              { value: 'linkedin', label: 'LinkedIn' },
+              { value: 'twitter', label: 'X, formerly Twitter' },
+              { value: 'event', label: 'An event or meetup' },
+              { value: 'other', label: 'Somewhere else' },
+            ]}
+            placeholder="Choose one"
+            ariaLabel="How you heard about us"
+          />
           {referral === 'referral' && (
             <div style={{ marginTop: 10 }}>
               <label htmlFor="c-referral-detail">Who referred you?</label>

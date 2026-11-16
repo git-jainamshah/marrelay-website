@@ -118,24 +118,24 @@ export default function PhoneField({
       </div>
 
       {open && (
-        <div className="dial-pop">
+        <div className="sel-pop">
           <input
             ref={searchRef}
             type="text"
-            className="dial-search"
+            className="sel-search"
             placeholder="Search country or code"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onSearchKey}
             aria-label="Search for a country"
           />
-          <ul className="dial-list" role="listbox" ref={listRef}>
+          <ul className="sel-list" role="listbox" ref={listRef}>
             {matches.map((x, i) => (
               <li
                 key={x.code}
                 role="option"
                 aria-selected={x.code === c.code}
-                className={`dial-opt${i === active ? ' active' : ''}${x.code === c.code ? ' current' : ''}`}
+                className={`sel-opt${i === active ? ' active' : ''}${x.code === c.code ? ' current' : ''}`}
                 onMouseEnter={() => setActive(i)}
                 onClick={() => pick(x)}
               >
@@ -144,7 +144,7 @@ export default function PhoneField({
                 <span className="dl">{x.dial}</span>
               </li>
             ))}
-            {matches.length === 0 && <li className="dial-empty">No country matches that.</li>}
+            {matches.length === 0 && <li className="sel-empty">No country matches that.</li>}
           </ul>
         </div>
       )}
