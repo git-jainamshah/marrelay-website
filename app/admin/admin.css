@@ -915,3 +915,26 @@
 }
 .adm .ad-macro-chips button:hover { border-color: var(--ink); color: var(--ink); }
 .adm .ad-block-head p code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--paper-2); padding: 1px 5px; font-size: 11.5px; }
+
+/* ---- Lead Alerts / split editor: usable below full desktop ----
+   The form and its live preview only sit side by side when there is room for
+   both; below that the preview stacks above the form and stops sticking, so
+   the two can never overlap. */
+@media (max-width: 1240px) {
+  .adm .ad-split { grid-template-columns: 1fr; }
+  .adm .ad-split-preview { order: -1; position: static; }
+  .adm .ad-email-prev { height: 420px; }
+}
+@media (max-width: 760px) {
+  .adm .ad-email-prev { height: 340px; }
+  .adm .ad-prev-head { flex-wrap: wrap; }
+  .adm .ad-macro-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 3px; -webkit-overflow-scrolling: touch; }
+  .adm .ad-macro-chips button { flex: 0 0 auto; }
+  .adm .ad-block-head { flex-direction: column; align-items: flex-start; }
+  .adm .ad-page-head { flex-direction: column; align-items: flex-start; }
+  .adm .ad-seg { flex-wrap: wrap; }
+}
+/* grid children must be allowed to shrink, or long values force overflow */
+.adm .ad-split > * { min-width: 0; }
+.adm .ad-split-form { min-width: 0; }
+.adm .ad-email-prev { max-width: 100%; }

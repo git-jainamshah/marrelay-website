@@ -19,9 +19,9 @@ type Cfg = { enabled: boolean; from: string; to: string[]; cc: string[]; include
 type Tpl = { subject: string; intro: string; footerNote: string; buttonLabel: string; showScore: boolean }
 const TPL_DEFAULTS: Tpl = {
   subject: 'New lead: {{name}}{{company_paren}} · {{form}}',
-  intro: '{{name}} just got in touch through the {{form_lower}}. Reply to this email and it goes straight to them.',
-  footerNote: 'Sent automatically by the Marrelay website when a new lead arrives.',
-  buttonLabel: 'Open this lead in the admin',
+  intro: '',
+  footerNote: 'Internal alert · Follow up from the lead dashboard.',
+  buttonLabel: 'View lead',
   showScore: true,
 }
 
@@ -171,7 +171,7 @@ export default function NotificationsPage() {
                     {preview && <p className="ad-soft" style={{ fontSize: 12, margin: '6px 0 0' }}>Appears as: <b>{preview.subject}</b></p>}
 
                     <div style={{ marginTop: 16 }}>
-                      <label className="ad-label">Opening line</label>
+                      <label className="ad-label">Opening line (optional)</label>
                       <MacroInput multiline rows={3} value={tpl.intro} onChange={(v) => setTpl({ ...tpl, intro: v })} />
                     </div>
                     <div style={{ marginTop: 16 }}>

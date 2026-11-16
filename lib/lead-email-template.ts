@@ -19,9 +19,9 @@ export type EmailTemplateCfg = {
 
 export const DEFAULT_EMAIL_TEMPLATE: EmailTemplateCfg = {
   subject: 'New lead: {{name}}{{company_paren}} · {{form}}',
-  intro: '{{name}} just got in touch through the {{form_lower}}. Reply to this email and it goes straight to them.',
-  footerNote: 'Sent automatically by the Marrelay website when a new lead arrives.',
-  buttonLabel: 'Open this lead in the admin',
+  intro: '',
+  footerNote: 'Internal alert · Follow up from the lead dashboard.',
+  buttonLabel: 'View lead',
   showScore: true,
 }
 
@@ -120,15 +120,22 @@ export function renderSubject(cfg: EmailTemplateCfg, lead: LeadForAlert & { budg
   return fill(cfg.subject || DEFAULT_EMAIL_TEMPLATE.subject, templateVars(lead))
 }
 
-/** Five dots, filled to the score. Works in every mail client (no images). */
-function scoreDots(score: number) {
+/** Five segments, filled to the score. No images, so every client shows it. */
+function scoreBars(score: number, accent: string) {
   let out = ''
   for (let i = 1; i <= 5; i++) {
-    const full = score >= i
-    const half = !full && score >= i - 0.5
-    out += `<span style="display:inline-block;width:11px;height:11px;border-radius:999px;margin-right:4px;background:${full ? '#D7262C' : half ? 'linear-gradient(90deg,#D7262C 50%,#D8D6CE 50%)' : '#D8D6CE'}"></span>`
+    const on = score >= i - 0.25
+    out += `<td width="16" style="width:16px;height:3px;line-height:3px;font-size:0;background:${on ? accent : '#E6E6E3'}">&nbsp;</td>`
+    if (i < 5) out += '<td width="3" style="width:3px;font-size:0;line-height:3px">&nbsp;</td>'
   }
-  return out
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>${out}</tr></table>`
+}
+
+/** When the lead arrived, in Eastern time, the way the design shows it. */
+function receivedAt(d = new Date()) {
+  const date = d.toLocaleDateString('en-US', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })
+  const time = d.toLocaleTimeString('en-US', { timeZone: 'America/Toronto', hour: 'numeric', minute: '2-digit' })
+  return `${date} · ${time}`
 }
 
 export function renderLeadEmail(opts: {
@@ -139,97 +146,117 @@ export function renderLeadEmail(opts: {
   env: 'production' | 'staging'
   envLabel?: string
   logoUrl: string
+  receivedLabel?: string
 }) {
   const { cfg, lead, adminUrl, siteUrl, env, logoUrl } = opts
   const vars = templateVars(lead)
   const sc = scoreLead(lead)
   const staging = env === 'staging'
+  const ACCENT = '#D7262C'
+  const INK = '#111111'
+  const MUT = '#6B6B68'
+  const RULE = '#EEEEEB'
 
-  const row = (label: string, value?: string, strong = false) =>
-    value ? `<tr>
-      <td style="padding:9px 16px 9px 0;color:#6A6964;font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;vertical-align:top;border-bottom:1px solid #E7E5DE">${esc(label)}</td>
-      <td style="padding:9px 0;font-size:${strong ? '15px' : '14px'};color:#0E0E0D;${strong ? 'font-weight:600;' : ''}border-bottom:1px solid #E7E5DE">${value}</td></tr>` : ''
+  const title = lead.company || lead.name || 'New enquiry'
+  const sub = lead.company && lead.name ? lead.name : ''
 
-  const link = (href: string, text: string) => `<a href="${esc(href)}" style="color:#0E0E0D;text-decoration:underline">${esc(text)}</a>`
-  const where = [lead.channel, lead.source, lead.medium].filter(Boolean).join(' / ')
+  /** One label/value row. Stacks under the label on a phone. */
+  const row = (label: string, value?: string, mono = false) => {
+    if (!value) return ''
+    return `<tr><td style="padding:0;border-bottom:1px solid ${RULE}">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="lb" width="112" valign="top" style="width:112px;padding:9px 10px 9px 0;font-size:12px;line-height:1.5;color:${MUT}">${esc(label)}</td>
+        <td class="vl" valign="top" style="padding:9px 0;font-size:14px;line-height:1.5;color:${INK}${mono ? ";font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.04em" : ''}">${value}</td>
+      </tr></table>
+    </td></tr>`
+  }
+  const link = (href: string, text: string) => `<a href="${esc(href)}" style="color:${INK};text-decoration:none">${esc(text)}</a>`
+  const where = [lead.channel, lead.source].filter(Boolean).join(' / ') || ''
 
   return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(renderSubject(cfg, lead))}</title></head>
-<body style="margin:0;padding:0;background:#F2F1EC;-webkit-font-smoothing:antialiased">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(vars.name)}${vars.company ? ` from ${esc(vars.company)}` : ''} · importance ${sc.score}/5 · ${esc(vars.budget || 'no budget given')}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F2F1EC;padding:28px 14px">
-<tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background:#FFFFFF;border:1px solid #D8D6CE">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
+<title>${esc(renderSubject(cfg, lead))}</title>
+<style>
+  @media only screen and (max-width:480px) {
+    .wrap { padding: 20px 0 24px !important; }
+    .card { border-left: 0 !important; border-right: 0 !important; }
+    .pad { padding-left: 20px !important; padding-right: 20px !important; }
+    .h1 { font-size: 22px !important; }
+    .lb { display: block !important; width: 100% !important; padding: 9px 0 0 0 !important; font-size: 11px !important; }
+    .vl { display: block !important; width: 100% !important; padding: 2px 0 9px 0 !important; }
+    .cta a { display: block !important; text-align: center !important; padding: 14px 20px !important; font-size: 14px !important; }
+    .foot td { display: block !important; width: 100% !important; text-align: center !important; }
+  }
+</style></head>
+<body style="margin:0;padding:0;background:#F4F4F2;-webkit-font-smoothing:antialiased">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(title)} · priority ${sc.score}/5 · ${esc(vars.budget || 'no budget given')}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F4F2">
+<tr><td align="center" class="wrap" style="padding:40px 16px">
+<table role="presentation" width="680" cellpadding="0" cellspacing="0" border="0" style="width:680px;max-width:680px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
 
-  ${staging ? `<tr><td style="background:#3F4C9B;color:#FFFFFF;padding:10px 24px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase">
-    ${esc(opts.envLabel || 'Staging')} environment · test lead, not a real enquiry</td></tr>` : ''}
+  ${staging ? `<tr><td align="center" style="padding:0 0 14px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8A6A00">
+    Test lead · ${esc(opts.envLabel || 'Development')} environment</td></tr>` : ''}
 
-  <!-- header -->
-  <tr><td style="background:#0E0E0D;padding:22px 24px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td><img src="${esc(logoUrl)}" width="30" height="30" alt="Marrelay" style="display:block;border:0"></td>
-      <td style="padding-left:11px;vertical-align:middle">
-        <div style="color:#F2F1EC;font-family:Helvetica,Arial,sans-serif;font-size:17px;font-weight:600;letter-spacing:-.01em">Marrelay</div>
-        <div style="color:#8B8A85;font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase">New lead</div>
-      </td>
-      <td align="right" style="color:#8B8A85;font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase">${esc(vars.form)}</td>
-    </tr></table>
-  </td></tr>
+  <tr><td class="card" style="background:#FFFFFF;border:1px solid #E6E6E3">
 
-  <!-- name + score -->
-  <tr><td style="padding:26px 24px 0;font-family:Helvetica,Arial,sans-serif">
-    <div style="font-size:26px;line-height:1.15;letter-spacing:-.02em;color:#0E0E0D;font-weight:600">${esc(vars.name)}</div>
-    ${vars.company ? `<div style="font-size:15px;color:#6A6964;margin-top:3px">${esc(vars.company)}</div>` : ''}
-    <p style="font-size:14px;line-height:1.6;color:#2B2B30;margin:14px 0 0">${esc(fill(cfg.intro || '', vars))}</p>
-  </td></tr>
-
-  ${cfg.showScore ? `<tr><td style="padding:18px 24px 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F2F1EC;border:1px solid #E7E5DE">
-      <tr><td style="padding:14px 16px;font-family:Helvetica,Arial,sans-serif">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          <td style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6A6964">Importance</td>
-          <td align="right" style="font-size:13px;color:#0E0E0D;font-weight:600">${sc.score} / 5 · ${esc(sc.label)}</td>
+    <!-- header -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="pad" style="padding:18px 32px;border-bottom:1px solid ${RULE}">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td valign="middle" style="width:30px"><img src="${esc(logoUrl)}" width="20" height="22" alt="Marrelay" style="display:block;border:0;width:20px;height:22px"></td>
+          <td valign="middle" style="padding-left:10px;font-size:14px;font-weight:600;letter-spacing:-.01em;color:${INK}">Marrelay</td>
+          <td valign="middle" align="right" style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:${MUT}">New lead</td>
         </tr></table>
-        <div style="margin-top:9px">${scoreDots(sc.score)}</div>
-        <div style="font-size:11.5px;color:#6A6964;margin-top:9px">${esc(sc.reasons.join(' · '))}</div>
+      </td></tr>
+
+      <!-- body -->
+      <tr><td class="pad" style="padding:28px 32px 32px">
+
+        <p style="margin:0 0 6px;font-size:12px;line-height:1.5;color:${MUT}">${esc(vars.form)} · ${esc(opts.receivedLabel || receivedAt())}</p>
+        <h1 class="h1" style="margin:0;font-size:26px;line-height:1.2;font-weight:600;letter-spacing:-.02em;color:${INK}">${esc(title)}</h1>
+        ${sub ? `<p style="margin:4px 0 0;font-size:14px;line-height:1.5;color:${MUT}">${esc(sub)}</p>` : ''}
+
+        ${cfg.showScore ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px"><tr>
+          <td valign="middle">${scoreBars(sc.score, ACCENT)}</td>
+          <td valign="middle" style="padding-left:12px;font-size:12px;line-height:1.5;color:#4A4A47">
+            <span style="color:${INK};font-weight:600">Priority ${sc.score}/5</span> · ${esc(sc.label)}</td>
+        </tr></table>
+        <p style="margin:8px 0 0;font-size:11px;line-height:1.5;color:${MUT}">${esc(sc.reasons.join(' · '))}</p>` : ''}
+
+        ${cfg.intro ? `<p style="margin:18px 0 0;font-size:14px;line-height:1.6;color:#4A4A47">${esc(fill(cfg.intro, vars))}</p>` : ''}
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px;border-top:1px solid ${RULE}">
+          ${row('Name', esc(lead.name))}
+          ${row('Email', lead.email ? link(`mailto:${lead.email}`, lead.email) : '')}
+          ${row('Phone', lead.phone ? link(`tel:${lead.phone}`, lead.phone) : '')}
+          ${row('Page', esc(lead.sourcePage))}
+          ${row('Source', esc(where))}
+          ${row('Campaign', esc(lead.campaign))}
+          ${row('Lead #', esc(vars.reference), true)}
+          ${row('Wants', esc((lead.services || []).join(', ')))}
+          ${row('Timeline', esc(vars.timeline))}
+          ${row('Budget', esc(vars.budget))}
+          ${lead.message ? `<tr><td style="padding:0;border-bottom:1px solid ${RULE}">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+              <td class="lb" width="112" valign="top" style="width:112px;padding:9px 10px 9px 0;font-size:12px;line-height:1.5;color:${MUT}">Message</td>
+              <td class="vl" valign="top" style="padding:9px 0;font-size:14px;line-height:1.5;color:#4A4A47;white-space:pre-wrap">${esc(lead.message)}</td>
+            </tr></table></td></tr>` : ''}
+        </table>
+
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="cta" style="margin-top:22px"><tr><td>
+          <a href="${esc(adminUrl)}" style="display:inline-block;background:${INK};color:#FFFFFF;font-size:13px;font-weight:600;text-decoration:none;padding:12px 22px;letter-spacing:.01em">${esc(cfg.buttonLabel || 'View lead')}</a>
+        </td></tr></table>
+
       </td></tr>
     </table>
-  </td></tr>` : ''}
-
-  <!-- details -->
-  <tr><td style="padding:20px 24px 0;font-family:Helvetica,Arial,sans-serif">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
-      ${row('Email', lead.email ? link(`mailto:${lead.email}`, lead.email) : '', true)}
-      ${row('Phone', lead.phone ? link(`tel:${lead.phone}`, lead.phone) : '', true)}
-      ${row('Budget', esc(vars.budget))}
-      ${row('Timeline', esc(vars.timeline))}
-      ${row('Wants', esc((lead.services || []).join(', ')))}
-      ${row('Page', esc(lead.sourcePage))}
-      ${row('Came from', esc(where))}
-      ${row('Campaign', esc(lead.campaign))}
-      ${row('Reference', esc(vars.reference))}
-    </table>
-  </td></tr>
-
-  ${lead.message ? `<tr><td style="padding:18px 24px 0;font-family:Helvetica,Arial,sans-serif">
-    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6A6964;margin-bottom:7px">Their message</div>
-    <div style="font-size:14px;line-height:1.6;color:#0E0E0D;white-space:pre-wrap;border-left:2px solid #D7262C;padding-left:13px">${esc(lead.message)}</div>
-  </td></tr>` : ''}
-
-  <!-- cta -->
-  <tr><td style="padding:24px;font-family:Helvetica,Arial,sans-serif">
-    <a href="${esc(adminUrl)}" style="display:inline-block;background:#D7262C;color:#FFFFFF;text-decoration:none;padding:13px 24px;border-radius:999px;font-size:14px;font-weight:600">${esc(cfg.buttonLabel || 'Open in the admin')}</a>
   </td></tr>
 
   <!-- footer -->
-  <tr><td style="background:#0E0E0D;padding:18px 24px;font-family:Helvetica,Arial,sans-serif">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="color:#8B8A85;font-size:11.5px;line-height:1.6">
-        ${esc(fill(cfg.footerNote || '', vars))}<br>
-        <a href="${esc(siteUrl)}" style="color:#F2F1EC;text-decoration:none">${esc(siteUrl.replace(/^https?:\/\//, ''))}</a>
-      </td>
-      <td align="right" style="color:#8B8A85;font-size:11px;letter-spacing:.08em;text-transform:uppercase">Toronto</td>
+  <tr><td style="padding:12px 2px 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="foot"><tr>
+      <td style="font-size:11px;line-height:1.6;color:${MUT}">${esc(fill(cfg.footerNote || '', vars))}</td>
+      <td align="right" style="font-size:11px;line-height:1.6;color:${MUT}">${esc(siteUrl.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</td>
     </tr></table>
   </td></tr>
 

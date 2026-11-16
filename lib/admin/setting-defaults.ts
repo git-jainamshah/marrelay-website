@@ -18,9 +18,9 @@ export const SETTING_DEFAULTS: Record<string, unknown> = {
   },
   lead_email_template: {
     subject: 'New lead: {{name}}{{company_paren}} · {{form}}',
-    intro: '{{name}} just got in touch through the {{form_lower}}. Reply to this email and it goes straight to them.',
-    footerNote: 'Sent automatically by the Marrelay website when a new lead arrives.',
-    buttonLabel: 'Open this lead in the admin',
+    intro: '',
+    footerNote: 'Internal alert · Follow up from the lead dashboard.',
+    buttonLabel: 'View lead',
     showScore: true,
   },
   storage: { limitBytes: 1024 * 1024 * 1024 },
