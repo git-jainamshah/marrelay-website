@@ -24,6 +24,7 @@ export const FORM_DEFS: FormDef[] = [
       { field: 'name', label: 'Name' },
       { field: 'email', label: 'Email' },
       { field: 'phone', label: 'Phone' },
+      { field: 'company', label: 'Company', optional: true },
       { field: 'consent', label: 'Consent ticked' },
     ],
   },

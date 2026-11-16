@@ -26,7 +26,7 @@ const SEEN_KEY = 'marrelay_promo_seen'
 export default function PromoBanner() {
   const [cfg, setCfg] = useState<PromoCfg | null>(null)
   const [open, setOpen] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', phone: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', company: '' })
   const [sent, setSent] = useState(false)
   const [consent, setConsent] = useState(false)
   const [consentErr, setConsentErr] = useState(false)
@@ -81,7 +81,7 @@ export default function PromoBanner() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name, email: form.email, phone: form.phone,
+          name: form.name, email: form.email, phone: form.phone, company: form.company,
           formType: 'promo-banner', sourcePage: window.location.pathname,
           consent: true,
           message: `Signed up via promo banner: ${cfg!.title}`,
@@ -125,6 +125,8 @@ export default function PromoBanner() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })} style={inputStyle} />
               <input required type="tel" name="phone" placeholder="Phone number" value={form.phone}
                 onChange={(e) => { setForm({ ...form, phone: e.target.value }); setPhoneErr(false) }} style={inputStyle} />
+              <input name="company" placeholder="Company (optional)" value={form.company}
+                onChange={(e) => setForm({ ...form, company: e.target.value })} style={inputStyle} />
               {phoneErr && (
                 <p style={{ color: '#c0392b', fontSize: 12.5, margin: 0 }}>Please enter a valid phone number.</p>
               )}

@@ -109,45 +109,6 @@ const FORM_LABELS: Record<string, string> = {
   contact: 'Contact form', 'promo-banner': 'Promo pop-up', offline: 'Offline', pitch: 'Pitch', other: 'Other',
 }
 
-export function leadAlertHtml(lead: LeadForAlert, adminUrl: string) {
-  const row = (label: string, value?: string) =>
-    value ? `<tr><td style="padding:7px 14px 7px 0;color:#6A6964;font-size:13px;white-space:nowrap;vertical-align:top">${esc(label)}</td><td style="padding:7px 0;font-size:14px;color:#0E0E0D">${esc(value)}</td></tr>` : ''
-
-  const where = [lead.channel, lead.source, lead.medium].filter(Boolean).join(' / ')
-  return `<!DOCTYPE html><html><body style="margin:0;background:#F2F1EC;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-<div style="max-width:560px;margin:0 auto;padding:28px 20px">
-  <div style="background:#0E0E0D;color:#F2F1EC;padding:18px 22px">
-    <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.7">New lead · ${esc(FORM_LABELS[lead.formType || ''] || lead.formType || 'Website')}</div>
-    <div style="font-size:22px;margin-top:6px">${esc(lead.name || 'Someone')} got in touch</div>
-  </div>
-  <div style="background:#ffffff;padding:20px 22px;border:1px solid #D8D6CE;border-top:0">
-    <table style="border-collapse:collapse;width:100%">
-      ${row('Name', lead.name)}
-      ${row('Email', lead.email)}
-      ${row('Phone', lead.phone)}
-      ${row('Company', lead.company)}
-      ${row('Wants', (lead.services || []).join(', '))}
-      ${row('Page', lead.sourcePage)}
-      ${row('Came from', where)}
-      ${row('Campaign', lead.campaign)}
-      ${row('Reference', lead.publicId)}
-    </table>
-    ${lead.message ? `<div style="margin-top:16px;padding-top:14px;border-top:1px solid #D8D6CE">
-      <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6A6964;margin-bottom:6px">Message</div>
-      <div style="font-size:14px;line-height:1.55;color:#0E0E0D;white-space:pre-wrap">${esc(lead.message)}</div></div>` : ''}
-    <div style="margin-top:20px">
-      <a href="${esc(adminUrl)}" style="display:inline-block;background:#D7262C;color:#ffffff;text-decoration:none;padding:11px 20px;border-radius:999px;font-size:14px">Open in the admin</a>
-    </div>
-    ${lead.email ? `<p style="font-size:12px;color:#6A6964;margin:16px 0 0">Reply to this email and it goes straight to ${esc(lead.email)}.</p>` : ''}
-  </div>
-  <p style="font-size:11px;color:#8B8A85;text-align:center;margin:16px 0 0">Sent by the Marrelay website when a new lead arrives.</p>
-</div></body></html>`
-}
-
-/**
- * Fire a "new lead" alert. Never throws: a mail problem must not stop a lead
- * being saved. Returns why it did not send, for logging.
- */
 export async function notifyNewLead(lead: LeadForAlert, siteUrl: string): Promise<{ sent: boolean; reason?: string }> {
   try {
     const cfg = { ...DEFAULT_LEAD_ALERTS, ...((await getSetting<LeadAlertCfg>('lead_alerts')) || {}) }

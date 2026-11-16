@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-16T05:57:16.094Z",
+ "generatedAt": "2026-11-16T06:00:41.823Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -270,7 +270,7 @@
    {
     "file": "lib/lead-alerts.ts",
     "label": "lib/lead-alerts.ts",
-    "line": 164
+    "line": 125
    },
    {
     "file": "lib/site-config.ts",
