@@ -247,7 +247,8 @@ export default function Header() {
           {socials && socials.length > 0 && (
             <div className="v-menu-soc">
               {socials.map((s) => (
-                <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer" data-dl-event="social_click" data-dl-platform={s.platform.toLowerCase()}>
+                <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer" data-dl-event="social_click" data-dl-platform={s.platform.toLowerCase()}
+                  data-social={s.platform.toLowerCase().replace(/[^a-z]/g, '')}>
                   {s.platform}
                 </a>
               ))}

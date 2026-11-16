@@ -597,11 +597,28 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .lead-form .form-head p { font-size: 15px; color: var(--v-mut); }
 /* Rows carry the columns, so each field gets a width that suits what goes in
    it: two names side by side, and the phone wider than the email because it
-   also carries a dial code. Below 620px every row becomes one column. */
-.v3 .lead-form .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+   also carries a dial code. Below 620px every row becomes one column.
+
+   The row is a subgrid of two tracks, label then control, and each field
+   spans both. That way a label that wraps to two lines lifts every label in
+   the row rather than pushing its own input out of line with the others. */
+.v3 .lead-form .form-row {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px;
+  grid-template-rows: auto auto; align-items: start;
+}
+.v3 .lead-form .form-row > .field {
+  display: grid; grid-template-rows: subgrid; grid-row: span 2;
+  grid-auto-rows: auto; align-content: start;
+}
+/* the control sits at the bottom of its track, so short and tall labels still
+   leave their inputs on the same line */
+.v3 .lead-form .form-row > .field > label { align-self: end; }
 .v3 .lead-form .form-row.split-contact { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
 /* a row whose field count changes as the form is filled in */
-.v3 .lead-form .form-row.fluid { grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); }
+/* With the subgrid above keeping labels in line, a wrapped label no longer
+   breaks the row, so these can stay three across on narrower screens
+   rather than leaving one field orphaned on a line of its own. */
+.v3 .lead-form .form-row.fluid { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 0 18px; }
 .v3 .lead-form .field > label .opt { color: var(--v-soft); }
 @media (max-width: 620px) {
   .v3 .lead-form .form-row,
@@ -1289,4 +1306,50 @@ body:has(> .v3) { background: #F2F1EC; }
 
 @media (prefers-reduced-motion: reduce) {
   .v3 .lead-form .field .mselect .sel-btn .caret { transition: none; }
+}
+
+/* =====================================================================
+   SOCIAL LINKS - each one hovers in its own brand colour
+   The red hover is ours; on a link that leads to someone else's platform
+   their colour reads as a signpost rather than decoration.
+   ===================================================================== */
+.v3 a[data-social] { transition: color .25s var(--v-ease), opacity .25s var(--v-ease); }
+
+.v3 a[data-social='linkedin']:hover { color: #0A66C2; }
+.v3 a[data-social='facebook']:hover { color: #1877F2; }
+.v3 a[data-social='youtube']:hover { color: #FF0000; }
+.v3 a[data-social='tiktok']:hover { color: #25F4EE; }
+.v3 a[data-social='pinterest']:hover { color: #E60023; }
+.v3 a[data-social='threads']:hover { color: #000; }
+/* X is black on light and white on dark, which is the whole brand */
+.v3 a[data-social='x']:hover { color: #000; }
+
+/* Instagram's mark is a gradient, so the text takes the gradient too.
+   background-clip:text cannot be transitioned, so the swap is immediate;
+   the fallback colour below keeps it readable if clipping is unsupported. */
+.v3 a[data-social='instagram']:hover {
+  color: #C13584;
+  /* near horizontal, so the whole spectrum runs across the word rather than
+     a single slice of it, and it ends warm rather than pale on paper */
+  background-image: linear-gradient(100deg, #833AB4 0%, #C13584 24%, #E1306C 46%, #FD1D1D 66%, #F56040 84%, #F77737 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .v3 a[data-social='instagram']:hover { color: transparent; -webkit-text-fill-color: transparent; }
+}
+
+/* On the dark footer and the mobile drawer the dark brands flip to light,
+   and the blues lift so they stay legible against the ink. */
+/* the same spectrum, lifted, so the purple end does not sink into the ink */
+.v3 .v-dark a[data-social='instagram']:hover {
+  background-image: linear-gradient(100deg, #A855D8 0%, #D64BA0 24%, #F0477E 46%, #FF4B4B 66%, #FF7A52 84%, #FFB347 100%);
+}
+.v3 .v-dark a[data-social='x']:hover,
+.v3 .v-dark a[data-social='threads']:hover { color: #fff; }
+.v3 .v-dark a[data-social='linkedin']:hover { color: #4DA3F0; }
+.v3 .v-dark a[data-social='facebook']:hover { color: #589BFF; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v3 a[data-social] { transition: none; }
 }

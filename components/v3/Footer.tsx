@@ -90,7 +90,8 @@ export default function Footer() {
               {company.phone && <a href={`tel:${company.phone.replace(/[^+\d]/g, '')}`}>{company.phone}</a>}
               {address && <span className="addr">{address}</span>}
               {socials.map((s) => (
-                <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer">
+                <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer"
+                  data-social={s.platform.toLowerCase().replace(/[^a-z]/g, '')}>
                   {s.platform} ↗
                 </a>
               ))}

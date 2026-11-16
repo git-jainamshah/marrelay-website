@@ -329,7 +329,7 @@ export default function ContactLeadForm() {
           {companyCountry && (
             <div className="field">
               <label htmlFor="c-province">
-                {PROVINCES[companyCountry] ? 'Province or state' : 'Region'}
+                {PROVINCES[companyCountry] ? 'Province or state' : 'Region'} <span className="opt">(optional)</span>
               </label>
               {PROVINCES[companyCountry] ? (
                 <SelectField
@@ -349,7 +349,7 @@ export default function ContactLeadForm() {
           )}
           <div className="field">
             <label htmlFor="c-remote">
-              How the team works <span className="opt">(optional)</span>
+              Team setup <span className="opt">(optional)</span>
             </label>
             <SelectField
               id="c-remote"

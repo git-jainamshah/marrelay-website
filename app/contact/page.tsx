@@ -53,7 +53,8 @@ export default async function ContactPage() {
               <div>
                 <span className="v-label">Elsewhere</span>
                 {enabledSocials.map((s) => (
-                  <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer">{s.platform} ↗</a>
+                  <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer"
+                    data-social={s.platform.toLowerCase().replace(/[^a-z]/g, '')}>{s.platform} ↗</a>
                 ))}
               </div>
             )}
