@@ -157,111 +157,120 @@ export function renderLeadEmail(opts: {
   const INK = '#111111'
   const MUT = '#6B6B68'
   const RULE = '#EEEEEB'
+  const GROUND = '#F4F4F2'
+  const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif"
 
   const title = lead.company || lead.name || 'New enquiry'
   const sub = lead.company && lead.name ? lead.name : ''
 
-  /** One label/value row. Stacks under the label on a phone. */
+  /**
+   * One label/value row.
+   *
+   * Percentage columns, not a media query: Gmail's app strips <style> for
+   * accounts it does not host, so anything that depends on a media query
+   * renders one way there and another way everywhere else. Percentages give
+   * the same two-column layout at every width, on every client.
+   */
   const row = (label: string, value?: string, mono = false) => {
     if (!value) return ''
-    return `<tr><td style="padding:0;border-bottom:1px solid ${RULE}">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-        <td class="lb" width="112" valign="top" style="width:112px;padding:9px 10px 9px 0;font-size:12px;line-height:1.5;color:${MUT}">${esc(label)}</td>
-        <td class="vl" valign="top" style="padding:9px 0;font-size:14px;line-height:1.5;color:${INK}${mono ? ";font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.04em" : ''}">${value}</td>
-      </tr></table>
-    </td></tr>`
+    return `<tr>
+      <td width="30%" valign="top" style="width:30%;padding:10px 10px 10px 0;border-bottom:1px solid ${RULE};font-family:${FONT};font-size:12px;line-height:1.45;color:${MUT}">${esc(label)}</td>
+      <td width="70%" valign="top" style="width:70%;padding:10px 0;border-bottom:1px solid ${RULE};font-family:${FONT};font-size:14px;line-height:1.45;color:${INK}${mono ? ";font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.04em" : ''}">${value}</td>
+    </tr>`
   }
   const link = (href: string, text: string) => `<a href="${esc(href)}" style="color:${INK};text-decoration:none">${esc(text)}</a>`
-  const where = [lead.channel, lead.source].filter(Boolean).join(' / ') || ''
+
+  // "(direct)" and "(none)" are placeholders, not information.
+  const clean = (v?: string) => (!v || /^\((direct|none|not set)\)$/i.test(v) ? '' : v)
+  const where = [clean(lead.channel), clean(lead.source)].filter(Boolean).join(' / ')
 
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
 <title>${esc(renderSubject(cfg, lead))}</title>
 <style>
-  @media only screen and (max-width:480px) {
-    .wrap { padding: 20px 0 24px !important; }
-    .card { border-left: 0 !important; border-right: 0 !important; }
+  /* Progressive enhancement only. Every rule that matters is inline, because
+     the Gmail app drops this block entirely for non-Google accounts. */
+  body, table, td { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; text-size-adjust: 100%; }
+  a { text-decoration: none; }
+  @media only screen and (max-width: 420px) {
     .pad { padding-left: 20px !important; padding-right: 20px !important; }
     .h1 { font-size: 22px !important; }
-    .lb { display: block !important; width: 100% !important; padding: 9px 0 0 0 !important; font-size: 11px !important; }
-    .vl { display: block !important; width: 100% !important; padding: 2px 0 9px 0 !important; }
-    .cta a { display: block !important; text-align: center !important; padding: 14px 20px !important; font-size: 14px !important; }
-    .foot td { display: block !important; width: 100% !important; text-align: center !important; }
   }
 </style></head>
-<body style="margin:0;padding:0;background:#F4F4F2;-webkit-font-smoothing:antialiased">
+<body style="margin:0;padding:0;background:${GROUND};-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;text-size-adjust:100%">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(title)} · priority ${sc.score}/5 · ${esc(vars.budget || 'no budget given')}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F4F2">
-<tr><td align="center" class="wrap" style="padding:40px 16px">
-<table role="presentation" width="680" cellpadding="0" cellspacing="0" border="0" style="width:680px;max-width:680px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
 
-  ${staging ? `<tr><td align="center" style="padding:0 0 14px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8A6A00">
-    Test lead · ${esc(opts.envLabel || 'Development')} environment</td></tr>` : ''}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${GROUND}" style="background:${GROUND};width:100%;margin:0;padding:0">
+<tr><td align="center" style="padding:28px 12px">
 
-  <tr><td class="card" style="background:#FFFFFF;border:1px solid #E6E6E3">
+  <!-- fluid container: never wider than 680, never forced wider than the screen -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:680px;font-family:${FONT}">
 
-    <!-- header -->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      <tr><td class="pad" style="padding:18px 32px;border-bottom:1px solid ${RULE}">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-          <td valign="middle" style="width:30px"><img src="${esc(logoUrl)}" width="20" height="22" alt="Marrelay" style="display:block;border:0;width:20px;height:22px"></td>
-          <td valign="middle" style="padding-left:10px;font-size:14px;font-weight:600;letter-spacing:-.01em;color:${INK}">Marrelay</td>
-          <td valign="middle" align="right" style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:${MUT}">New lead</td>
-        </tr></table>
-      </td></tr>
+    ${staging ? `<tr><td align="center" style="padding:0 0 12px;font-family:${FONT};font-size:10px;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:#8A6A00">
+      Test lead · ${esc(opts.envLabel || 'Development')} environment</td></tr>` : ''}
 
-      <!-- body -->
-      <tr><td class="pad" style="padding:28px 32px 32px">
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;border:1px solid #E6E6E3">
 
-        <p style="margin:0 0 6px;font-size:12px;line-height:1.5;color:${MUT}">${esc(vars.form)} · ${esc(opts.receivedLabel || receivedAt())}</p>
-        <h1 class="h1" style="margin:0;font-size:26px;line-height:1.2;font-weight:600;letter-spacing:-.02em;color:${INK}">${esc(title)}</h1>
-        ${sub ? `<p style="margin:4px 0 0;font-size:14px;line-height:1.5;color:${MUT}">${esc(sub)}</p>` : ''}
+      <!-- header: left cell takes the slack so the right cell is pushed out -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="pad" style="padding:16px 28px;border-bottom:1px solid ${RULE}">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td valign="middle" width="24" style="width:24px"><img src="${esc(logoUrl)}" width="20" height="22" alt="" style="display:block;border:0;width:20px;height:22px"></td>
+            <td valign="middle" style="padding-left:10px;font-family:${FONT};font-size:14px;font-weight:bold;letter-spacing:-.01em;color:${INK};white-space:nowrap">Marrelay</td>
+            <td valign="middle" align="right" style="font-family:${FONT};font-size:10px;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:${MUT};white-space:nowrap">New lead</td>
+          </tr></table>
+        </td></tr>
 
-        ${cfg.showScore ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px"><tr>
-          <td valign="middle">${scoreBars(sc.score, ACCENT)}</td>
-          <td valign="middle" style="padding-left:12px;font-size:12px;line-height:1.5;color:#4A4A47">
-            <span style="color:${INK};font-weight:600">Priority ${sc.score}/5</span> · ${esc(sc.label)}</td>
-        </tr></table>
-        <p style="margin:8px 0 0;font-size:11px;line-height:1.5;color:${MUT}">${esc(sc.reasons.join(' · '))}</p>` : ''}
+        <tr><td class="pad" style="padding:26px 28px 28px">
 
-        ${cfg.intro ? `<p style="margin:18px 0 0;font-size:14px;line-height:1.6;color:#4A4A47">${esc(fill(cfg.intro, vars))}</p>` : ''}
+          <p style="margin:0 0 6px;font-family:${FONT};font-size:12px;line-height:1.5;color:${MUT}">${esc(vars.form)} · ${esc(opts.receivedLabel || receivedAt())}</p>
+          <h1 class="h1" style="margin:0;font-family:${FONT};font-size:25px;line-height:1.2;font-weight:bold;letter-spacing:-.02em;color:${INK}">${esc(title)}</h1>
+          ${sub ? `<p style="margin:4px 0 0;font-family:${FONT};font-size:14px;line-height:1.5;color:${MUT}">${esc(sub)}</p>` : ''}
 
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px;border-top:1px solid ${RULE}">
-          ${row('Name', esc(lead.name))}
-          ${row('Email', lead.email ? link(`mailto:${lead.email}`, lead.email) : '')}
-          ${row('Phone', lead.phone ? link(`tel:${lead.phone}`, lead.phone) : '')}
-          ${row('Page', esc(lead.sourcePage))}
-          ${row('Source', esc(where))}
-          ${row('Campaign', esc(lead.campaign))}
-          ${row('Lead #', esc(vars.reference), true)}
-          ${row('Wants', esc((lead.services || []).join(', ')))}
-          ${row('Timeline', esc(vars.timeline))}
-          ${row('Budget', esc(vars.budget))}
-          ${lead.message ? `<tr><td style="padding:0;border-bottom:1px solid ${RULE}">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-              <td class="lb" width="112" valign="top" style="width:112px;padding:9px 10px 9px 0;font-size:12px;line-height:1.5;color:${MUT}">Message</td>
-              <td class="vl" valign="top" style="padding:9px 0;font-size:14px;line-height:1.5;color:#4A4A47;white-space:pre-wrap">${esc(lead.message)}</td>
-            </tr></table></td></tr>` : ''}
-        </table>
+          ${cfg.showScore ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px"><tr>
+            <td valign="middle">${scoreBars(sc.score, ACCENT)}</td>
+            <td valign="middle" style="padding-left:12px;font-family:${FONT};font-size:12px;line-height:1.5;color:#4A4A47;white-space:nowrap">
+              <span style="color:${INK};font-weight:bold">Priority ${sc.score}/5</span> · ${esc(sc.label)}</td>
+          </tr></table>
+          <p style="margin:8px 0 0;font-family:${FONT};font-size:11px;line-height:1.5;color:${MUT}">${esc(sc.reasons.join(' · '))}</p>` : ''}
 
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="cta" style="margin-top:22px"><tr><td>
-          <a href="${esc(adminUrl)}" style="display:inline-block;background:${INK};color:#FFFFFF;font-size:13px;font-weight:600;text-decoration:none;padding:12px 22px;letter-spacing:.01em">${esc(cfg.buttonLabel || 'View lead')}</a>
-        </td></tr></table>
+          ${cfg.intro ? `<p style="margin:18px 0 0;font-family:${FONT};font-size:14px;line-height:1.6;color:#4A4A47">${esc(fill(cfg.intro, vars))}</p>` : ''}
 
-      </td></tr>
-    </table>
-  </td></tr>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin-top:20px;border-top:1px solid ${RULE};border-collapse:collapse">
+            ${row('Name', esc(lead.name))}
+            ${row('Email', lead.email ? link(`mailto:${lead.email}`, lead.email) : '')}
+            ${row('Phone', lead.phone ? link(`tel:${lead.phone}`, lead.phone) : '')}
+            ${row('Page', esc(lead.sourcePage))}
+            ${row('Source', esc(where))}
+            ${row('Campaign', esc(clean(lead.campaign)))}
+            ${row('Lead #', esc(vars.reference), true)}
+            ${row('Wants', esc((lead.services || []).join(', ')))}
+            ${row('Timeline', esc(vars.timeline))}
+            ${row('Budget', esc(vars.budget))}
+            ${lead.message ? row('Message', `<span style="color:#4A4A47">${esc(lead.message)}</span>`) : ''}
+          </table>
 
-  <!-- footer -->
-  <tr><td style="padding:12px 2px 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="foot"><tr>
-      <td style="font-size:11px;line-height:1.6;color:${MUT}">${esc(fill(cfg.footerNote || '', vars))}</td>
-      <td align="right" style="font-size:11px;line-height:1.6"><a href="${esc(siteUrl)}" style="color:${ACCENT};text-decoration:none;font-weight:600">${esc(displayHost(siteUrl))}</a></td>
-    </tr></table>
-  </td></tr>
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px"><tr>
+            <td bgcolor="${INK}" style="background:${INK}">
+              <a href="${esc(adminUrl)}" style="display:inline-block;font-family:${FONT};background:${INK};color:#FFFFFF;font-size:14px;font-weight:bold;text-decoration:none;padding:13px 26px;letter-spacing:.01em">${esc(cfg.buttonLabel || 'View lead')}</a>
+            </td>
+          </tr></table>
 
-</table>
+        </td></tr>
+      </table>
+    </td></tr>
+
+    <tr><td style="padding:12px 2px 0">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td width="62%" valign="top" style="width:62%;font-family:${FONT};font-size:11px;line-height:1.6;color:${MUT}">${esc(fill(cfg.footerNote || '', vars))}</td>
+        <td width="38%" valign="top" align="right" style="width:38%;font-family:${FONT};font-size:11px;line-height:1.6"><a href="${esc(siteUrl)}" style="color:${ACCENT};text-decoration:none;font-weight:bold">${esc(displayHost(siteUrl))}</a></td>
+      </tr></table>
+    </td></tr>
+
+  </table>
+
 </td></tr></table>
 </body></html>`
 }
