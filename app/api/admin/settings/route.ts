@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSetting, setSetting, audit, recordSettingVersion } from '@/lib/admin/db'
 import { requireUser, requireEditor } from '@/lib/admin/auth'
 import { isSettingKey } from '@/lib/admin/settings-keys'
+import { SETTING_DEFAULTS } from '@/lib/admin/setting-defaults'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -11,7 +12,10 @@ export async function GET(req: NextRequest) {
   if ('error' in auth) return auth.error
   const key = req.nextUrl.searchParams.get('key') || ''
   if (!isSettingKey(key)) return NextResponse.json({ error: 'Unknown setting.' }, { status: 400 })
-  return NextResponse.json({ key, value: await getSetting(key) })
+  // Keys added after the database was created have never been seeded, so fall
+  // back to the shipped default rather than handing the admin a null.
+  const value = (await getSetting(key)) ?? SETTING_DEFAULTS[key] ?? null
+  return NextResponse.json({ key, value })
 }
 
 export async function PUT(req: NextRequest) {

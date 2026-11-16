@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { Plus, Trash2, Send, CheckCircle2, AlertTriangle, RotateCcw } from 'lucide-react'
 import { Seg } from '@/components/admin/viz'
+import MacroInput from '@/components/admin/MacroInput'
 import PageHeader from '@/components/admin/PageHeader'
 import SaveBar from '@/components/admin/SaveBar'
 import { HistoryButton } from '@/components/admin/HistoryDrawer'
@@ -40,6 +41,8 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     loadSetting<Cfg>('lead_alerts').then((v) => { if (v) { setC(v); setSaved(JSON.stringify(v)) } })
+    // Safety net: if the settings call fails outright, still show the form.
+    setTimeout(() => setC((cur) => cur), 0)
     fetch('/api/admin/notifications/test', { cache: 'no-store' }).then((r) => r.json()).then(setStatus).catch(() => {})
     loadSetting<Tpl>('lead_email_template').then((v) => {
       const t = { ...TPL_DEFAULTS, ...(v || {}) }
@@ -152,7 +155,7 @@ export default function NotificationsPage() {
               <header className="ad-block-head">
                 <div>
                   <h2>What the email looks like</h2>
-                  <p>Edit the wording; the preview updates as you type. {'{{name}}'}, {'{{company}}'}, {'{{form}}'}, {'{{budget}}'}, {'{{timeline}}'} and {'{{reference}}'} are filled in from the lead.</p>
+                  <p>Edit the wording; the preview updates as you type. Type <code>&#123;&#123;</code> in any field to pick from the available fields, or click a chip to insert one.</p>
                 </div>
                 <div className="ad-block-tools">
                   <HistoryButton settingKey="lead_email_template" onRestored={(v) => { setTpl({ ...TPL_DEFAULTS, ...v }); setTplSaved(JSON.stringify({ ...TPL_DEFAULTS, ...v })) }} />
@@ -164,20 +167,20 @@ export default function NotificationsPage() {
                 <div className="ad-split-form">
                   <div className="ad-card">
                     <label className="ad-label">Subject line</label>
-                    <input className="ad-input" value={tpl.subject} onChange={(e) => setTpl({ ...tpl, subject: e.target.value })} />
+                    <MacroInput value={tpl.subject} onChange={(v) => setTpl({ ...tpl, subject: v })} />
                     {preview && <p className="ad-soft" style={{ fontSize: 12, margin: '6px 0 0' }}>Appears as: <b>{preview.subject}</b></p>}
 
                     <div style={{ marginTop: 16 }}>
                       <label className="ad-label">Opening line</label>
-                      <textarea rows={2} className="ad-input" value={tpl.intro} onChange={(e) => setTpl({ ...tpl, intro: e.target.value })} />
+                      <MacroInput multiline rows={3} value={tpl.intro} onChange={(v) => setTpl({ ...tpl, intro: v })} />
                     </div>
                     <div style={{ marginTop: 16 }}>
                       <label className="ad-label">Button</label>
-                      <input className="ad-input" value={tpl.buttonLabel} onChange={(e) => setTpl({ ...tpl, buttonLabel: e.target.value })} />
+                      <MacroInput value={tpl.buttonLabel} onChange={(v) => setTpl({ ...tpl, buttonLabel: v })} />
                     </div>
                     <div style={{ marginTop: 16 }}>
                       <label className="ad-label">Footer note</label>
-                      <input className="ad-input" value={tpl.footerNote} onChange={(e) => setTpl({ ...tpl, footerNote: e.target.value })} />
+                      <MacroInput value={tpl.footerNote} onChange={(v) => setTpl({ ...tpl, footerNote: v })} />
                     </div>
                     <label style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 18, fontSize: 13 }}>
                       <input type="checkbox" checked={tpl.showScore} onChange={(e) => setTpl({ ...tpl, showScore: e.target.checked })} />

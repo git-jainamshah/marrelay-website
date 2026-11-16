@@ -885,3 +885,33 @@
 .adm .ad-bulkbar .ad-btn-ghost:hover { border-color: var(--paper); background: transparent; }
 
 .adm .ad-email-prev { width: 100%; height: 560px; border: 1px solid var(--rule-strong); background: #F2F1EC; display: block; }
+
+/* ---- {{macro}} field with autocomplete ---- */
+.adm .ad-macro { position: relative; }
+.adm .ad-macro-pop {
+  position: absolute; z-index: 40; left: 0; right: 0; top: calc(100% + 4px);
+  background: var(--ink); color: var(--paper); border: 1px solid #333330;
+  box-shadow: 0 18px 44px -16px rgba(14,14,13,.6); max-height: 280px; overflow-y: auto;
+}
+.adm .ad-macro-pop .hd,
+.adm .ad-macro-pop .ft {
+  font-family: var(--label-font); font-stretch: 125%; font-size: 9.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: #8B8A85; padding: 8px 12px;
+}
+.adm .ad-macro-pop .ft { border-top: 1px solid #262624; text-transform: none; letter-spacing: 0; font-size: 11px; display: flex; gap: 12px; }
+.adm .ad-macro-pop .ft kbd { border-color: #3a3a37; color: #B9B8B2; background: transparent; margin-right: 3px; }
+.adm .ad-macro-pop button {
+  width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: baseline;
+  padding: 8px 12px; background: transparent; border: 0; text-align: left; cursor: pointer; color: var(--paper); font-family: var(--sans);
+}
+.adm .ad-macro-pop button.on { background: #1A1A18; }
+.adm .ad-macro-pop button code { font-size: 12px; color: #F2F1EC; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.adm .ad-macro-pop button .lb { font-size: 12.5px; color: #B9B8B2; }
+.adm .ad-macro-pop button .sm { font-size: 11px; color: #6A6964; white-space: nowrap; max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+.adm .ad-macro-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.adm .ad-macro-chips button {
+  border: 1px solid var(--rule-strong); background: #fff; color: var(--ink-mut);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; padding: 3px 7px; cursor: pointer;
+}
+.adm .ad-macro-chips button:hover { border-color: var(--ink); color: var(--ink); }
+.adm .ad-block-head p code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--paper-2); padding: 1px 5px; font-size: 11.5px; }
