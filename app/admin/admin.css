@@ -864,3 +864,24 @@
 /* amber alert state, for "not connected yet" notices */
 .adm .ad-alert.warn { background: #FDF6E7; border-color: #E7D3A3; color: #6b4e12; }
 .adm .ad-input.invalid { border-color: var(--brand); }
+
+/* ---- lead drawer (editable) ---- */
+.adm .ad-lead-scrim { position: fixed; inset: 0; background: rgba(14,14,13,.42); z-index: 60; display: flex; justify-content: flex-end; }
+.adm .ad-lead-drawer { width: 100%; max-width: 520px; background: var(--paper); border-left: 1px solid var(--rule-strong); height: 100%; display: flex; flex-direction: column; animation: ad-drawer-in .28s cubic-bezier(.16,1,.3,1); }
+.adm .ad-lead-body { flex: 1; overflow-y: auto; padding: 24px 26px 28px; }
+.adm .ad-lead-foot { display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-top: 1px solid var(--rule); background: #fff; }
+.adm .ad-lead-foot .tx { display: grid; flex: 1; min-width: 0; }
+.adm .ad-lead-foot .tx b { font-size: 13px; font-weight: 500; }
+.adm .ad-lead-foot .tx small { font-size: 11.5px; color: var(--ink-soft); }
+.adm .ad-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.adm .ad-chip-toggle { border: 1px solid var(--rule-strong); background: #fff; padding: 6px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer; font-family: var(--sans); color: var(--ink-mut); }
+.adm .ad-chip-toggle:hover { border-color: var(--ink); color: var(--ink); }
+.adm .ad-chip-toggle.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.adm .ad-bulkbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 10px 14px; background: var(--ink); color: var(--paper); margin-bottom: 12px; }
+.adm .ad-bulkbar b { font-weight: 500; font-size: 13px; }
+.adm .ad-bulkbar label { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; }
+.adm .ad-bulkbar label span { color: #B9B8B2; }
+.adm .ad-bulkbar .ad-btn-ghost { color: var(--paper); border-color: rgba(242,241,236,.35); margin-left: auto; }
+.adm .ad-bulkbar .ad-btn-ghost:hover { border-color: var(--paper); background: transparent; }
+
+.adm .ad-email-prev { width: 100%; height: 560px; border: 1px solid var(--rule-strong); background: #F2F1EC; display: block; }

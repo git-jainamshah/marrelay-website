@@ -1,6 +1,6 @@
 /** Settings keys the admin may read and write through /api/admin/settings. */
 export const ALLOWED_SETTING_KEYS = [
-  'announcement', 'promo_banner', 'robots_txt', 'seo', 'company', 'socials', 'legal_terms', 'legal_privacy', 'media_slots', 'storage', 'lead_alerts',
+  'announcement', 'promo_banner', 'robots_txt', 'seo', 'company', 'socials', 'legal_terms', 'legal_privacy', 'media_slots', 'storage', 'lead_alerts', 'lead_email_template',
 ] as const
 
 export type SettingKey = (typeof ALLOWED_SETTING_KEYS)[number]
@@ -18,6 +18,7 @@ export const SETTING_LABELS: Record<SettingKey, string> = {
   media_slots: 'Media slots',
   storage: 'Storage limit',
   lead_alerts: 'New-lead email alerts',
+  lead_email_template: 'Lead email template',
 }
 
 /** Site storage ceiling, in bytes. 1 GB by default; only admins may change it. */

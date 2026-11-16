@@ -45,63 +45,73 @@ export default async function ReceiptPage({ params }: { params: { id: string } }
   const docTitle = isPaid ? 'RECEIPT' : 'INVOICE'
 
   return (
-    <div style={{ background: '#EEE9DD', minHeight: '100vh' }}>
+    <div style={{ background: '#F2F1EC', minHeight: '100vh' }}>
       <style>{`
         @page { size: A4; margin: 14mm; }
-        @media print { .noprint { display: none !important; } body { background: #fff !important; } .rcpt-wrap { box-shadow: none !important; margin: 0 !important; } }
-        .rcpt-wrap { font-family: var(--font-dm-sans, ui-sans-serif), system-ui, sans-serif; color: #1A1A1E; }
-        .rcpt-serif { font-family: var(--font-fraunces, Georgia), serif; }
-        .rcpt-t th { text-align: left; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #6E6A62; padding: 8px 10px; border-bottom: 1.5px solid #1A1A1E; }
-        .rcpt-t td { padding: 10px; border-bottom: 1px solid #E2D9C4; font-size: 13.5px; vertical-align: top; }
+        @media print {
+          .noprint { display: none !important; }
+          body { background: #fff !important; }
+          .rcpt-wrap { box-shadow: none !important; margin: 0 !important; border: 0 !important; padding: 0 !important; max-width: none !important; }
+        }
+        .rcpt-wrap { font-family: var(--font-geist-sans, ui-sans-serif), system-ui, sans-serif; color: #0E0E0D; }
+        .rcpt-serif { font-family: var(--font-geist-sans, ui-sans-serif), system-ui, sans-serif; font-weight: 600; letter-spacing: -.03em; }
+        .rcpt-label { font-family: var(--font-archivo, ui-sans-serif), system-ui, sans-serif; font-stretch: 125%; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #6A6964; }
+        .rcpt-t th { text-align: left; font-family: var(--font-archivo, ui-sans-serif), system-ui, sans-serif; font-stretch: 125%; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #6A6964; padding: 8px 10px; border-bottom: 1px solid #0E0E0D; }
+        .rcpt-t td { padding: 11px 10px; border-bottom: 1px solid #E7E5DE; font-size: 13.5px; vertical-align: top; }
+        .rcpt-actions { display: flex; gap: 10px; justify-content: center; padding: 20px 14px 26px; flex-wrap: wrap; }
+        .rcpt-btn { display: inline-flex; align-items: center; gap: 7px; background: transparent; color: #0E0E0D; border: 1px solid #0E0E0D; border-radius: 999px; padding: 10px 20px; font-size: 13.5px; font-family: var(--font-geist-sans, ui-sans-serif), system-ui, sans-serif; text-decoration: none; cursor: pointer; }
+        .rcpt-btn:hover { background: #0E0E0D; color: #F2F1EC; }
+        .rcpt-btn.primary { background: #D7262C; border-color: #D7262C; color: #fff; }
+        .rcpt-btn.primary:hover { background: #B01E23; border-color: #B01E23; }
       `}</style>
 
-      <PrintButton />
+      <PrintButton id={inv.id} label={isPaid ? 'receipt' : 'invoice'} />
 
-      <div className="rcpt-wrap" style={{ maxWidth: 800, margin: '0 auto 40px', background: '#fff', border: '1px solid #E2D9C4', borderRadius: 8, boxShadow: '0 10px 40px rgba(0,0,0,.12)', padding: '44px 48px' }}>
+      <div className="rcpt-wrap" style={{ maxWidth: 800, margin: '0 auto 40px', background: '#fff', border: '1px solid #D8D6CE', boxShadow: '0 18px 60px -30px rgba(14,14,13,.35)', padding: '44px 48px' }}>
         {/* header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #ED1C24', paddingBottom: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #D7262C', paddingBottom: 20 }}>
           <div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={company.logoIcon || '/assets/marrelay-mark.png'} alt={company.name} width={44} height={44} />
               <div>
-                <div className="rcpt-serif" style={{ fontSize: 24, fontWeight: 700 }}>{company.name || 'Marrelay'}</div>
-                <div style={{ fontSize: 12, color: '#6E6A62' }}>{company.tagline || 'Digital studio'}</div>
+                <div className="rcpt-serif" style={{ fontSize: 23 }}>{company.name || 'Marrelay'}</div>
+                <div style={{ fontSize: 12, color: '#6A6964' }}>{company.tagline || 'Digital studio'}</div>
               </div>
             </div>
             <div style={{ marginTop: 12 }}>
               <Barcode value={inv.invoice_number} mod={1} h={26} />
-              <div style={{ fontFamily: 'var(--font-jetbrains, monospace)', fontSize: 9.5, letterSpacing: '.14em', color: '#6E6A62', marginTop: 2 }}>{inv.invoice_number}</div>
+              <div style={{ fontFamily: 'var(--font-archivo, monospace)', fontSize: 9.5, letterSpacing: '.14em', color: '#6A6964', marginTop: 2 }}>{inv.invoice_number}</div>
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div className="rcpt-serif" style={{ fontSize: 30, fontWeight: 700, letterSpacing: '.02em' }}>{docTitle}</div>
-            <div style={{ fontSize: 13, color: '#6E6A62' }}>{inv.invoice_number}</div>
-            <span style={{ display: 'inline-block', marginTop: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '4px 12px', borderRadius: 999, background: isPaid ? '#DFF0E4' : balance > 0 ? '#FBD9DA' : '#EFEAE0', color: isPaid ? '#1F7a3f' : balance > 0 ? '#C8141B' : '#6E6A62' }}>{INVOICE_STATUS_LABELS[state] || state}</span>
+            <div className="rcpt-serif" style={{ fontSize: 28 }}>{docTitle}</div>
+            <div style={{ fontSize: 13, color: '#6A6964' }}>{inv.invoice_number}</div>
+            <span style={{ display: 'inline-block', marginTop: 6, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.1em', padding: '4px 12px', borderRadius: 999, background: isPaid ? '#E7F3EC' : balance > 0 ? '#FCEEEF' : '#F2F1EC', color: isPaid ? '#2F6B4F' : balance > 0 ? '#D7262C' : '#6A6964' }}>{INVOICE_STATUS_LABELS[state] || state}</span>
           </div>
         </div>
 
         {/* parties */}
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 30, marginTop: 24 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '.08em', color: '#6E6A62', marginBottom: 6 }}>From</div>
-            <div style={{ fontWeight: 700 }}>{company.name || 'Marrelay'}</div>
+            <div className="rcpt-label" style={{ marginBottom: 6 }}>From</div>
+            <div style={{ fontWeight: 600 }}>{company.name || 'Marrelay'}</div>
             {[company.addressLine1, company.addressLine2].filter(Boolean).map((l, i) => <div key={i} style={{ fontSize: 13, color: '#2B2B30' }}>{l}</div>)}
             {company.email && <div style={{ fontSize: 13, color: '#2B2B30' }}>{company.email}</div>}
             {company.phone && <div style={{ fontSize: 13, color: '#2B2B30' }}>{company.phone}</div>}
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '.08em', color: '#6E6A62', marginBottom: 6 }}>Bill to</div>
-            <div style={{ fontWeight: 700, fontSize: 16 }}>{inv.client_company || inv.client_name}</div>
+            <div className="rcpt-label" style={{ marginBottom: 6 }}>Bill to</div>
+            <div style={{ fontWeight: 600, fontSize: 16 }}>{inv.client_company || inv.client_name}</div>
             {inv.client_company && <div style={{ fontSize: 13, color: '#2B2B30', marginTop: 3 }}>Billed to: {inv.client_name}</div>}
             {inv.client_address && <div style={{ fontSize: 13, color: '#2B2B30', whiteSpace: 'pre-wrap', marginTop: 3 }}>{inv.client_address}</div>}
             {inv.client_email && <div style={{ fontSize: 13, color: '#2B2B30', marginTop: 3 }}>{inv.client_email}</div>}
             {inv.client_phone && <div style={{ fontSize: 13, color: '#2B2B30' }}>{inv.client_phone}</div>}
           </div>
           <div style={{ textAlign: 'right', fontSize: 13, minWidth: 150 }}>
-            {inv.project_name && <div style={{ marginBottom: 6 }}><span style={{ color: '#6E6A62' }}>Project</span><br /><b>{inv.project_name}</b></div>}
-            <div><span style={{ color: '#6E6A62' }}>Issued</span><br />{fmtDate(inv.issue_date)}</div>
-            {inv.due_date && <div style={{ marginTop: 6 }}><span style={{ color: '#6E6A62' }}>Due</span><br />{fmtDate(inv.due_date)}</div>}
+            {inv.project_name && <div style={{ marginBottom: 6 }}><span style={{ color: '#6A6964' }}>Project</span><br /><b>{inv.project_name}</b></div>}
+            <div><span style={{ color: '#6A6964' }}>Issued</span><br />{fmtDate(inv.issue_date)}</div>
+            {inv.due_date && <div style={{ marginTop: 6 }}><span style={{ color: '#6A6964' }}>Due</span><br />{fmtDate(inv.due_date)}</div>}
           </div>
         </div>
 
@@ -126,7 +136,7 @@ export default async function ReceiptPage({ params }: { params: { id: string } }
             <TotalRow k="Subtotal" v={money(Number(inv.subtotal), cur)} />
             {Number(inv.discount_amount) > 0 && <TotalRow k={`Discount${inv.discount_type === 'percent' ? ` (${Number(inv.discount_value)}%)` : ''}`} v={'- ' + money(Number(inv.discount_amount), cur)} />}
             <TotalRow k={`HST / Tax (${Number(inv.tax_rate)}%)`} v={money(Number(inv.tax_amount), cur)} />
-            <div style={{ borderTop: '2px solid #1A1A1E', margin: '8px 0' }} />
+            <div style={{ borderTop: '1px solid #0E0E0D', margin: '8px 0' }} />
             <TotalRow k="Total" v={money(total, cur)} big />
             <TotalRow k="Amount paid" v={money(paid, cur)} />
             <TotalRow k="Balance due" v={money(balance, cur)} big accent={balance > 0.005} />
@@ -135,10 +145,10 @@ export default async function ReceiptPage({ params }: { params: { id: string } }
 
         {inv.notes && <div style={{ marginTop: 24, fontSize: 13, color: '#2B2B30', textAlign: 'center' }}><b>Notes:</b> {inv.notes}</div>}
 
-        <div style={{ marginTop: 30, paddingTop: 16, borderTop: '1px solid #E2D9C4', fontSize: 12, color: '#6E6A62', textAlign: 'center' }}>
+        <div style={{ marginTop: 30, paddingTop: 16, borderTop: '1px solid #E7E5DE', fontSize: 12, color: '#6A6964', textAlign: 'center' }}>
           {isPaid ? 'Thank you - this invoice has been paid in full.' : balance > 0 ? `Please remit ${money(balance, cur)} by ${inv.due_date ? fmtDate(inv.due_date) : 'the due date'}.` : 'Thank you for your business.'}
           <br />Questions? {company.email || 'hello@marrelay.com'}{company.phone ? ` · ${company.phone}` : ''}
-          <br /><a href={SITE_URL} style={{ color: '#C8141B', fontWeight: 600, textDecoration: 'none' }}>{SITE_URL.replace(/^https?:\/\//, '')}</a>
+          <br /><a href={SITE_URL} style={{ color: '#D7262C', fontWeight: 600, textDecoration: 'none' }}>{SITE_URL.replace(/^https?:\/\//, '')}</a>
         </div>
       </div>
     </div>
@@ -172,15 +182,15 @@ function Barcode({ value, mod = 1.5, h = 42 }: { value: string; mod?: number; h?
   }
   return (
     <svg width={x} height={h} viewBox={`0 0 ${x} ${h}`} role="img" aria-label={`Barcode ${value}`} style={{ maxWidth: '100%' }}>
-      {bars.map((b, i) => <rect key={i} x={b.x} y={0} width={b.w} height={h} fill="#1A1A1E" />)}
+      {bars.map((b, i) => <rect key={i} x={b.x} y={0} width={b.w} height={h} fill="#0E0E0D" />)}
     </svg>
   )
 }
 
 function TotalRow({ k, v, big, accent }: { k: string; v: string; big?: boolean; accent?: boolean }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: big ? 16 : 13, fontWeight: big ? 700 : 400, color: accent ? '#C8141B' : '#1A1A1E' }}>
-      <span style={{ color: big ? undefined : '#6E6A62' }}>{k}</span><span>{v}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: big ? 16 : 13, fontWeight: big ? 600 : 400, color: accent ? '#D7262C' : '#0E0E0D' }}>
+      <span style={{ color: big ? undefined : '#6A6964' }}>{k}</span><span>{v}</span>
     </div>
   )
 }

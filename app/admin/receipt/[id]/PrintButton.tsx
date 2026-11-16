@@ -1,13 +1,22 @@
 'use client'
 
-export default function PrintButton() {
+import { Download, Printer, ArrowLeft } from 'lucide-react'
+
+/**
+ * Download is a real PDF file from the server, not the browser print dialog.
+ * Printing is still offered, but it is the secondary action.
+ */
+export default function PrintButton({ id, label }: { id: number | string; label: string }) {
   return (
-    <div className="noprint" style={{ display: 'flex', gap: 10, justifyContent: 'center', padding: '18px 0 26px' }}>
-      <button onClick={() => window.print()} style={{ background: '#1A1A1E', color: '#FBF6EC', border: 0, borderRadius: 999, padding: '11px 22px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
-        Print / Save as PDF
+    <div className="noprint rcpt-actions">
+      <a href={`/api/admin/receipt/${id}/pdf`} className="rcpt-btn primary">
+        <Download size={15} /> Download {label} (PDF)
+      </a>
+      <button onClick={() => window.print()} className="rcpt-btn">
+        <Printer size={15} /> Print
       </button>
-      <a href="/admin/finance/invoices" style={{ background: 'transparent', color: '#1A1A1E', border: '1.5px solid #1A1A1E', borderRadius: 999, padding: '11px 22px', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
-        Back to invoices
+      <a href="/admin/finance/invoices" className="rcpt-btn">
+        <ArrowLeft size={15} /> Back to invoices
       </a>
     </div>
   )

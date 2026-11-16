@@ -7,7 +7,7 @@ import { Download, BarChart3, Megaphone, Trash2, Sparkles } from 'lucide-react'
 import LeadFilters from '@/components/admin/LeadFilters'
 import { fmtDateTime } from '@/lib/admin/dates'
 import { isProduction } from '@/lib/env'
-import { useLeads, LeadDrawer, extraOf, STATUSES, STATUS_COLORS, STATUS_LABELS, FORM_LABELS, serviceNames, Lead, useSelection, BulkDeleteBar, SelectHeaderCell, SelectRowCell } from '@/components/admin/leads-shared'
+import { useLeads, LeadDrawer, extraOf, STATUSES, STATUS_COLORS, STATUS_LABELS, FORM_LABELS, serviceNames, Lead, useSelection, BulkDeleteBar, BulkOwnerBar, SelectHeaderCell, SelectRowCell } from '@/components/admin/leads-shared'
 
 export default function LeadsPage() {
   const { filters, setFilters, leads, loading, load, qs, role, canEdit } = useLeads()
@@ -80,6 +80,7 @@ export default function LeadsPage() {
 
       <LeadFilters value={filters} onChange={setFilters} />
       {bulkMsg && <div className="ad-alert ok" style={{ marginTop: 12 }}>{bulkMsg} {canEdit && bulkMsg.includes('Delete Folder') && <Link href="/admin/leads/trash" style={{ textDecoration: 'underline' }}>Open Delete Folder</Link>}</div>}
+      {canEdit && <BulkOwnerBar selected={sel.selected} clear={sel.clear} onDone={load} />}
       {canEdit && <BulkDeleteBar visibleIds={leads.map((l) => l.id)} selected={sel.selected} selectAll={sel.selectAll} clear={sel.clear}
         onDone={(m) => { setBulkMsg(m); setTimeout(() => setBulkMsg(''), 8000); load() }} />}
 

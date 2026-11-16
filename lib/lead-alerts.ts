@@ -11,6 +11,8 @@
  * Everything else (on/off, who it goes to) is editable in the admin.
  */
 import { getSetting } from '@/lib/admin/db'
+import { DEFAULT_EMAIL_TEMPLATE, renderLeadEmail, renderSubject, type EmailTemplateCfg } from '@/lib/lead-email-template'
+import { isProduction, envLabel } from '@/lib/env'
 
 export type LeadAlertCfg = {
   enabled: boolean
@@ -152,17 +154,18 @@ export async function notifyNewLead(lead: LeadForAlert, siteUrl: string): Promis
     if (!cfg.enabled) return { sent: false, reason: 'Alerts are switched off in the admin.' }
     if (!alertsConfigured()) return { sent: false, reason: 'Microsoft 365 credentials are not set.' }
 
-    const adminUrl = `${siteUrl.replace(/\/$/, '')}/admin/leads${lead.id ? `?open=${lead.id}` : ''}`
-    const who = lead.name || lead.email || 'Someone'
-    const via = FORM_LABELS[lead.formType || ''] || 'Website'
-    await sendMail({
-      from: cfg.from,
-      to: cfg.to,
-      cc: cfg.cc,
-      replyTo: lead.email,
-      subject: `New lead: ${who}${lead.company ? ` (${lead.company})` : ''} · ${via}`,
-      html: leadAlertHtml(lead, adminUrl),
+    const tpl = { ...DEFAULT_EMAIL_TEMPLATE, ...((await getSetting<EmailTemplateCfg>('lead_email_template')) || {}) }
+    const base = siteUrl.replace(/\/$/, '')
+    const adminUrl = `${base}/admin/leads${lead.id ? `?open=${lead.id}` : ''}`
+    const html = renderLeadEmail({
+      cfg: tpl, lead, adminUrl, siteUrl: base,
+      env: isProduction ? 'production' : 'staging',
+      envLabel,
+      logoUrl: `${base}/assets/marrelay-mark.png`,
     })
+    const subject = (isProduction ? '' : `[${envLabel}] `) + renderSubject(tpl, lead)
+
+    await sendMail({ from: cfg.from, to: cfg.to, cc: cfg.cc, replyTo: lead.email, subject, html })
     return { sent: true }
   } catch (e) {
     return { sent: false, reason: e instanceof Error ? e.message : 'Unknown error' }

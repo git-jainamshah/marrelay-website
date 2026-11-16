@@ -5,7 +5,8 @@
  * works without waiting for a real lead.
  */
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Send, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { Plus, Trash2, Send, CheckCircle2, AlertTriangle, RotateCcw } from 'lucide-react'
+import { Seg } from '@/components/admin/viz'
 import PageHeader from '@/components/admin/PageHeader'
 import SaveBar from '@/components/admin/SaveBar'
 import { HistoryButton } from '@/components/admin/HistoryDrawer'
@@ -14,6 +15,14 @@ import { useToast } from '@/components/admin/Toast'
 import { loadSetting, saveSetting } from '@/lib/admin/client'
 
 type Cfg = { enabled: boolean; from: string; to: string[]; cc: string[]; includeSpam?: boolean }
+type Tpl = { subject: string; intro: string; footerNote: string; buttonLabel: string; showScore: boolean }
+const TPL_DEFAULTS: Tpl = {
+  subject: 'New lead: {{name}}{{company_paren}} · {{form}}',
+  intro: '{{name}} just got in touch through the {{form_lower}}. Reply to this email and it goes straight to them.',
+  footerNote: 'Sent automatically by the Marrelay website when a new lead arrives.',
+  buttonLabel: 'Open this lead in the admin',
+  showScore: true,
+}
 
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())
 
@@ -24,17 +33,36 @@ export default function NotificationsPage() {
   const [busy, setBusy] = useState(false)
   const [testing, setTesting] = useState(false)
   const [status, setStatus] = useState<{ configured: boolean; missing: string[] } | null>(null)
+  const [tpl, setTpl] = useState<Tpl | null>(null)
+  const [tplSaved, setTplSaved] = useState('')
+  const [previewEnv, setPreviewEnv] = useState<'production' | 'staging'>('production')
+  const [preview, setPreview] = useState<{ html: string; subject: string; score: any } | null>(null)
 
   useEffect(() => {
     loadSetting<Cfg>('lead_alerts').then((v) => { if (v) { setC(v); setSaved(JSON.stringify(v)) } })
     fetch('/api/admin/notifications/test', { cache: 'no-store' }).then((r) => r.json()).then(setStatus).catch(() => {})
+    loadSetting<Tpl>('lead_email_template').then((v) => {
+      const t = { ...TPL_DEFAULTS, ...(v || {}) }
+      setTpl(t); setTplSaved(JSON.stringify(t))
+    })
   }, [])
 
-  const dirty = !!c && JSON.stringify(c) !== saved
+  // Re-render the preview as the template is edited.
+  useEffect(() => {
+    if (!tpl) return
+    const t = setTimeout(() => {
+      fetch(`/api/admin/notifications/preview?format=json&env=${previewEnv}&cfg=${encodeURIComponent(JSON.stringify(tpl))}`, { cache: 'no-store' })
+        .then((r) => r.json()).then(setPreview).catch(() => {})
+    }, 300)
+    return () => clearTimeout(t)
+  }, [tpl, previewEnv])
+
+  const tplDirty = !!tpl && JSON.stringify(tpl) !== tplSaved
+  const dirty = (!!c && JSON.stringify(c) !== saved) || tplDirty
   async function save() {
-    if (!c) return
     setBusy(true)
-    if (await saveSetting('lead_alerts', c)) setSaved(JSON.stringify(c))
+    if (c && JSON.stringify(c) !== saved) { if (await saveSetting('lead_alerts', c)) setSaved(JSON.stringify(c)) }
+    if (tpl && tplDirty) { if (await saveSetting('lead_email_template', tpl)) setTplSaved(JSON.stringify(tpl)) }
     setBusy(false)
   }
 
@@ -63,7 +91,7 @@ export default function NotificationsPage() {
   )
 
   return (
-    <div className="ad-page" style={{ maxWidth: 760 }}>
+    <div className="ad-page">
       <PageHeader kicker="Settings" title="Lead Alerts"
         description="Email the team the moment a lead comes in, from any form on the site, so nothing is missed between checking the admin."
         actions={c && <HistoryButton settingKey="lead_alerts" onRestored={(v) => { setC(v); setSaved(JSON.stringify(v)) }} />} />
@@ -119,12 +147,71 @@ export default function NotificationsPage() {
             </div>
           </section>
 
+          {tpl && (
+            <section className="ad-block" id="template">
+              <header className="ad-block-head">
+                <div>
+                  <h2>What the email looks like</h2>
+                  <p>Edit the wording; the preview updates as you type. {'{{name}}'}, {'{{company}}'}, {'{{form}}'}, {'{{budget}}'}, {'{{timeline}}'} and {'{{reference}}'} are filled in from the lead.</p>
+                </div>
+                <div className="ad-block-tools">
+                  <HistoryButton settingKey="lead_email_template" onRestored={(v) => { setTpl({ ...TPL_DEFAULTS, ...v }); setTplSaved(JSON.stringify({ ...TPL_DEFAULTS, ...v })) }} />
+                  <button className="ad-btn-ghost sm" onClick={() => setTpl({ ...TPL_DEFAULTS })}><RotateCcw size={14} /> Reset wording</button>
+                </div>
+              </header>
+
+              <div className="ad-split">
+                <div className="ad-split-form">
+                  <div className="ad-card">
+                    <label className="ad-label">Subject line</label>
+                    <input className="ad-input" value={tpl.subject} onChange={(e) => setTpl({ ...tpl, subject: e.target.value })} />
+                    {preview && <p className="ad-soft" style={{ fontSize: 12, margin: '6px 0 0' }}>Appears as: <b>{preview.subject}</b></p>}
+
+                    <div style={{ marginTop: 16 }}>
+                      <label className="ad-label">Opening line</label>
+                      <textarea rows={2} className="ad-input" value={tpl.intro} onChange={(e) => setTpl({ ...tpl, intro: e.target.value })} />
+                    </div>
+                    <div style={{ marginTop: 16 }}>
+                      <label className="ad-label">Button</label>
+                      <input className="ad-input" value={tpl.buttonLabel} onChange={(e) => setTpl({ ...tpl, buttonLabel: e.target.value })} />
+                    </div>
+                    <div style={{ marginTop: 16 }}>
+                      <label className="ad-label">Footer note</label>
+                      <input className="ad-input" value={tpl.footerNote} onChange={(e) => setTpl({ ...tpl, footerNote: e.target.value })} />
+                    </div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 18, fontSize: 13 }}>
+                      <input type="checkbox" checked={tpl.showScore} onChange={(e) => setTpl({ ...tpl, showScore: e.target.checked })} />
+                      Show the importance score
+                    </label>
+                    <p className="ad-soft" style={{ fontSize: 12, margin: '8px 0 0', lineHeight: 1.55 }}>
+                      Scored out of 5, mostly on the budget asked for, lifted by how urgent the timeline is and by whether they gave a company, a phone number and a real message.
+                    </p>
+                  </div>
+                </div>
+
+                <aside className="ad-split-preview">
+                  <div className="ad-prev-head">
+                    <span>Preview</span>
+                    <Seg small value={previewEnv} onChange={setPreviewEnv} options={[{ v: 'production', l: 'Production' }, { v: 'staging', l: 'Dev / QA' }]} />
+                  </div>
+                  {preview ? (
+                    <iframe title="Email preview" srcDoc={preview.html} className="ad-email-prev" />
+                  ) : <div className="ad-skel" style={{ height: 420 }} />}
+                  <p className="ad-prev-note">
+                    Production is what clients-facing alerts look like. Dev / QA adds a blue banner and an environment tag in the subject, so a test lead is never mistaken for a real one.
+                    <a href={`/api/admin/notifications/preview?env=${previewEnv}`} target="_blank" style={{ marginLeft: 6, textDecoration: 'underline' }}>Open full size</a>
+                  </p>
+                </aside>
+              </div>
+            </section>
+          )}
+
           <p className="ad-soft" style={{ fontSize: 12, lineHeight: 1.6 }}>
             Replies go to the person who enquired, so you can answer straight from the alert. If an alert ever fails to send, the lead is still saved;
             email is never allowed to block a submission.
           </p>
 
-          <SaveBar dirty={dirty} busy={busy} onSave={save} onDiscard={() => saved && setC(JSON.parse(saved))} label="Save alerts" />
+          <SaveBar dirty={dirty} busy={busy} onSave={save} label="Save alerts" onDiscard={() => { if (saved) setC(JSON.parse(saved)); if (tplSaved) setTpl(JSON.parse(tplSaved)) }} />
         </>
       )}
     </div>
