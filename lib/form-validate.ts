@@ -34,39 +34,10 @@ export function emailSuggestion(v: string): string | null {
 
 /* ---------------- phone ---------------- */
 
-export type Country = { code: string; name: string; dial: string; min: number; max: number }
+export type { Country } from './countries'
+export { COUNTRIES, COUNTRIES_SORTED, DEFAULT_COUNTRY, countryByCode } from './countries'
 
-/** Common destinations first; the list stays short enough to scan. */
-export const COUNTRIES: Country[] = [
-  { code: 'CA', name: 'Canada', dial: '+1', min: 10, max: 10 },
-  { code: 'US', name: 'United States', dial: '+1', min: 10, max: 10 },
-  { code: 'GB', name: 'United Kingdom', dial: '+44', min: 9, max: 10 },
-  { code: 'IN', name: 'India', dial: '+91', min: 10, max: 10 },
-  { code: 'AU', name: 'Australia', dial: '+61', min: 9, max: 9 },
-  { code: 'NZ', name: 'New Zealand', dial: '+64', min: 8, max: 10 },
-  { code: 'IE', name: 'Ireland', dial: '+353', min: 7, max: 9 },
-  { code: 'AE', name: 'United Arab Emirates', dial: '+971', min: 8, max: 9 },
-  { code: 'SG', name: 'Singapore', dial: '+65', min: 8, max: 8 },
-  { code: 'DE', name: 'Germany', dial: '+49', min: 7, max: 11 },
-  { code: 'FR', name: 'France', dial: '+33', min: 9, max: 9 },
-  { code: 'NL', name: 'Netherlands', dial: '+31', min: 9, max: 9 },
-  { code: 'ES', name: 'Spain', dial: '+34', min: 9, max: 9 },
-  { code: 'IT', name: 'Italy', dial: '+39', min: 9, max: 11 },
-  { code: 'ZA', name: 'South Africa', dial: '+27', min: 9, max: 9 },
-  { code: 'BR', name: 'Brazil', dial: '+55', min: 10, max: 11 },
-  { code: 'MX', name: 'Mexico', dial: '+52', min: 10, max: 10 },
-  { code: 'JP', name: 'Japan', dial: '+81', min: 9, max: 10 },
-  { code: 'CN', name: 'China', dial: '+86', min: 11, max: 11 },
-  { code: 'PK', name: 'Pakistan', dial: '+92', min: 10, max: 10 },
-  { code: 'BD', name: 'Bangladesh', dial: '+880', min: 10, max: 10 },
-  { code: 'PH', name: 'Philippines', dial: '+63', min: 10, max: 10 },
-  { code: 'NG', name: 'Nigeria', dial: '+234', min: 10, max: 10 },
-  { code: 'KE', name: 'Kenya', dial: '+254', min: 9, max: 9 },
-  { code: 'OTHER', name: 'Other', dial: '+', min: 6, max: 15 },
-]
-
-export const DEFAULT_COUNTRY = 'CA'
-export const countryByCode = (code: string) => COUNTRIES.find((c) => c.code === code) || COUNTRIES[0]
+import { countryByCode } from './countries'
 
 export const digitsOf = (v: string) => String(v ?? '').replace(/\D/g, '')
 
@@ -109,6 +80,71 @@ export function toStoredPhone(digits: string, code: string): string {
 export function toE164(v: unknown): string {
   const d = digitsOf(v as string)
   return d ? `+${d}` : ''
+}
+
+/* ---------------- live validation messages ---------------- */
+
+/**
+ * A field's live state. `idle` is a field nobody has touched yet: it shows
+ * nothing at all, so an untouched form is quiet rather than covered in red.
+ */
+export type FieldState = { status: 'idle' | 'ok' | 'error'; message?: string }
+
+const IDLE: FieldState = { status: 'idle' }
+const OK: FieldState = { status: 'ok' }
+const err = (message: string): FieldState => ({ status: 'error', message })
+
+export function checkRequired(v: string, label: string): FieldState {
+  const t = tidy(v)
+  if (!t) return IDLE
+  if (t.length < 2) return err(`${label} looks too short.`)
+  return OK
+}
+
+export function checkName(v: string): FieldState {
+  const t = tidy(v)
+  if (!t) return IDLE
+  if (t.length < 2) return err('Please enter your full name.')
+  if (!/[A-Za-zÀ-ɏ]/.test(t)) return err('Please enter your name in letters.')
+  return OK
+}
+
+export function checkEmail(v: string): FieldState {
+  const t = normalizeEmail(v)
+  if (!t) return IDLE
+  if (!t.includes('@')) return err('Add the @ part, like you@company.com.')
+  if (!isValidEmail(t)) return err('That email address is not complete yet.')
+  // A likely typo is a nudge, not a blocker: the address may well be right.
+  const fix = emailSuggestion(t)
+  if (fix) return { status: 'ok', message: `Did you mean ${fix}?` }
+  return OK
+}
+
+export function checkPhone(digits: string, code: string): FieldState {
+  const d = digitsOf(digits)
+  const c = countryByCode(code)
+  if (!d) return IDLE
+  if (d.length < c.min) {
+    const left = c.min - d.length
+    return err(`${left} more digit${left === 1 ? '' : 's'} for a ${c.name} number.`)
+  }
+  if (d.length > c.max) return err(`That is longer than a ${c.name} number.`)
+  return OK
+}
+
+export function checkMessage(v: string, min = 10): FieldState {
+  const t = tidyMultiline(v)
+  if (!t) return IDLE
+  if (t.length < min) return err(`A sentence or two helps us reply properly.`)
+  return OK
+}
+
+/** A field that is optional but, once filled, has to look right. */
+export function checkUrl(v: string): FieldState {
+  const t = tidy(v)
+  if (!t) return IDLE
+  if (!/^(https?:\/\/)?[\w-]+(\.[\w-]+)+/.test(t)) return err('That does not look like a web address.')
+  return OK
 }
 
 /** Tidy a value for display: no runs of whitespace, no stray ends. */

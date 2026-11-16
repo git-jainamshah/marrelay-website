@@ -3,15 +3,15 @@
 import { useState, useEffect, useRef, useMemo, FormEvent } from 'react'
 import { createFormTracker } from '@/lib/form-funnel'
 import PhoneField from '@/components/forms/PhoneField'
-import { DEFAULT_COUNTRY, isValidEmail, normalizeEmail, isValidPhone, toStoredPhone, emailSuggestion } from '@/lib/form-validate'
+import {
+  DEFAULT_COUNTRY, isValidEmail, normalizeEmail, isValidPhone, toStoredPhone,
+  checkName, checkEmail, checkPhone, type FieldState,
+} from '@/lib/form-validate'
 import { useSearchParams } from 'next/navigation'
 import { getTrafficData } from '@/analytics/traffic-identification'
 import {
   trackFormView, trackFormStart, trackFormError, trackAddToCart, trackBeginCheckout, trackLead,
 } from '@/analytics/events'
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const phoneValid = (p: string) => (p.match(/\d/g) ?? []).length >= 7
 
 const SERVICES = [
   { value: 'web', label: 'Web' },
@@ -27,10 +27,13 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [country, setCountry] = useState(DEFAULT_COUNTRY)
-  const [emailHint, setEmailHint] = useState<string | null>(null)
   const [services, setServices] = useState<string[]>([])
   const [message, setMessage] = useState('')
-  const [invalid, setInvalid] = useState<{ name?: boolean; email?: boolean; phone?: boolean; services?: boolean; consent?: boolean }>({})
+  const [invalid, setInvalid] = useState<{ services?: boolean; consent?: boolean }>({})
+  // A field only starts showing red once it has been left, or once Send was pressed.
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [tried, setTried] = useState(false)
+  const touch = (k: string) => setTouched((p) => (p[k] ? p : { ...p, [k]: true }))
   const [done, setDone] = useState(false)
   const [consent, setConsent] = useState(false)
   const [sending, setSending] = useState(false)
@@ -73,22 +76,51 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
     setInvalid((prev) => ({ ...prev, services: false }))
   }
 
+  // Live state for the three typed fields, recomputed on every keystroke.
+  const live = {
+    name: checkName(name),
+    email: checkEmail(email),
+    phone: checkPhone(phone, country),
+  }
+
+  /**
+   * Turns a field's live state into what the user actually sees. An empty
+   * required field stays quiet until they try to send; a filled one that is
+   * wrong speaks up as soon as they leave it, and keeps up as they fix it.
+   */
+  function view(key: 'name' | 'email' | 'phone', emptyMsg: string) {
+    const s: FieldState = live[key]
+    const revealed = touched[key] || tried
+    if (s.status === 'idle') return tried ? { cls: ' invalid', note: emptyMsg, bad: true } : { cls: '', note: null, bad: false }
+    if (s.status === 'error') return revealed ? { cls: ' invalid', note: s.message!, bad: true } : { cls: '', note: null, bad: false }
+    // A valid field may still carry a soft note, such as a likely address typo.
+    return { cls: ' ok', note: s.message ?? null, bad: false }
+  }
+
+  const vName = view('name', 'Please tell us your name.')
+  const vEmail = view('email', 'We need an email to reply to.')
+  const vPhone = view('phone', 'A phone number helps us reach you.')
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setTried(true)
     const bad = {
-      name: name.trim() === '',
+      name: live.name.status !== 'ok',
       email: !isValidEmail(email),
       phone: !isValidPhone(phone, country),
       services: services.length === 0,
       consent: !consent,
     }
-    setInvalid(bad)
+    setInvalid({ services: bad.services, consent: bad.consent })
     const form = e.target as HTMLFormElement
     if (bad.name || bad.email || bad.phone || bad.services || bad.consent) {
       const badFields = Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k])
       trackFormError({ formId: 'home-lead-form', formType: 'home', errorFields: badFields })
       funnel.error(badFields)
-      const firstBad = form.querySelector('.field.invalid') || form
+      // Classes have not re-rendered yet, so go to the field by id instead.
+      const firstKey = ['name', 'email', 'phone', 'services', 'consent'].find((k) => badFields.includes(k))
+      const anchorId = firstKey === 'services' ? `${idPrefix}-${SERVICES[0].value}` : `${idPrefix}-${firstKey}`
+      const firstBad = (document.getElementById(anchorId)?.closest('.field') as HTMLElement | null) || form
       const top = firstBad.getBoundingClientRect().top + window.pageYOffset - 140
       window.scrollTo({ top, behavior: 'smooth' })
       return
@@ -139,7 +171,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
           <p>Four quick fields. The rest we&apos;ll cover on the call.</p>
         </div>
 
-        <div className={`field${invalid.name ? ' invalid' : ''}`}>
+        <div className={`field${vName.cls}`}>
           <label htmlFor={`${idPrefix}-name`}>
             Name <span className="req">*</span>
           </label>
@@ -150,15 +182,14 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
             placeholder="Your name"
             autoComplete="name"
             value={name}
-            onChange={(e) => {
-              setName(e.target.value)
-              setInvalid((prev) => ({ ...prev, name: false }))
-            }}
+            onBlur={() => touch('name')}
+            onChange={(e) => setName(e.target.value)}
+            aria-invalid={vName.bad}
           />
-          <span className="err">Please tell us your name.</span>
+          {vName.note && <span className={`note${vName.bad ? ' bad' : ''}`} role={vName.bad ? 'alert' : undefined}>{vName.note}</span>}
         </div>
 
-        <div className={`field${invalid.email ? ' invalid' : ''}`}>
+        <div className={`field${vEmail.cls}`}>
           <label htmlFor={`${idPrefix}-email`}>
             Email <span className="req">*</span>
           </label>
@@ -169,22 +200,14 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
             placeholder="you@company.com"
             autoComplete="email"
             value={email}
-            onBlur={() => setEmailHint(emailSuggestion(email))}
-            onChange={(e) => {
-              setEmail(e.target.value)
-              setInvalid((prev) => ({ ...prev, email: false }))
-              setEmailHint(null)
-            }}
+            onBlur={() => touch('email')}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={vEmail.bad}
           />
-          <span className="err">A valid email helps us reply.</span>
-          {emailHint && (
-            <button type="button" className="field-hint" onClick={() => { setEmail(emailHint); setEmailHint(null) }}>
-              Did you mean <b>{emailHint}</b>?
-            </button>
-          )}
+          {vEmail.note && <span className={`note${vEmail.bad ? ' bad' : ''}`} role={vEmail.bad ? 'alert' : undefined}>{vEmail.note}</span>}
         </div>
 
-        <div className={`field${invalid.phone ? ' invalid' : ''}`}>
+        <div className={`field${vPhone.cls}`}>
           <label htmlFor={`${idPrefix}-phone`}>
             Phone <span className="req">*</span>
           </label>
@@ -192,13 +215,11 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
             id={`${idPrefix}-phone`}
             digits={phone}
             country={country}
-            onChange={({ digits, country: c }) => {
-              setPhone(digits)
-              setCountry(c)
-              setInvalid((prev) => ({ ...prev, phone: false }))
-            }}
+            status={vPhone.bad ? 'error' : vPhone.cls === ' ok' ? 'ok' : 'idle'}
+            onBlur={() => touch('phone')}
+            onChange={({ digits, country: c }) => { setPhone(digits); setCountry(c) }}
           />
-          <span className="err">A phone number helps us reach you.</span>
+          {vPhone.note && <span className={`note${vPhone.bad ? ' bad' : ''}`} role={vPhone.bad ? 'alert' : undefined}>{vPhone.note}</span>}
         </div>
 
         <div className={`field${invalid.services ? ' invalid' : ''}`}>

@@ -850,9 +850,9 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .v-start .lead-form .form-head { display: none; }
 .v3 .v-start .lead-form .form-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 24px; }
 .v3 .v-start .lead-form .form-body > * { grid-column: 1 / -1; }
+/* Name and Email share the top row; Phone keeps the full width for its dial code. */
 .v3 .v-start .lead-form .form-body > .field:nth-child(2),
-.v3 .v-start .lead-form .form-body > .field:nth-child(3),
-.v3 .v-start .lead-form .form-body > .field:nth-child(4) { grid-column: auto; }
+.v3 .v-start .lead-form .form-body > .field:nth-child(3) { grid-column: auto; }
 .v3 .v-start .lead-form .form-body > .form-submit { justify-self: start; }
 
 /* legacy rich-text spans (.it italic, .hl highlight) inside v3 templates render plain */
@@ -1014,14 +1014,105 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .v-svc-row.gw:hover .gw-tools img { opacity: 1; }
 .v3 .gw-tools small { font-size: 12px; color: var(--v-mut-2); }
 
-/* phone field: country selector sits beside the number on every form */
-.v3 .phone-field { display: flex; gap: 8px; align-items: stretch; }
-.v3 .phone-field select { flex: 0 0 auto; width: 108px; }
-.v3 .phone-field input { flex: 1 1 auto; min-width: 0; }
-@media (max-width: 420px) { .v3 .phone-field select { width: 92px; } }
+/* ---- phone field: a compact dial-code picker beside a full-width number ---- */
+.phone-field { position: relative; }
+.phone-field .phone-row { display: flex; align-items: stretch; gap: 10px; }
+
+.phone-field .dial-btn {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--v-sans); font-size: 17px; color: var(--v-ink);
+  background: transparent; border: 0; border-bottom: 1px solid var(--v-ink);
+  border-radius: 0; padding: 10px 2px 10px 0; cursor: pointer; line-height: 1.2;
+}
+.phone-field .dial-btn .flag { font-size: 18px; line-height: 1; }
+.phone-field .dial-btn .dial { font-variant-numeric: tabular-nums; }
+.phone-field .dial-btn .caret { color: var(--v-mut-2); transition: transform .18s ease; }
+.phone-field.open .dial-btn .caret { transform: rotate(180deg); }
+.phone-field .dial-btn:hover .caret { color: var(--v-ink); }
+.phone-field .dial-btn:focus-visible { border-bottom-color: var(--v-red); box-shadow: 0 1px 0 0 var(--v-red); }
+
+/* a phone needs a dial code and a number side by side, so it takes the whole row */
+.v3 .lead-form .field:has(.phone-field) { grid-column: 1 / -1; }
+
+/* the number itself takes everything that is left */
+.v3 .lead-form .field .phone-field .phone-input { flex: 1 1 auto; width: 100%; min-width: 0; }
+
+.phone-field .dial-pop {
+  position: absolute; z-index: 40; top: calc(100% + 6px); left: 0;
+  width: min(330px, 100%); background: #fff;
+  border: 1px solid var(--v-rule, #D8D6CE); box-shadow: 0 18px 44px rgba(14, 14, 13, .14);
+}
+.phone-field .dial-search {
+  width: 100%; font-family: var(--v-sans, inherit); font-size: 15px; color: var(--v-ink, #0E0E0D);
+  background: transparent; border: 0; border-bottom: 1px solid var(--v-rule, #D8D6CE);
+  padding: 12px 14px; outline: none; border-radius: 0;
+}
+/* the picker lives inside a .field, so keep the form's input styling off it */
+.v3 .lead-form .field .phone-field input.dial-search {
+  font-size: 15px; border-bottom: 1px solid var(--v-rule, #D8D6CE);
+  background-image: none; padding: 12px 14px; box-shadow: none;
+}
+.v3 .lead-form .field .phone-field input.dial-search:focus {
+  border-bottom-color: var(--v-rule, #D8D6CE); box-shadow: none;
+}
+.phone-field .dial-list { max-height: 264px; overflow-y: auto; margin: 0; padding: 4px 0; list-style: none; background: #fff; }
+.phone-field .dial-opt {
+  display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer;
+  font-family: var(--v-sans, inherit); font-size: 15px; color: var(--v-ink, #0E0E0D);
+}
+.phone-field .dial-opt .nm { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.phone-field .dial-opt .dl { flex: 0 0 auto; color: var(--v-mut-2, #6A6964); font-variant-numeric: tabular-nums; }
+.phone-field .dial-opt.active { background: rgba(14, 14, 13, .06); }
+.phone-field .dial-opt.current { font-weight: 500; }
+.phone-field .dial-empty { padding: 14px; font-family: var(--v-sans, inherit); font-size: 14px; color: var(--v-mut-2, #6A6964); }
+
+/* ---- live validation: a red line under a field being fixed, a tick when it is right ---- */
+.v3 .lead-form .field.ok input[type=text],
+.v3 .lead-form .field.ok input[type=email],
+.v3 .lead-form .field.ok input[type=tel],
+.v3 .lead-form .field.ok input[type=url],
+.v3 .lead-form .field.ok textarea {
+  border-bottom-color: #1E7F4A;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.6l3.4 3.4 7.6-8' fill='none' stroke='%231E7F4A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  padding-right: 24px;
+}
+.v3 .lead-form .field.ok textarea { background-position: right 2px top 10px; }
+.v3 .lead-form .field.ok input:focus, .v3 .lead-form .field.ok textarea:focus {
+  border-bottom-color: #1E7F4A; box-shadow: 0 1px 0 0 #1E7F4A;
+}
+/* the dial button sits on the same line, so its underline matches the field */
+.v3 .lead-form .field.ok .phone-field .dial-btn { border-bottom-color: #1E7F4A; }
+.v3 .lead-form .field.invalid .phone-field .dial-btn { border-bottom-color: var(--v-red); }
+/* the search box lives inside a .field, so keep the form's input styling off it */
+.v3 .lead-form .field.ok .phone-field .dial-pop input.dial-search,
+.v3 .lead-form .field.invalid .phone-field .dial-pop input.dial-search,
+.v3 .lead-form .field .phone-field .dial-pop input.dial-search {
+  font-size: 15px; background: transparent; background-image: none; padding: 12px 14px;
+  box-shadow: none; border: 0; border-bottom: 1px solid var(--v-rule, #D8D6CE);
+}
+
+/* the message under the field, which replaces the browser's own bubble */
+.v3 .lead-form .field .note {
+  display: block; margin-top: 7px;
+  font-family: var(--v-sans); font-size: 13px; line-height: 1.45; color: var(--v-mut-2);
+}
+.v3 .lead-form .field .note.bad { color: var(--v-red); }
+.v3 .lead-form .field .note b { color: var(--v-ink); text-decoration: underline; cursor: pointer; }
+
 /* "did you mean" nudge under the email field */
 .v3 .field-hint {
   display: inline-block; margin-top: 6px; background: none; border: 0; padding: 0;
   font: inherit; font-size: 13px; color: var(--v-mut-2); cursor: pointer; text-align: left;
 }
 .v3 .field-hint b { color: var(--v-ink); text-decoration: underline; }
+
+.v3 .sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3 .phone-field .dial-btn .caret { transition: none; }
+}

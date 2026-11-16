@@ -135,7 +135,7 @@ export default function PromoBanner() {
                 style={{ ...inputStyle, ...(emailErr ? { borderColor: '#D7262C' } : null) }} />
               <PhoneField required name="phone" digits={form.phone} country={country}
                 onChange={({ digits, country: c }) => { setForm({ ...form, phone: digits }); setCountry(c); setPhoneErr(false) }}
-                style={inputStyle} />
+                inputStyle={phoneErr ? { ...inputStyle, borderColor: '#D7262C' } : inputStyle} />
               <input name="company" placeholder="Company (optional)" value={form.company}
                 onChange={(e) => setForm({ ...form, company: e.target.value })} style={inputStyle} />
               {phoneErr && (

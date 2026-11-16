@@ -7,9 +7,11 @@ import {
   trackFormView, trackFormStart, trackFormError, trackAddToCart, trackBeginCheckout, trackLead,
 } from '@/analytics/events'
 import { COUNTRIES, PROVINCES } from '@/lib/locations'
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const phoneValid = (p: string) => (p.match(/\d/g) ?? []).length >= 7
+import PhoneField from '@/components/forms/PhoneField'
+import {
+  DEFAULT_COUNTRY, isValidEmail, isValidPhone, normalizeEmail, toStoredPhone, tidy, tidyMultiline,
+  checkName, checkEmail, checkPhone, checkMessage, type FieldState,
+} from '@/lib/form-validate'
 
 const SERVICES = [
   { value: 'web', label: 'Web development' },
@@ -38,14 +40,19 @@ export default function ContactLeadForm() {
   const searchParams = useSearchParams()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState('') // national digits only; the dial code lives in phoneCountry
+  const [phoneCountry, setPhoneCountry] = useState(DEFAULT_COUNTRY)
   const [company, setCompany] = useState('')
   const [services, setServices] = useState<string[]>([])
   const [budget, setBudget] = useState('')
   const [timeline, setTimeline] = useState('')
   const [message, setMessage] = useState('')
   const [referral, setReferral] = useState('')
-  const [invalid, setInvalid] = useState<{ name?: boolean; email?: boolean; phone?: boolean; services?: boolean; message?: boolean; consent?: boolean }>({})
+  const [invalid, setInvalid] = useState<{ services?: boolean; consent?: boolean }>({})
+  // A field only starts showing red once it has been left, or once Send was pressed.
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [tried, setTried] = useState(false)
+  const touch = (k: string) => setTouched((p) => (p[k] ? p : { ...p, [k]: true }))
   const [done, setDone] = useState(false)
   const [sending, setSending] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -90,21 +97,53 @@ export default function ContactLeadForm() {
     setInvalid((prev) => ({ ...prev, services: false }))
   }
 
+  // Live state for the typed fields, recomputed on every keystroke.
+  const live = {
+    name: checkName(name),
+    email: checkEmail(email),
+    phone: checkPhone(phone, phoneCountry),
+    message: checkMessage(message),
+  }
+
+  /**
+   * Turns a field's live state into what the user actually sees. An empty
+   * required field stays quiet until they try to send; a filled one that is
+   * wrong speaks up as soon as they leave it, and keeps up as they fix it.
+   */
+  function view(key: keyof typeof live, emptyMsg: string) {
+    const s: FieldState = live[key]
+    const revealed = touched[key] || tried
+    if (s.status === 'idle') return tried ? { cls: ' invalid', note: emptyMsg, bad: true } : { cls: '', note: null, bad: false }
+    if (s.status === 'error') return revealed ? { cls: ' invalid', note: s.message!, bad: true } : { cls: '', note: null, bad: false }
+    // A valid field may still carry a soft note, such as a likely address typo.
+    return { cls: ' ok', note: s.message ?? null, bad: false }
+  }
+
+  const vName = view('name', 'Please tell us your name.')
+  const vEmail = view('email', 'We need an email to reply to.')
+  const vPhone = view('phone', 'A phone number helps us reach you.')
+  const vMessage = view('message', 'A sentence or two gets us started.')
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setTried(true)
     const bad = {
-      name: name.trim() === '',
-      email: !EMAIL_RE.test(email.trim()),
-      phone: !phoneValid(phone),
+      name: live.name.status !== 'ok',
+      email: !isValidEmail(email),
+      phone: !isValidPhone(phone, phoneCountry),
       services: services.length === 0,
-      message: message.trim() === '',
+      message: live.message.status !== 'ok',
       consent: !consent,
     }
-    setInvalid(bad)
+    setInvalid({ services: bad.services, consent: bad.consent })
     const form = e.target as HTMLFormElement
     if (bad.name || bad.email || bad.phone || bad.services || bad.message || bad.consent) {
-      trackFormError({ formId: 'contact-lead-form', formType: 'contact', errorFields: Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k]) })
-      const firstBad = form.querySelector('.field.invalid') || form
+      const badFields = Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k])
+      trackFormError({ formId: 'contact-lead-form', formType: 'contact', errorFields: badFields })
+      // Classes have not re-rendered yet, so go to the field by id instead.
+      const firstKey = ['name', 'email', 'phone', 'services', 'message', 'consent'].find((k) => badFields.includes(k))
+      const anchorId = firstKey === 'services' ? `c-${SERVICES[0].value}` : `c-${firstKey}`
+      const firstBad = (document.getElementById(anchorId)?.closest('.field') as HTMLElement | null) || form
       const top = firstBad.getBoundingClientRect().top + window.pageYOffset - 140
       window.scrollTo({ top, behavior: 'smooth' })
       return
@@ -117,7 +156,8 @@ export default function ContactLeadForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name, email, phone, company, message,
+          name: tidy(name), email: normalizeEmail(email), phone: toStoredPhone(phone, phoneCountry),
+          company: tidy(company), message: tidyMultiline(message),
           services, budget, timeline, referral, referralDetail, website,
           companyUrl, companyCountry, companyProvince, companyRemote,
           consent,
@@ -133,8 +173,9 @@ export default function ContactLeadForm() {
       }
       // conversion: generate_lead + purchase with hashed PII + DB lead_id
       await trackLead({
-        name, email, phone, services, budget, timeline,
-        formType: 'contact', company, companyCountry, companyProvince, companyRemote,
+        name: tidy(name), email: normalizeEmail(email), phone: toStoredPhone(phone, phoneCountry),
+        services, budget, timeline,
+        formType: 'contact', company: tidy(company), companyCountry, companyProvince, companyRemote,
         publicId: d.leadId, consent,
       })
       setDone(true)
@@ -160,7 +201,7 @@ export default function ContactLeadForm() {
         </div>
 
         <div className="form-row">
-          <div className={`field${invalid.name ? ' invalid' : ''}`}>
+          <div className={`field${vName.cls}`}>
             <label htmlFor="c-name">
               Name <span className="req">*</span>
             </label>
@@ -171,14 +212,13 @@ export default function ContactLeadForm() {
               placeholder="Your name"
               autoComplete="name"
               value={name}
-              onChange={(e) => {
-                setName(e.target.value)
-                setInvalid((p) => ({ ...p, name: false }))
-              }}
+              onBlur={() => touch('name')}
+              onChange={(e) => setName(e.target.value)}
+              aria-invalid={vName.bad}
             />
-            <span className="err">Please tell us your name.</span>
+            {vName.note && <span className={`note${vName.bad ? ' bad' : ''}`} role={vName.bad ? 'alert' : undefined}>{vName.note}</span>}
           </div>
-          <div className={`field${invalid.email ? ' invalid' : ''}`}>
+          <div className={`field${vEmail.cls}`}>
             <label htmlFor="c-email">
               Email <span className="req">*</span>
             </label>
@@ -189,32 +229,27 @@ export default function ContactLeadForm() {
               placeholder="you@company.com"
               autoComplete="email"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value)
-                setInvalid((p) => ({ ...p, email: false }))
-              }}
+              onBlur={() => touch('email')}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={vEmail.bad}
             />
-            <span className="err">A valid email helps us reply.</span>
+            {vEmail.note && <span className={`note${vEmail.bad ? ' bad' : ''}`} role={vEmail.bad ? 'alert' : undefined}>{vEmail.note}</span>}
           </div>
         </div>
 
-        <div className={`field${invalid.phone ? ' invalid' : ''}`}>
+        <div className={`field${vPhone.cls}`}>
           <label htmlFor="c-phone">
             Phone <span className="req">*</span>
           </label>
-          <input
-            type="tel"
+          <PhoneField
             id="c-phone"
-            name="phone"
-            placeholder="+1 (555) 000-0000"
-            autoComplete="tel"
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value)
-              setInvalid((p) => ({ ...p, phone: false }))
-            }}
+            digits={phone}
+            country={phoneCountry}
+            status={vPhone.bad ? 'error' : vPhone.cls === ' ok' ? 'ok' : 'idle'}
+            onBlur={() => touch('phone')}
+            onChange={({ digits, country }) => { setPhone(digits); setPhoneCountry(country) }}
           />
-          <span className="err">A phone number helps us reach you.</span>
+          {vPhone.note && <span className={`note${vPhone.bad ? ' bad' : ''}`} role={vPhone.bad ? 'alert' : undefined}>{vPhone.note}</span>}
         </div>
 
         <div className="field">
@@ -355,7 +390,7 @@ export default function ContactLeadForm() {
           </div>
         </div>
 
-        <div className={`field${invalid.message ? ' invalid' : ''}`}>
+        <div className={`field${vMessage.cls}`}>
           <label htmlFor="c-message">
             Project description <span className="req">*</span>
           </label>
@@ -365,12 +400,11 @@ export default function ContactLeadForm() {
             rows={5}
             placeholder="What are you building? What's working, what's stuck, and what does 'done' look like? A scrappy paragraph is perfect."
             value={message}
-            onChange={(e) => {
-              setMessage(e.target.value)
-              setInvalid((p) => ({ ...p, message: false }))
-            }}
+            onBlur={() => touch('message')}
+            onChange={(e) => setMessage(e.target.value)}
+            aria-invalid={vMessage.bad}
           />
-          <span className="err">A sentence or two gets us started.</span>
+          {vMessage.note && <span className={`note${vMessage.bad ? ' bad' : ''}`} role={vMessage.bad ? 'alert' : undefined}>{vMessage.note}</span>}
         </div>
 
         <div className="field">
