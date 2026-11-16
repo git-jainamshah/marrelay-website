@@ -27,7 +27,7 @@ type Stats = {
 }
 
 const STATUS_LABELS: Record<string, string> = { new: 'New', contacted: 'Contacted', qualified: 'Qualified', won: 'Won', lost: 'Lost', spam: 'Spam' }
-const FORM_LABELS: Record<string, string> = { contact: 'Contact form', 'promo-banner': 'Promo pop-up', offline: 'Offline', pitch: 'Pitch', other: 'Other' }
+const FORM_LABELS: Record<string, string> = { contact: 'Contact form', 'promo-banner': 'Promo pop-up', 'launch-offer': 'Launch offer', offline: 'Offline', pitch: 'Pitch', other: 'Other' }
 const STATUS_CLASS: Record<string, string> = { new: 'blue', contacted: 'amber', qualified: 'green', won: 'green', lost: 'red', spam: 'grey' }
 
 export default function DashboardView({ firstName }: { firstName: string }) {

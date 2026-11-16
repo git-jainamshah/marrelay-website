@@ -22,7 +22,7 @@ type Stats = {
 
 const SERVICE_LABELS: Record<string, string> = { web: 'Web Development', data: 'Data & Analytics', social: 'Social', seo: 'SEO & Ads', engineering: 'Engineering' }
 const STATUS_LABELS: Record<string, string> = { new: 'New', contacted: 'Contacted', qualified: 'Qualified', won: 'Won', lost: 'Lost', spam: 'Spam' }
-const FORM_LABELS: Record<string, string> = { contact: 'Contact form', 'promo-banner': 'Promo pop-up', offline: 'Offline', pitch: 'Pitch' }
+const FORM_LABELS: Record<string, string> = { contact: 'Contact form', 'promo-banner': 'Promo pop-up', 'launch-offer': 'Launch offer', offline: 'Offline', pitch: 'Pitch' }
 
 type Range = '30' | '90' | '365' | 'all' | 'custom'
 type Tab = 'channel' | 'status' | 'service' | 'budget' | 'source' | 'landing' | 'form'
@@ -100,6 +100,7 @@ export default function LeadsDashboardPage() {
           <option value="">Every form</option>
           <option value="contact">Contact form</option>
           <option value="promo-banner">Promo pop-up</option>
+          <option value="launch-offer">Launch offer</option>
           <option value="offline">Offline leads</option>
           <option value="pitch">Pitches</option>
         </select>

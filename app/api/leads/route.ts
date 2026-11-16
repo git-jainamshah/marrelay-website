@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         tidy(body.company).slice(0, 200) || null,
         tidyMultiline(body.message).slice(0, 5000) || null,
         String(body.sourcePage ?? '').slice(0, 300) || null,
-        ['contact', 'promo-banner', 'other'].includes(body.formType) ? body.formType : 'other',
+        ['contact', 'promo-banner', 'launch-offer', 'other'].includes(body.formType) ? body.formType : 'other',
         String(body.packageInterest ?? '').slice(0, 200) || null,
         JSON.stringify({
           services: body.services ?? undefined,

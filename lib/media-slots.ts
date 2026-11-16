@@ -28,6 +28,8 @@ export const SLOT_DEFS: SlotDef[] = [
   { key: 'home-hero-poster', page: 'Home page', pageUrl: '/', section: 'Hero poster photo (shows while the video loads)', kind: 'photo', defaultPath: '/assets/city-night.jpg' },
   { key: 'home-sprint-image', page: 'Home page', pageUrl: '/', section: 'Launch Sprint banner - background photo', kind: 'photo', defaultPath: '/assets/arch-curve.jpg' },
   { key: 'home-journal-image', page: 'Home page', pageUrl: '/', section: 'Journal - featured article photo', kind: 'photo', defaultPath: '/assets/blog-banner.jpg' },
+  // ---- Campaign landing pages ----
+  { key: 'lp-launch-hero', page: 'Landing: 30% offer', pageUrl: '/lp/launch', section: 'Hero background photo', kind: 'photo', defaultPath: '/assets/lp/photo-3.jpg' },
   // ---- Service pages (hero background; also used by the home services showcase) ----
   { key: 'service-web-hero', page: 'Service: Web Development', pageUrl: '/services/web-development', section: 'Studio loop video (plays behind the Launch Sprint band)', kind: 'video', defaultPath: '/assets/web-dev-bg.mp4' },
   { key: 'service-web-poster', page: 'Service: Web Development', pageUrl: '/services/web-development', section: 'Hero poster photo', kind: 'photo', defaultPath: '/assets/city-blue.jpg' },

@@ -21,7 +21,24 @@ const SERVICES = [
   { value: 'engineering', label: 'Engineering' },
 ]
 
-export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
+type Props = {
+  idPrefix?: string
+  /** Identity for analytics and the funnel. Defaults keep the homepage unchanged. */
+  formId?: string
+  formType?: string
+  location?: string
+  /** The heading above the fields, so a campaign page can speak its own language. */
+  heading?: React.ReactNode
+  blurb?: string
+  submitLabel?: string
+  /** Appended to the message, so the team sees which offer the lead came from. */
+  contextNote?: string
+}
+
+export default function LeadForm({
+  idPrefix = 'hs', formId = 'home-lead-form', formType = 'home', location = 'home',
+  heading, blurb, submitLabel, contextNote,
+}: Props) {
   const searchParams = useSearchParams()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -48,23 +65,23 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
   }, [searchParams])
 
   const startedRef = useRef(false)
-  const funnel = useMemo(() => createFormTracker('home-lead-form', 'home'), [])
+  const funnel = useMemo(() => createFormTracker(formId, formType), [formId, formType])
   useEffect(() => {
-    trackFormView({ formId: 'home-lead-form', formType: 'home', location: 'home' })
+    trackFormView({ formId, formType, location })
     funnel.view()
     // Capture how far they got even if they close the tab or switch away.
-    const flush = () => funnel.snapshot(document.getElementById('home-lead-form') as HTMLFormElement | null)
+    const flush = () => funnel.snapshot(document.getElementById(formId) as HTMLFormElement | null)
     const onHide = () => { if (document.visibilityState === 'hidden') flush() }
     window.addEventListener('pagehide', flush)
     document.addEventListener('visibilitychange', onHide)
     return () => { flush(); window.removeEventListener('pagehide', flush); document.removeEventListener('visibilitychange', onHide) }
-  }, [funnel])
+  }, [funnel, formId, formType, location])
   const onFirstInteract = () => {
     if (startedRef.current) return
     startedRef.current = true
-    trackFormStart({ formId: 'home-lead-form', formType: 'home' })
+    trackFormStart({ formId, formType })
     funnel.start()
-    trackBeginCheckout(services, '', 'home')
+    trackBeginCheckout(services, '', location)
   }
 
   const toggleService = (value: string) => {
@@ -115,7 +132,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
     const form = e.target as HTMLFormElement
     if (bad.name || bad.email || bad.phone || bad.services || bad.consent) {
       const badFields = Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k])
-      trackFormError({ formId: 'home-lead-form', formType: 'home', errorFields: badFields })
+      trackFormError({ formId, formType, errorFields: badFields })
       funnel.error(badFields)
       // Classes have not re-rendered yet, so go to the field by id instead.
       const firstKey = ['name', 'email', 'phone', 'services', 'consent'].find((k) => badFields.includes(k))
@@ -135,8 +152,8 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(), email: normalizeEmail(email), phone: toStoredPhone(phone, country),
-          message: message.trim(), services, consent,
-          formType: 'contact',
+          message: [message.trim(), contextNote].filter(Boolean).join('\n\n'), services, consent,
+          formType,
           sourcePage: window.location.pathname + window.location.search,
           traffic: getTrafficData(),
         }),
@@ -146,7 +163,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
         setSubmitError(d.error || 'Something went wrong - please try again.')
         return
       }
-      await trackLead({ name: name.trim(), email: normalizeEmail(email), phone: toStoredPhone(phone, country), services, formType: 'home', publicId: d.leadId, consent })
+      await trackLead({ name: name.trim(), email: normalizeEmail(email), phone: toStoredPhone(phone, country), services, formType, publicId: d.leadId, consent })
       funnel.success()
       setDone(true)
       const top = form.getBoundingClientRect().top + window.pageYOffset - 120
@@ -161,14 +178,12 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
   const firstName = name.trim().split(' ')[0]
 
   return (
-    <form className={`lead-form${done ? ' done' : ''}`} noValidate onSubmit={handleSubmit} onFocusCapture={onFirstInteract} id="home-lead-form"
+    <form className={`lead-form${done ? ' done' : ''}`} noValidate onSubmit={handleSubmit} onFocusCapture={onFirstInteract} id={formId}
       onBlurCapture={funnel.handlers.onBlurCapture} onChangeCapture={funnel.handlers.onChangeCapture}>
       <div className="form-body">
         <div className="form-head">
-          <h3>
-            Book your <span className="it">free call</span>
-          </h3>
-          <p>Four quick fields. The rest we&apos;ll cover on the call.</p>
+          <h3>{heading ?? <>Book your <span className="it">free call</span></>}</h3>
+          <p>{blurb ?? "Four quick fields. The rest we'll cover on the call."}</p>
         </div>
 
         <div className={`field${vName.cls}`}>
@@ -284,7 +299,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
         {submitError && <p style={{ color: '#c0392b', fontSize: 14, marginBottom: 12 }}>{submitError}</p>}
 
         <button type="submit" className="form-submit" disabled={sending}>
-          {sending ? 'Sending…' : 'Book my free call'}
+          {sending ? 'Sending…' : (submitLabel ?? 'Book my free call')}
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M3 11 L11 3 M5 3 H11 V9" />
           </svg>

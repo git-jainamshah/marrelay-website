@@ -1,242 +1,217 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import ContactLeadForm from '@/components/ContactLeadForm'
+import { getSlots } from '@/lib/media-slots-server'
+import { getPackageOverrides } from '@/lib/pricing'
+import { SERVICES_V3 } from '@/lib/v3-content'
+import { OFFER, offerRow, type OfferRow } from '@/lib/launch-offer'
+import LeadForm from '@/components/home/LeadForm'
+import Faq from '@/components/v3/Faq'
 
 export const metadata: Metadata = {
-  title: 'Launch Offer',
+  title: '30% off your first project',
   description:
-    'Our launch offer: a flat 30% off for the first 3 clients. Web, data & analytics, social, SEO & ads, and engineering/CAD. Fixed project price, not hourly, Toronto-based. Claim a spot below.',
+    'A flat 30% off your first project with Marrelay. Web, data and analytics, social, SEO and ads, engineering and CAD. One fixed price agreed before we start. Toronto, working across Canada and the US.',
   alternates: { canonical: '/lp/launch' },
   openGraph: {
-    title: 'Marrelay - Launch Offer',
-    description: 'Flat 30% off for the first 3 clients. Claim a spot. Fixed-price, not hourly, Toronto-based.',
+    title: 'Marrelay - 30% off your first project',
+    description: 'A flat 30% off your first project, across every service. One fixed price, agreed before we start.',
     url: '/lp/launch',
-    images: [{ url: '/assets/marrelay-header.png', width: 1200, height: 630, alt: 'Marrelay launch offer' }],
+    images: [{ url: '/assets/marrelay-header.png', width: 1200, height: 630, alt: 'Marrelay 30% offer' }],
   },
   // Paid-social landing. Kept out of the index so it does not compete with core pages.
   robots: { index: false, follow: true },
 }
 
-const PRODUCTS = [
+const STEPS = [
+  { n: '01', t: 'Send the form', d: 'Four fields. Name, email, phone and what you need. It takes about a minute.', w: 'Today' },
+  { n: '02', t: 'A free 30-minute call', d: 'We reply within one business day with a few times. No pitch deck, no pressure.', w: 'Within 1 business day' },
+  { n: '03', t: 'A fixed quote, 30% already off', d: 'One page. The scope, the timeline and the price, with the discount applied to the total.', w: '2 to 3 days after the call' },
+  { n: '04', t: 'We build, you see it weekly', d: 'A working demo every Friday. At the end you keep the code, the files and every account.', w: 'From week one' },
+]
+
+const FAQS = [
   {
-    tag: 'Web',
-    color: 'var(--terra)',
-    title: 'Web development',
-    blurb: 'Fast, custom sites and web apps in React & Next.js. You own the code.',
-    points: ['Marketing sites & landing pages', 'Custom web apps & dashboards', 'E-commerce & headless CMS'],
+    q: `What is the catch with ${OFFER.percent}% off?`,
+    a: 'None that we hide. We are a young studio and we would rather spend the first projects building work we can show than spend it on ads. The scope, the timeline and the price are all agreed in writing before you pay anything, and the discount comes off the total you are quoted.',
   },
   {
-    tag: 'Data',
-    color: '#3D7D6E',
-    title: 'Data & analytics',
-    blurb: 'Clean tracking and dashboards so you can actually see what is working.',
-    points: ['GA4 & server-side tagging', 'Executive dashboards', 'Reporting & attribution'],
+    q: 'Does the discount apply to any service?',
+    a: 'Yes. Web, data and analytics, social, SEO and ads, and engineering and CAD. If a project spans two of them, the discount comes off the whole quote, not one part of it.',
   },
   {
-    tag: 'Social',
-    color: '#C58A2E',
-    title: 'Social media',
-    blurb: 'Content and community management that keeps your brand consistent.',
-    points: ['Content calendars', 'Creative & short-form video', 'Community management'],
+    q: 'Is this hourly or a fixed price?',
+    a: 'Fixed. You get one number for the whole project before we start, and that is the number you pay. If you ask for something outside the agreed scope we quote that separately, and you decide.',
   },
   {
-    tag: 'SEO & Ads',
-    color: '#5A6BC0',
-    title: 'SEO & paid ads',
-    blurb: 'Get found and convert with technical SEO plus Google & Meta ad management.',
-    points: ['Technical SEO audits', 'Google & Meta ads', 'Landing-page optimisation'],
+    q: 'What do I actually own at the end?',
+    a: 'Everything. The code, the design files, the analytics properties and the ad accounts, all in your name. There is no licence to renew and nothing that stops working if you leave.',
   },
   {
-    tag: 'CAD',
-    color: '#8A6FB0',
-    title: 'Engineering & CAD',
-    blurb: 'Precision drafting and 3D modelling for industrial and civil projects.',
-    points: ['CAD / CAM drafting', '3D parametric modelling', 'Technical specifications'],
+    q: 'Where are you, and who does the work?',
+    a: 'We are in Toronto and work remotely with clients across Canada and the US. The person who answers your first email is the person who builds the project.',
   },
 ]
 
-const PHOTOS = [
-  // pos = object-position, biased down so the subject (crowd / towers / skyline) is in frame,
-  // not the ceiling or empty sky at the top of each square photo.
-  { src: '/assets/lp/photo-1.jpg', alt: 'Commuters in motion', pos: '50% 60%' },
-  { src: '/assets/lp/photo-2.jpg', alt: 'City light trails at night', pos: '50% 55%' },
-  { src: '/assets/lp/photo-3.jpg', alt: 'City skyline at dusk', pos: '50% 60%' },
-]
+export default async function LaunchPage() {
+  const [slots, ...svcPkgs] = await Promise.all([
+    getSlots(),
+    ...SERVICES_V3.map((s) => getPackageOverrides(s.pricingKey)),
+  ])
 
-export default function LaunchPage({ searchParams }: { searchParams?: { hero?: string } }) {
-  // Feature flag to A/B the hero: default = three-photo panorama.
-  //   ?hero=single  -> one image (defaults to photo 2, the colourful city shot)
-  //   ?hero=1|2|3   -> single, using that specific photo
-  const heroFlag = (searchParams?.hero || '').toLowerCase()
-  // Default hero = the single skyline photo (photo-3).
-  //   ?hero=three (or panorama|all) -> the 3-photo panorama
-  //   ?hero=1|2                     -> preview the other single photos
-  const triptych = heroFlag === 'three' || heroFlag === 'panorama' || heroFlag === 'all'
-  const single = !triptych
-  const singleIndex = heroFlag === '1' ? 0 : heroFlag === '2' ? 1 : 2
+  // Every figure below is worked out from the live pricing table, so the page
+  // can never quote a saving that disagrees with the pricing pages.
+  const rows = SERVICES_V3
+    .map((s, i) => offerRow(s.key, s.full, s.url, svcPkgs[i]))
+    .filter((r): r is OfferRow => r !== null)
 
   return (
     <>
-      {/* HERO: three photos combined into one panorama (or a single image via ?hero flag) */}
-      <section className="lp-hero-wrap">
-        <div className="lp-hero">
-          <div className={`lp-hero-imgs${single ? ' one' : ''}`}>
-            {single ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={PHOTOS[singleIndex].src} alt={PHOTOS[singleIndex].alt} style={{ objectPosition: PHOTOS[singleIndex].pos }} />
-            ) : (
-              PHOTOS.map((p) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={p.src} src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} />
-              ))
-            )}
+      {/* HERO */}
+      <section className="v-phero full v-hero lp-hero" id="top">
+        <img src={slots['lp-launch-hero']} alt="City skyline at night" />
+        <div className="scrim" />
+        <div className="v-wrap inner">
+          <div className="meta" data-reveal>
+            <span>Offer</span>
+            <span>Toronto · Canada &amp; US</span>
           </div>
-          <div className="lp-hero-scrim" />
-          <div className="wrap lp-hero-inner">
-            <div className="lp-hero-copy" data-reveal>
-              <span className="lp-badge">Launch offer · limited to 3 clients</span>
-              <h1>
-                Get <span className="lp-hl">30% off</span><br />your first project.
-              </h1>
-              <p>
-                The first <b>3 clients</b> get a flat <b>30% off</b> any project, across every service we offer.
-                Fixed project price, not hourly. Toronto-based, remote across Canada and the US.
-              </p>
+          <h1>
+            <span data-reveal="line" data-delay="1"><span>Get <em className="lp-pc">{OFFER.percent}%</em> off</span></span>
+            <span data-reveal="line" data-delay="2"><span>your first project.</span></span>
+            <span data-reveal="line" data-delay="3"><span className="v-muted">Every service. One fixed price.</span></span>
+          </h1>
+          <div className="foot" data-reveal data-delay="4">
+            <p>
+              A flat {OFFER.percent}% comes off {OFFER.appliesTo}, whichever service it is. You get one number for the
+              whole job before we start, a working demo every Friday, and everything in your name at the end.
+            </p>
+            <div className="ctas">
+              <Link href="#claim" className="btn btn-light">Claim your {OFFER.percent}% <span aria-hidden="true">→</span></Link>
+              <Link href="#saving" className="btn btn-ghost-light">See what that saves</Link>
+              <span className="v-cta-note">Free call first, then a fixed quote on one page. No obligation.</span>
             </div>
-          </div>
-        </div>
-
-        {/* form starts mid-hero and overflows below it */}
-        <div className="wrap">
-          <div className="lp-overlap">
-            <div className="lp-form-card" id="form">
-              <Suspense fallback={null}>
-                <ContactLeadForm />
-              </Suspense>
-            </div>
-            <aside className="lp-offer-aside">
-              <div className="lp-facts">
-                {[
-                  { n: '30%', t: 'Flat discount', d: 'A straight 30% off your project total. No tiers, no fine print.' },
-                  { n: '3', t: 'Clients only', d: 'Capped at the first three clients who book with us.' },
-                  { n: 'All', t: 'Services eligible', d: 'Web, data, social, SEO & ads, or engineering/CAD.' },
-                ].map((c) => (
-                  <div key={c.t} className="lp-fact">
-                    <div className="n">{c.n}</div>
-                    <div className="t">{c.t}</div>
-                    <p>{c.d}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="lp-aside-note">
-                Mention the launch offer in your message and we will lock in your 30% while spots last.
-              </p>
-            </aside>
           </div>
         </div>
       </section>
 
-      {/* PRODUCTS, SIDE BY SIDE */}
-      <div className="wrap" style={{ marginTop: 8 }}>
-        <div className="head" data-reveal style={{ maxWidth: 640 }}>
-          <div className="kicker">What you can put the 30% toward</div>
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 400, fontSize: 'clamp(28px,3.6vw,44px)', lineHeight: 1.02, letterSpacing: '-.02em', marginTop: 8 }}>
-            Everything we build, side by side.
-          </h2>
+      {/* STATEMENT */}
+      <section className="v-wrap v-sec v-statement">
+        <p data-reveal>
+          The discount comes off the total, not off the care.{' '}
+          <span className="v-muted">
+            Same scope, same weekly demos, same handover. The only difference is the number at the bottom of the quote.
+          </span>
+        </p>
+      </section>
+
+      {/* WHAT IT SAVES - every number computed from the live pricing table */}
+      <section id="saving" className="v-wrap v-sec">
+        <div className="v-head" data-reveal>
+          <div>
+            <span className="v-kick"><i>01</i>What {OFFER.percent}% actually saves</span>
+            <h2 className="v-h2"><span>Real prices,</span><span>{OFFER.percent}% lighter.</span></h2>
+          </div>
+          <p className="v-body">
+            These are our starting packages, straight off the pricing pages, with the discount applied. Bigger projects
+            are quoted on the call, and the same {OFFER.percent}% comes off those too.
+          </p>
         </div>
 
-        <div className="lp-products" data-reveal>
-          {PRODUCTS.map((p) => (
-            <div key={p.title} className="lp-product">
-              <span className="lp-product-tag" style={{ background: p.color }}>{p.tag}</span>
-              <h3>{p.title}</h3>
-              <p>{p.blurb}</p>
-              <ul>
-                {p.points.map((pt) => (
-                  <li key={pt}>
-                    <span style={{ background: p.color }} />
-                    {pt}
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div className="lp-rates" data-reveal>
+          <div className="lp-rate-head" aria-hidden="true">
+            <span>Service</span><span>Starting package</span><span>Regular</span><span>With {OFFER.percent}% off</span><span>You keep</span>
+          </div>
+          {rows.map((r) => (
+            <Link key={r.key} href={r.href} className="lp-rate">
+              <span className="sv">{r.service}</span>
+              <span className="pk">{r.pkg}{r.note && <i> · {r.note}</i>}</span>
+              <span className="was"><s>{r.regular}</s></span>
+              <span className="now">{r.discounted}</span>
+              <span className="save">{r.saving}<i aria-hidden="true">→</i></span>
+            </Link>
           ))}
         </div>
-
-        <p className="lp-closing" data-reveal>
-          Ready when you are. <a href="#form">Claim your 30% above</a>, or{' '}
-          <Link href="/contact">reach us here</Link>. Offer valid for the first three new clients only.
+        <p className="lp-rates-note">
+          Prices in Canadian dollars. The discount applies to the project total on your first project with us.
         </p>
-      </div>
+      </section>
 
-      {/* page-scoped styles */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .lp-hero-wrap{position:relative}
-        .lp-hero{position:relative; height:clamp(440px,54vw,640px); overflow:hidden}
-        .lp-hero-imgs{position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr 1fr}
-        .lp-hero-imgs.one{grid-template-columns:1fr}
-        .lp-hero-imgs img{width:100%; height:100%; object-fit:cover; display:block}
-        .lp-hero-imgs img + img{box-shadow:-1px 0 0 rgba(0,0,0,.28)}
-        .lp-hero-scrim{position:absolute; inset:0;
-          background:linear-gradient(90deg, rgba(10,10,14,.62) 0%, rgba(10,10,14,.28) 34%, rgba(10,10,14,0) 60%)}
-        .lp-hero-inner{position:relative; height:100%; display:flex; align-items:center}
-        .lp-hero-copy{color:var(--paper); max-width:620px; padding:32px 0}
-        .lp-badge{display:inline-block; font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
-          text-transform:uppercase; color:var(--paper); background:var(--brand); padding:6px 12px; border-radius:999px}
-        .lp-hero-copy h1{font-family:var(--display); font-weight:400; font-size:clamp(40px,6vw,80px); line-height:.96;
-          letter-spacing:-.025em; margin-top:16px; color:var(--paper)}
-        .lp-hl{background:var(--brand); color:var(--paper); padding:0 .12em; border-radius:10px;
-          display:inline-block; transform:rotate(-1.5deg); font-style:italic}
-        .lp-hero-copy p{margin-top:18px; font-size:18px; line-height:1.5; color:rgba(255,255,255,.9); max-width:520px}
-        .lp-hero-copy p b{color:var(--paper)}
+      {/* HOW IT WORKS */}
+      <section className="v-wrap v-sec">
+        <div className="v-split">
+          <div className="l sticky" data-reveal>
+            <span className="v-kick"><i>02</i>How it works</span>
+            <h2 className="v-h2">Four steps to a fixed quote.</h2>
+            <p className="v-body">
+              You will know the price, the timeline and who is doing the work before you pay anything. If the quote is
+              not right for you, that is a fine place to stop.
+            </p>
+            <Link href="#claim" className="v-link">Start at step one →</Link>
+          </div>
+          <div className="r v-steps">
+            {STEPS.map((st) => (
+              <div key={st.n} className="v-step" data-reveal>
+                <span className="n">{st.n}</span>
+                <div className="b">
+                  <span className="t">{st.t}</span>
+                  <span className="d">{st.d}</span>
+                  <span className="w">{st.w}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        /* overlap: pull the form up into the hero so it starts mid-hero and overflows downward */
-        .lp-overlap{position:relative; z-index:3; margin-top:clamp(-240px,-22vw,-160px);
-          display:grid; grid-template-columns:1.15fr .85fr; gap:26px; align-items:start; padding-bottom:56px}
-        .lp-form-card{background:var(--paper); border:1.5px solid var(--ink); border-radius:22px;
-          box-shadow:8px 8px 0 var(--ink); overflow:hidden}
-        .lp-offer-aside{position:sticky; top:24px; margin-top:0}
-        .lp-facts{display:grid; gap:12px}
-        .lp-fact{background:var(--paper-2); border:1.5px solid var(--ink); border-radius:16px; padding:16px;
-          display:grid; grid-template-columns:auto 1fr; column-gap:14px; align-items:baseline}
-        .lp-fact .n{grid-row:1 / span 2; font-family:var(--display); font-size:40px; line-height:1; color:var(--brand-ink)}
-        .lp-fact .t{font-weight:600; font-size:14px}
-        .lp-fact p{margin-top:4px; font-size:12.5px; color:var(--ink-2); line-height:1.45}
-        .lp-aside-note{margin-top:14px; font-family:var(--mono); font-size:12px; color:var(--ink-mut); line-height:1.5}
+      {/* CLAIM */}
+      <section id="claim" className="v-wrap v-sec">
+        <div className="v-start lp-claim" data-reveal>
+          <div className="l">
+            <span className="v-kick"><i>03</i>Claim the offer</span>
+            <h2>Tell us what you need.</h2>
+            <p>
+              Four fields is all we need to get started. We reply within one business day with a few times for a free
+              30-minute call, and your {OFFER.percent}% is noted on the file from the moment this lands.
+            </p>
+            <ul className="lp-assure">
+              <li>A fixed price, agreed before any work starts</li>
+              <li>A working demo every Friday</li>
+              <li>You own the code, the files and the accounts</li>
+              <li>No retainer to sign and nothing to cancel</li>
+            </ul>
+            <Link href="/contact" className="v-link">Rather send a full brief? Contact page →</Link>
+          </div>
+          <div className="r">
+            <Suspense fallback={null}>
+              <LeadForm
+                idPrefix="lp"
+                formId="launch-offer-form"
+                formType={OFFER.formType}
+                location="lp-launch"
+                submitLabel={`Claim my ${OFFER.percent}%`}
+                contextNote={`[${OFFER.percent}% offer] Submitted from the launch offer page.`}
+              />
+            </Suspense>
+          </div>
+        </div>
+      </section>
 
-        .lp-products{margin-top:22px; display:grid; grid-template-columns:repeat(5,1fr); gap:14px}
-        .lp-product{background:var(--paper-2); border:1.5px solid var(--ink); border-radius:18px; padding:18px;
-          box-shadow:5px 5px 0 var(--ink); display:flex; flex-direction:column}
-        .lp-product-tag{align-self:flex-start; font-family:var(--mono); font-size:10.5px; letter-spacing:.12em;
-          text-transform:uppercase; color:var(--paper); padding:4px 10px; border-radius:999px}
-        .lp-product h3{font-family:var(--display); font-style:italic; font-weight:400; font-size:22px; margin-top:12px}
-        .lp-product p{margin-top:7px; font-size:13px; color:var(--ink-2); line-height:1.5}
-        .lp-product ul{margin-top:12px; list-style:none; padding:0; display:grid; gap:8px}
-        .lp-product li{display:flex; align-items:center; gap:9px; font-size:12px; color:var(--ink-mut)}
-        .lp-product li span{width:6px; height:6px; border-radius:999px; flex-shrink:0}
-        .lp-closing{margin:26px 0 64px; font-family:var(--mono); font-size:13px; color:var(--ink-mut)}
-        .lp-closing a{text-decoration:underline}
-
-        @media (max-width:960px){
-          .lp-hero{height:clamp(360px,64vw,460px)}
-          .lp-overlap{grid-template-columns:1fr; margin-top:-90px; gap:20px}
-          .lp-offer-aside{position:static; margin-top:0}
-          .lp-facts{grid-template-columns:1fr 1fr 1fr}
-          .lp-products{grid-template-columns:repeat(2,1fr)}
-        }
-        @media (max-width:640px){
-          .lp-hero-imgs{grid-template-columns:1fr}
-          .lp-hero-imgs img + img{display:none}
-          .lp-overlap{margin-top:-70px}
-          .lp-facts{grid-template-columns:1fr}
-          .lp-products{grid-template-columns:1fr}
-        }
-      `,
-        }}
-      />
+      {/* FAQ */}
+      <section className="v-wrap v-sec v-sec-b">
+        <div className="v-head" data-reveal>
+          <div>
+            <span className="v-kick"><i>04</i>Before you ask</span>
+            <h2 className="v-h2">The honest answers.</h2>
+          </div>
+        </div>
+        <Faq items={FAQS} />
+        <p className="lp-closing" data-reveal>
+          Still deciding? <Link href="#claim">Claim the {OFFER.percent}%</Link> and ask on the call. Nothing is owed
+          until you accept a quote.
+        </p>
+      </section>
     </>
   )
 }

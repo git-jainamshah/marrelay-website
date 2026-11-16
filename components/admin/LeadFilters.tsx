@@ -126,6 +126,7 @@ export default function LeadFilters({
               <option value="">All</option>
               <option value="contact">Contact Form</option>
               <option value="promo-banner">Promo Banner</option>
+              <option value="launch-offer">Launch Offer</option>
               <option value="offline">Offline Lead</option>
               <option value="pitch">Pitch</option>
               <option value="other">Other</option>

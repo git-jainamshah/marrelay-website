@@ -1116,3 +1116,78 @@ body:has(> .v3) { background: #F2F1EC; }
 @media (prefers-reduced-motion: reduce) {
   .v3 .phone-field .dial-btn .caret { transition: none; }
 }
+
+/* =====================================================================
+   /lp/launch - the 30% offer campaign page
+   Built from the same primitives as the rest of the site: hairline rules,
+   no rounded cards, red used once per screen. Only the rate table and the
+   assurance list are new.
+   ===================================================================== */
+
+/* the discount figure is the one red thing in the hero */
+.v3 .lp-hero h1 .lp-pc { font-style: normal; color: var(--v-red); }
+
+/* ---- rate table: service, package, was, now, saving ---- */
+.v3 .lp-rates { margin-top: clamp(32px, 4vw, 56px); border-top: 1px solid var(--v-ink); }
+.v3 .lp-rate-head,
+.v3 .lp-rate {
+  display: grid;
+  grid-template-columns: 1.25fr 1.35fr .7fr .8fr .9fr;
+  gap: 24px; align-items: baseline;
+}
+.v3 .lp-rate-head {
+  padding: 14px 0; border-bottom: 1px solid var(--v-line);
+  font-family: var(--v-f2); font-stretch: 125%; font-weight: 500;
+  font-size: 11.04px; letter-spacing: .06em; text-transform: uppercase; color: var(--v-mut-2);
+}
+.v3 .lp-rate {
+  padding: clamp(20px, 2.2vw, 30px) 0; border-bottom: 1px solid var(--v-line);
+  color: inherit; transition: background .3s var(--v-ease), padding .3s var(--v-ease);
+}
+.v3 .lp-rate:hover { background: #fff; padding-left: 18px; padding-right: 18px; color: inherit; }
+.v3 .lp-rate .sv { font-size: clamp(18px, 1.7vw, 24px); letter-spacing: -.025em; }
+.v3 .lp-rate .pk { font-size: 15px; color: var(--v-mut); }
+.v3 .lp-rate .pk i { font-style: normal; color: var(--v-soft); }
+.v3 .lp-rate .was { font-family: var(--v-f2); font-stretch: 125%; font-size: 16px; color: var(--v-soft); }
+.v3 .lp-rate .was s { text-decoration-thickness: 1px; }
+.v3 .lp-rate .now {
+  font-family: var(--v-f2); font-stretch: 125%; font-weight: 500;
+  font-size: clamp(20px, 2vw, 28px); letter-spacing: -.02em; color: var(--v-red);
+}
+.v3 .lp-rate .save {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  font-family: var(--v-f2); font-stretch: 125%; font-size: 16px; color: var(--v-ink);
+}
+.v3 .lp-rate .save i { font-style: normal; color: var(--v-soft-2); transition: transform .3s var(--v-ease), color .3s; }
+.v3 .lp-rate:hover .save i { transform: translateX(4px); color: var(--v-red); }
+.v3 .lp-rates-note { margin-top: 18px; font-size: 13px; color: var(--v-mut-2); }
+
+/* ---- claim section ---- */
+.v3 .lp-assure { list-style: none; padding: 0; margin: 4px 0 0; display: grid; gap: 10px; }
+.v3 .lp-assure li {
+  position: relative; padding-left: 26px; font-size: 15px; line-height: 1.5; color: var(--v-mut);
+}
+.v3 .lp-assure li::before {
+  content: ''; position: absolute; left: 0; top: .52em; width: 14px; height: 7px;
+  border-left: 1.5px solid var(--v-red); border-bottom: 1.5px solid var(--v-red);
+  transform: rotate(-45deg);
+}
+
+.v3 .lp-closing { margin-top: clamp(32px, 4vw, 48px); font-size: 16px; color: var(--v-mut); }
+.v3 .lp-closing a { border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+
+@media (max-width: 900px) {
+  /* the head row is decoration on a wide screen; on a narrow one each row labels itself */
+  .v3 .lp-rate-head { display: none; }
+  .v3 .lp-rates { border-top: 1px solid var(--v-ink); }
+  .v3 .lp-rate {
+    grid-template-columns: 1fr auto; gap: 6px 16px; padding: 22px 0;
+  }
+  .v3 .lp-rate:hover { padding-left: 0; padding-right: 0; background: none; }
+  .v3 .lp-rate .sv { grid-column: 1; }
+  .v3 .lp-rate .now { grid-column: 2; grid-row: 1; justify-self: end; }
+  .v3 .lp-rate .pk { grid-column: 1; grid-row: 2; font-size: 14px; }
+  .v3 .lp-rate .was { grid-column: 2; grid-row: 2; justify-self: end; font-size: 14px; }
+  .v3 .lp-rate .save { grid-column: 1 / -1; grid-row: 3; margin-top: 6px; font-size: 14px; color: var(--v-mut-2); }
+  .v3 .lp-rate .save::before { content: 'You keep '; }
+}

@@ -38,7 +38,8 @@ const escRaw = (s: unknown) =>
 const esc = (s: unknown) => escRaw(tidy(s))
 
 export const FORM_LABELS: Record<string, string> = {
-  contact: 'Contact form', 'promo-banner': 'Promo pop-up', offline: 'Offline', pitch: 'Pitch', other: 'Website',
+  contact: 'Contact form', 'promo-banner': 'Promo pop-up', 'launch-offer': 'Launch offer page',
+  offline: 'Offline', pitch: 'Pitch', other: 'Website',
 }
 
 /* ---------------- importance score ---------------- */
