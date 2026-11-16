@@ -6,6 +6,8 @@ import { X } from 'lucide-react'
 import { getTrafficData } from '@/analytics/traffic-identification'
 import { trackFormView, trackFormStart, trackLead } from '@/analytics/events'
 import { createFormTracker } from '@/lib/form-funnel'
+import PhoneField from '@/components/forms/PhoneField'
+import { DEFAULT_COUNTRY, isValidEmail, normalizeEmail, isValidPhone, toStoredPhone } from '@/lib/form-validate'
 
 type PromoCfg = {
   enabled: boolean
@@ -27,6 +29,8 @@ export default function PromoBanner() {
   const [cfg, setCfg] = useState<PromoCfg | null>(null)
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', phone: '', company: '' })
+  const [country, setCountry] = useState(DEFAULT_COUNTRY)
+  const [emailErr, setEmailErr] = useState(false)
   const [sent, setSent] = useState(false)
   const [consent, setConsent] = useState(false)
   const [consentErr, setConsentErr] = useState(false)
@@ -63,7 +67,12 @@ export default function PromoBanner() {
 
   async function submitSignup(e: React.FormEvent) {
     e.preventDefault()
-    if ((form.phone.match(/\d/g) ?? []).length < 7) {
+    if (!isValidEmail(form.email)) {
+      setEmailErr(true)
+      funnel.error(['email'])
+      return
+    }
+    if (!isValidPhone(form.phone, country)) {
       setPhoneErr(true)
       funnel.error(['phone'])
       return
@@ -81,7 +90,7 @@ export default function PromoBanner() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name, email: form.email, phone: form.phone, company: form.company,
+          name: form.name.trim(), email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), company: form.company.trim(),
           formType: 'promo-banner', sourcePage: window.location.pathname,
           consent: true,
           message: `Signed up via promo banner: ${cfg!.title}`,
@@ -89,7 +98,7 @@ export default function PromoBanner() {
         }),
       })
       const d = await res.json().catch(() => ({}))
-      await trackLead({ name: form.name, email: form.email, phone: form.phone, formType: 'promo-banner', publicId: d.leadId, consent: true })
+      await trackLead({ name: form.name.trim(), email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), formType: 'promo-banner', publicId: d.leadId, consent: true })
       funnel.success()
       setSent(true)
     } finally {
@@ -122,9 +131,11 @@ export default function PromoBanner() {
               <input required name="name" placeholder="Your name" value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} />
               <input required type="email" name="email" placeholder="Email address" value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })} style={inputStyle} />
-              <input required type="tel" name="phone" placeholder="Phone number" value={form.phone}
-                onChange={(e) => { setForm({ ...form, phone: e.target.value }); setPhoneErr(false) }} style={inputStyle} />
+                onChange={(e) => { setForm({ ...form, email: e.target.value }); setEmailErr(false) }}
+                style={{ ...inputStyle, ...(emailErr ? { borderColor: '#D7262C' } : null) }} />
+              <PhoneField required name="phone" digits={form.phone} country={country}
+                onChange={({ digits, country: c }) => { setForm({ ...form, phone: digits }); setCountry(c); setPhoneErr(false) }}
+                style={inputStyle} />
               <input name="company" placeholder="Company (optional)" value={form.company}
                 onChange={(e) => setForm({ ...form, company: e.target.value })} style={inputStyle} />
               {phoneErr && (

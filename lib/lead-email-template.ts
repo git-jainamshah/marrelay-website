@@ -9,6 +9,7 @@
  */
 import { LeadForAlert } from '@/lib/lead-alerts'
 import { displayHost } from '@/lib/env'
+import { tidy, tidyMultiline } from '@/lib/form-validate'
 
 export type EmailTemplateCfg = {
   subject: string
@@ -26,8 +27,15 @@ export const DEFAULT_EMAIL_TEMPLATE: EmailTemplateCfg = {
   showScore: true,
 }
 
-const esc = (s: unknown) =>
+const escRaw = (s: unknown) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+/**
+ * Everything that reaches the email is tidied first: a name pasted with a
+ * trailing space, a message wrapped in blank lines, a phone with a stray tab.
+ * People paste from all sorts of places, and the table should look composed.
+ */
+const esc = (s: unknown) => escRaw(tidy(s))
 
 export const FORM_LABELS: Record<string, string> = {
   contact: 'Contact form', 'promo-banner': 'Promo pop-up', offline: 'Offline', pitch: 'Pitch', other: 'Website',
@@ -103,17 +111,18 @@ function fill(tpl: string, vars: Record<string, string>) {
 
 export function templateVars(lead: LeadForAlert & { budget?: string; timeline?: string }) {
   const form = FORM_LABELS[lead.formType || ''] || 'Website'
+  const company = tidy(lead.company)
   return {
-    name: lead.name || 'Someone',
-    company: lead.company || '',
-    company_paren: lead.company ? ` (${lead.company})` : '',
-    email: lead.email || '',
-    phone: lead.phone || '',
+    name: tidy(lead.name) || 'Someone',
+    company,
+    company_paren: company ? ` (${company})` : '',
+    email: tidy(lead.email),
+    phone: tidy(lead.phone),
     form,
     form_lower: form.toLowerCase(),
-    budget: lead.budget || '',
-    timeline: lead.timeline || '',
-    reference: lead.publicId || '',
+    budget: tidy(lead.budget),
+    timeline: tidy(lead.timeline),
+    reference: tidy(lead.publicId),
   }
 }
 
@@ -160,8 +169,8 @@ export function renderLeadEmail(opts: {
   const GROUND = '#F4F4F2'
   const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif"
 
-  const title = lead.company || lead.name || 'New enquiry'
-  const sub = lead.company && lead.name ? lead.name : ''
+  const title = tidy(lead.company) || tidy(lead.name) || 'New enquiry'
+  const sub = tidy(lead.company) && tidy(lead.name) ? tidy(lead.name) : ''
 
   /**
    * One label/value row.
@@ -181,7 +190,7 @@ export function renderLeadEmail(opts: {
   const link = (href: string, text: string) => `<a href="${esc(href)}" style="color:${INK};text-decoration:none">${esc(text)}</a>`
 
   // "(direct)" and "(none)" are placeholders, not information.
-  const clean = (v?: string) => (!v || /^\((direct|none|not set)\)$/i.test(v) ? '' : v)
+  const clean = (v?: string) => { const t = tidy(v); return !t || /^\((direct|none|not set)\)$/i.test(t) ? '' : t }
   const where = [clean(lead.channel), clean(lead.source)].filter(Boolean).join(' / ')
 
   return `<!DOCTYPE html>
@@ -246,10 +255,10 @@ export function renderLeadEmail(opts: {
             ${row('Source', esc(where))}
             ${row('Campaign', esc(clean(lead.campaign)))}
             ${row('Lead #', esc(vars.reference), true)}
-            ${row('Wants', esc((lead.services || []).join(', ')))}
+            ${row('Wants', esc((lead.services || []).map(tidy).filter(Boolean).join(', ')))}
             ${row('Timeline', esc(vars.timeline))}
             ${row('Budget', esc(vars.budget))}
-            ${lead.message ? row('Message', `<span style="color:#4A4A47">${esc(lead.message)}</span>`) : ''}
+            ${tidyMultiline(lead.message) ? row('Message', `<span style="color:#4A4A47">${escRaw(tidyMultiline(lead.message))}</span>`) : ''}
           </table>
 
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px"><tr>

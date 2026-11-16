@@ -4,6 +4,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 import { budgetToRange } from '@/lib/admin/leads'
+import { normalizeEmail, tidy, tidyMultiline } from '@/lib/form-validate'
 import { notifyNewLead } from '@/lib/lead-alerts'
 import { SITE_URL } from '@/lib/env'
 
@@ -29,9 +30,10 @@ export async function POST(req: NextRequest) {
   // Honeypot: bots fill the hidden "website" field - pretend success, store nothing
   if (body.website) return NextResponse.json({ ok: true })
 
-  const email = String(body.email ?? '').trim().slice(0, 200)
-  const name = String(body.name ?? '').trim().slice(0, 200)
-  const phone = String(body.phone ?? '').trim().slice(0, 50)
+  // Normalised here as well as in the browser: the API is reachable directly.
+  const email = normalizeEmail(body.email).slice(0, 200)
+  const name = tidy(body.name).slice(0, 200)
+  const phone = tidy(body.phone).slice(0, 50)
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'A valid email is required.' }, { status: 400 })
   }
@@ -72,8 +74,8 @@ export async function POST(req: NextRequest) {
         name || null,
         email,
         phone || null,
-        String(body.company ?? '').slice(0, 200) || null,
-        String(body.message ?? '').slice(0, 5000) || null,
+        tidy(body.company).slice(0, 200) || null,
+        tidyMultiline(body.message).slice(0, 5000) || null,
         String(body.sourcePage ?? '').slice(0, 300) || null,
         ['contact', 'promo-banner', 'other'].includes(body.formType) ? body.formType : 'other',
         String(body.packageInterest ?? '').slice(0, 200) || null,
@@ -142,8 +144,8 @@ export async function POST(req: NextRequest) {
           id: leadId,
           publicId,
           name, email, phone,
-          company: String(body.company ?? '').trim(),
-          message: String(body.message ?? '').trim(),
+          company: tidy(body.company),
+          message: tidyMultiline(body.message),
           services: Array.isArray(body.services) ? body.services.map(String) : [],
           formType: String(body.formType ?? ''),
           sourcePage: String(body.sourcePage ?? ''),

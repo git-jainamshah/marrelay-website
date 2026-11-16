@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useMemo, FormEvent } from 'react'
 import { createFormTracker } from '@/lib/form-funnel'
+import PhoneField from '@/components/forms/PhoneField'
+import { DEFAULT_COUNTRY, isValidEmail, normalizeEmail, isValidPhone, toStoredPhone, emailSuggestion } from '@/lib/form-validate'
 import { useSearchParams } from 'next/navigation'
 import { getTrafficData } from '@/analytics/traffic-identification'
 import {
@@ -24,6 +26,8 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [country, setCountry] = useState(DEFAULT_COUNTRY)
+  const [emailHint, setEmailHint] = useState<string | null>(null)
   const [services, setServices] = useState<string[]>([])
   const [message, setMessage] = useState('')
   const [invalid, setInvalid] = useState<{ name?: boolean; email?: boolean; phone?: boolean; services?: boolean; consent?: boolean }>({})
@@ -73,8 +77,8 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
     e.preventDefault()
     const bad = {
       name: name.trim() === '',
-      email: !EMAIL_RE.test(email.trim()),
-      phone: !phoneValid(phone),
+      email: !isValidEmail(email),
+      phone: !isValidPhone(phone, country),
       services: services.length === 0,
       consent: !consent,
     }
@@ -98,7 +102,8 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name, email, phone, message, services, consent,
+          name: name.trim(), email: normalizeEmail(email), phone: toStoredPhone(phone, country),
+          message: message.trim(), services, consent,
           formType: 'contact',
           sourcePage: window.location.pathname + window.location.search,
           traffic: getTrafficData(),
@@ -109,7 +114,7 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
         setSubmitError(d.error || 'Something went wrong - please try again.')
         return
       }
-      await trackLead({ name, email, phone, services, formType: 'home', publicId: d.leadId, consent })
+      await trackLead({ name: name.trim(), email: normalizeEmail(email), phone: toStoredPhone(phone, country), services, formType: 'home', publicId: d.leadId, consent })
       funnel.success()
       setDone(true)
       const top = form.getBoundingClientRect().top + window.pageYOffset - 120
@@ -164,27 +169,32 @@ export default function LeadForm({ idPrefix = 'hs' }: { idPrefix?: string }) {
             placeholder="you@company.com"
             autoComplete="email"
             value={email}
+            onBlur={() => setEmailHint(emailSuggestion(email))}
             onChange={(e) => {
               setEmail(e.target.value)
               setInvalid((prev) => ({ ...prev, email: false }))
+              setEmailHint(null)
             }}
           />
           <span className="err">A valid email helps us reply.</span>
+          {emailHint && (
+            <button type="button" className="field-hint" onClick={() => { setEmail(emailHint); setEmailHint(null) }}>
+              Did you mean <b>{emailHint}</b>?
+            </button>
+          )}
         </div>
 
         <div className={`field${invalid.phone ? ' invalid' : ''}`}>
           <label htmlFor={`${idPrefix}-phone`}>
             Phone <span className="req">*</span>
           </label>
-          <input
-            type="tel"
+          <PhoneField
             id={`${idPrefix}-phone`}
-            name="phone"
-            placeholder="+1 (555) 000-0000"
-            autoComplete="tel"
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value)
+            digits={phone}
+            country={country}
+            onChange={({ digits, country: c }) => {
+              setPhone(digits)
+              setCountry(c)
               setInvalid((prev) => ({ ...prev, phone: false }))
             }}
           />

@@ -1013,3 +1013,15 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .gw-tools img { height: 18px; width: auto; max-width: 80px; object-fit: contain; opacity: .85; transition: opacity .4s; }
 .v3 .v-svc-row.gw:hover .gw-tools img { opacity: 1; }
 .v3 .gw-tools small { font-size: 12px; color: var(--v-mut-2); }
+
+/* phone field: country selector sits beside the number on every form */
+.v3 .phone-field { display: flex; gap: 8px; align-items: stretch; }
+.v3 .phone-field select { flex: 0 0 auto; width: 108px; }
+.v3 .phone-field input { flex: 1 1 auto; min-width: 0; }
+@media (max-width: 420px) { .v3 .phone-field select { width: 92px; } }
+/* "did you mean" nudge under the email field */
+.v3 .field-hint {
+  display: inline-block; margin-top: 6px; background: none; border: 0; padding: 0;
+  font: inherit; font-size: 13px; color: var(--v-mut-2); cursor: pointer; text-align: left;
+}
+.v3 .field-hint b { color: var(--v-ink); text-decoration: underline; }
