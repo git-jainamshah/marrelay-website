@@ -1156,6 +1156,11 @@ body:has(> .v3) { background: #F2F1EC; }
   position: relative; padding-left: 28px; max-width: 34em;
   font-size: 15px; line-height: 1.5; color: rgba(255,255,255,.86);
 }
+.v3 .lp-why {
+  margin-top: clamp(20px, 2.4vw, 28px); max-width: 34em;
+  font-size: 14px; line-height: 1.55; color: rgba(255,255,255,.62);
+}
+.v3 .lp-why b { font-weight: 500; color: rgba(255,255,255,.9); }
 .v3 .lp-proof li::before {
   content: ''; position: absolute; left: 0; top: .5em; width: 14px; height: 7px;
   border-left: 1.5px solid var(--v-red); border-bottom: 1.5px solid var(--v-red); transform: rotate(-45deg);
@@ -1228,6 +1233,7 @@ body:has(> .v3) { background: #F2F1EC; }
   .v3 .lp-sub { order: 3; }
   .v3 .lp-form { order: 4; }
   .v3 .lp-proof { order: 5; margin-top: 0; }
+  .v3 .lp-why { order: 6; margin-top: 4px; }
   .v3 .lp-steps { grid-template-columns: 1fr; gap: 0; }
   .v3 .lp-step { padding: 18px 0; }
   .v3 .lp-step:last-child { border-bottom: 1px solid var(--v-ink); }

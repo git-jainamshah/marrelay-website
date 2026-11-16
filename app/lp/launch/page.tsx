@@ -33,14 +33,14 @@ const PROOF = [
 
 const STEPS = [
   { n: '01', t: 'Send the form', d: 'Four fields. It takes about a minute.' },
-  { n: '02', t: 'A free 30-minute call', d: 'We reply within one business day with a few times.' },
-  { n: '03', t: 'A fixed quote, 30% off', d: 'One page: scope, timeline and price. Then you decide.' },
+  { n: '02', t: 'A free 30-minute call', d: 'We reply within one business day with a few times that suit you.' },
+  { n: '03', t: 'A fixed quote, 30% off', d: 'One page: scope, timeline and price. Then you decide, with no pressure either way.' },
 ]
 
 const FAQS = [
   {
     q: `What is the catch with ${OFFER.percent}% off?`,
-    a: 'None that we hide. We are a young studio and we would rather spend the first projects building work we can show than spend it on ads. The scope, the timeline and the price are agreed in writing before you pay anything, and the discount comes off the total you are quoted.',
+    a: 'None that we hide. The discount buys us work we can show, so we would rather give it than spend the same money on ads. Nothing about the project gets smaller to pay for it: the scope, the timeline and the price are agreed in writing before you pay anything, and the 30% comes off the total you are quoted rather than off a number we quietly raised first.',
   },
   {
     q: 'Does it apply to any service, and is it hourly?',
@@ -52,7 +52,7 @@ const FAQS = [
   },
   {
     q: 'Where are you, and who does the work?',
-    a: 'We are in Toronto and work remotely with clients across Canada and the US. The person who answers your first email is the person who builds the project.',
+    a: 'We are in Toronto and work remotely across Canada and the US. You deal with the same small team from your first email through to handover, so you are never passed from a salesperson to a stranger once the quote is signed.',
   },
 ]
 
@@ -77,7 +77,7 @@ export default async function LaunchPage() {
         <div className="v-wrap lp-hero-inner">
           <div className="lp-pitch">
             <div className="meta" data-reveal>
-              <span>Offer</span>
+              <span>Digital studio</span>
               <span>Toronto · Canada &amp; US</span>
             </div>
             <h1>
@@ -85,12 +85,17 @@ export default async function LaunchPage() {
               <span data-reveal="line" data-delay="2"><span>your first project.</span></span>
             </h1>
             <p className="lp-sub" data-reveal data-delay="3">
-              Every service, one fixed price. Tell us what you need and we will come back within one business day
-              with a quote that already has the {OFFER.percent}% taken off.
+              Websites, analytics, ads, social and CAD drawings. Tell us what you need and we will reply within one
+              business day to put a free call in the diary. Your quote comes back as one fixed price with the{' '}
+              {OFFER.percent}% already taken off.
             </p>
             <ul className="lp-proof" data-reveal data-delay="4">
               {PROOF.map((t) => <li key={t}>{t}</li>)}
             </ul>
+            <p className="lp-why" data-reveal data-delay="5">
+              <b>Why {OFFER.percent}%?</b> We are new. We would rather spend our first projects building work we can
+              show than spend the same money on ads.
+            </p>
           </div>
 
           <div className="lp-form" data-reveal data-delay="2">
@@ -103,7 +108,7 @@ export default async function LaunchPage() {
                     formType={OFFER.formType}
                     location="lp-launch"
                     heading={<>Claim your <span className="it">{OFFER.percent}%</span></>}
-                    blurb="Four quick fields. No obligation, and nothing is owed until you accept a quote."
+                    blurb="Four quick fields. We reply within one business day to set up a free call, and nothing is owed until you accept a quote."
                     submitLabel={`Claim my ${OFFER.percent}%`}
                     contextNote={`[${OFFER.percent}% offer] Submitted from the launch offer page.`}
                   />
@@ -117,10 +122,10 @@ export default async function LaunchPage() {
       {/* WHAT IT SAVES - every number computed from the live pricing table */}
       <section id="saving" className="v-wrap v-sec lp-sec">
         <div className="lp-lead" data-reveal>
-          <h2 className="v-h2">Real prices, {OFFER.percent}% lighter.</h2>
+          <h2 className="v-h2">What the {OFFER.percent}% actually saves you.</h2>
           <p className="v-body">
-            Our starting packages, straight off the pricing pages, with the discount applied. Bigger projects are
-            quoted on the call and the same {OFFER.percent}% comes off those too.
+            These are our starting packages, straight off the pricing pages, with the discount applied. Bigger
+            projects get quoted on the call, and the same {OFFER.percent}% comes off those too.
           </p>
         </div>
 
@@ -158,7 +163,8 @@ export default async function LaunchPage() {
           ))}
         </div>
         <p className="lp-closing" data-reveal>
-          <Link href="#top">Claim your {OFFER.percent}% at the top</Link> or read the answers below first.
+          <Link href="#top">The form is back at the top</Link> whenever you are ready. Nothing is owed until you
+          accept a quote.
         </p>
       </section>
 
