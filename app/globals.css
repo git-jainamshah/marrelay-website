@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The font families, named once.
+   next/font used to generate these variables and hang them off <html>. The
+   faces are now bundled with the app instead of fetched from Google during
+   the build, so the variables are declared here and every stylesheet that
+   already reads them (marrelay.css, v3.css) keeps working unchanged.
+   Outside @layer so these win over Tailwind's base layer regardless of order. */
+:root {
+  --font-instrument: 'Instrument Serif';
+  --font-fraunces: 'Fraunces Variable';
+  --font-dm-sans: 'DM Sans Variable';
+  --font-jetbrains: 'JetBrains Mono Variable';
+  --font-poppins: 'Poppins';
+  --font-archivo: 'Archivo Variable';
+}
+
 @layer base {
   :root {
     --background: 60 30% 96%;

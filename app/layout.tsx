@@ -1,6 +1,20 @@
 import type { Metadata } from 'next'
-import { Instrument_Serif, Fraunces, DM_Sans, JetBrains_Mono, Poppins, Archivo } from 'next/font/google'
 import { GeistSans } from 'geist/font/sans'
+/* Fonts are served from our own bundle, not fetched from Google at build time.
+   next/font/google made every deploy depend on six network round trips, and a
+   single one timing out failed the whole build, which it did twice. These are
+   the same families and the same axes, shipped as npm packages. */
+import '@fontsource/instrument-serif/400.css'
+import '@fontsource/instrument-serif/400-italic.css'
+import '@fontsource-variable/fraunces/standard.css'
+import '@fontsource-variable/fraunces/standard-italic.css'
+import '@fontsource-variable/dm-sans/standard.css'
+import '@fontsource-variable/jetbrains-mono/wght.css'
+import '@fontsource/poppins/400.css'
+import '@fontsource/poppins/500.css'
+import '@fontsource/poppins/600.css'
+/* standard.css carries both axes, so font-stretch: 125% on the v3 labels works */
+import '@fontsource-variable/archivo/standard.css'
 import './globals.css'
 import './marrelay.css'
 // v3 redesign: scoped to the public site via the .v3 wrapper in LayoutWrapper.
@@ -10,44 +24,6 @@ import LayoutWrapper from '@/components/LayoutWrapper'
 import { SOCIALS } from '@/lib/social'
 import { HeadScripts, BodyStartScripts, FooterScripts } from '@/components/SiteScripts'
 import { SITE_URL, isProduction } from '@/lib/env'
-
-const instrument = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  variable: '--font-instrument',
-})
-
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  style: ['normal', 'italic'],
-  variable: '--font-fraunces',
-})
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-})
-
-const jetbrains = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-jetbrains',
-})
-
-// v3 secondary face: Archivo with its width axis, used expanded for labels.
-const archivo = Archivo({
-  subsets: ['latin'],
-  axes: ['wdth'],
-  variable: '--font-archivo',
-})
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-poppins',
-})
-
 
 // ISR: pages stay statically served (fast) but refresh within 60s, so
 // admin changes (scripts, pricing, announcement copy) go live within a minute.
@@ -197,7 +173,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${instrument.variable} ${fraunces.variable} ${dmSans.variable} ${jetbrains.variable} ${poppins.variable} ${GeistSans.variable} ${archivo.variable}`}
+      className={GeistSans.variable}
     >
       <head>
         <script
