@@ -8,6 +8,7 @@ import { trackFormView, trackFormStart, trackLead } from '@/analytics/events'
 import { createFormTracker } from '@/lib/form-funnel'
 import PhoneField from '@/components/forms/PhoneField'
 import { DEFAULT_COUNTRY, isValidEmail, normalizeEmail, isValidPhone, toStoredPhone } from '@/lib/form-validate'
+import { joinName } from '@/lib/names'
 
 type PromoCfg = {
   enabled: boolean
@@ -28,7 +29,7 @@ const SEEN_KEY = 'marrelay_promo_seen'
 export default function PromoBanner() {
   const [cfg, setCfg] = useState<PromoCfg | null>(null)
   const [open, setOpen] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', phone: '', company: '' })
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', company: '' })
   const [country, setCountry] = useState(DEFAULT_COUNTRY)
   const [emailErr, setEmailErr] = useState(false)
   const [sent, setSent] = useState(false)
@@ -90,7 +91,8 @@ export default function PromoBanner() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name.trim(), email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), company: form.company.trim(),
+          firstName: form.firstName.trim(), lastName: form.lastName.trim(),
+          email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), company: form.company.trim(),
           formType: 'promo-banner', sourcePage: window.location.pathname,
           consent: true,
           message: `Signed up via promo banner: ${cfg!.title}`,
@@ -98,7 +100,7 @@ export default function PromoBanner() {
         }),
       })
       const d = await res.json().catch(() => ({}))
-      await trackLead({ name: form.name.trim(), email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), formType: 'promo-banner', publicId: d.leadId, consent: true })
+      await trackLead({ name: joinName(form.firstName, form.lastName), firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), formType: 'promo-banner', publicId: d.leadId, consent: true })
       funnel.success()
       setSent(true)
     } finally {
@@ -128,8 +130,12 @@ export default function PromoBanner() {
             <form onSubmit={submitSignup} onFocusCapture={onFirstInteract}
               onBlurCapture={funnel.handlers.onBlurCapture} onChangeCapture={funnel.handlers.onChangeCapture}
               style={{ display: 'grid', gap: 10 }}>
-              <input required name="name" placeholder="Your name" value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} />
+              <div className="promo-names">
+                <input required name="firstName" placeholder="First name" autoComplete="given-name" value={form.firstName}
+                  onChange={(e) => setForm({ ...form, firstName: e.target.value })} style={inputStyle} />
+                <input required name="lastName" placeholder="Last name" autoComplete="family-name" value={form.lastName}
+                  onChange={(e) => setForm({ ...form, lastName: e.target.value })} style={inputStyle} />
+              </div>
               <input required type="email" name="email" placeholder="Email address" value={form.email}
                 onChange={(e) => { setForm({ ...form, email: e.target.value }); setEmailErr(false) }}
                 style={{ ...inputStyle, ...(emailErr ? { borderColor: '#D7262C' } : null) }} />

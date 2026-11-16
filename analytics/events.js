@@ -127,6 +127,8 @@ export function trackBeginCheckout(services, budget, formType) {
  * @param {string} [opts.budget]
  * @param {string} [opts.timeline]
  * @param {string} [opts.formType]
+ * @param {string} [opts.firstName] given name, as the form collected it
+ * @param {string} [opts.lastName] family name, as the form collected it
  * @param {string} [opts.company]
  * @param {string} [opts.companyCountry]
  * @param {string} [opts.companyProvince]
@@ -143,11 +145,17 @@ export async function trackLead(opts = {}) {
     companyCountry, companyProvince, companyRemote,
     publicId, consent,
   } = opts
+  // The forms now collect given and family name separately. Use what they sent
+  // and only fall back to splitting a full name, which is a guess.
+  const givenName = (opts.firstName || '').trim()
+  const familyName = (opts.lastName || '').trim()
   const value = leadValue(budget)
   const items = buildItems(services, value)
   const transaction_id = publicId || `lead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
-  const { firstName, lastName } = splitName(name)
+  const guessed = (givenName || familyName) ? { firstName: '', lastName: '' } : splitName(name)
+  const firstName = givenName || guessed.firstName
+  const lastName = familyName || guessed.lastName
   const user_data = await buildUserData({
     email, phone, firstName, lastName,
     region: companyProvince, country: companyCountry,

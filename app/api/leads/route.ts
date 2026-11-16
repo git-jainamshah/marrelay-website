@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 
 import { budgetToRange } from '@/lib/admin/leads'
 import { normalizeEmail, tidy, tidyMultiline } from '@/lib/form-validate'
+import { resolveName } from '@/lib/names'
 import { notifyNewLead } from '@/lib/lead-alerts'
 import { SITE_URL } from '@/lib/env'
 
@@ -32,7 +33,12 @@ export async function POST(req: NextRequest) {
 
   // Normalised here as well as in the browser: the API is reachable directly.
   const email = normalizeEmail(body.email).slice(0, 200)
-  const name = tidy(body.name).slice(0, 200)
+  /* Three forms kept: what a human reads, and the two parts ad platforms hash
+     separately. A caller that sends only one of them still gets all three. */
+  const parts = resolveName(body)
+  const name = parts.full.slice(0, 200)
+  const firstName = parts.first.slice(0, 100)
+  const lastName = parts.last.slice(0, 100)
   const phone = tidy(body.phone).slice(0, 50)
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'A valid email is required.' }, { status: 400 })
@@ -68,10 +74,12 @@ export async function POST(req: NextRequest) {
     } catch { /* assignment must never block capturing the lead */ }
 
     const leadId = await insertReturningId(
-      `INSERT INTO leads (name, email, phone, company, message, source_page, form_type, package_interest, extra, public_id, consent, consent_at, owner_user_id)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,1,now(),$11) RETURNING id`,
+      `INSERT INTO leads (name, first_name, last_name, email, phone, company, message, source_page, form_type, package_interest, extra, public_id, consent, consent_at, owner_user_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,1,now(),$13) RETURNING id`,
       [
         name || null,
+        firstName || null,
+        lastName || null,
         email,
         phone || null,
         tidy(body.company).slice(0, 200) || null,

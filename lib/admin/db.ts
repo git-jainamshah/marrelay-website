@@ -93,6 +93,8 @@ async function migrateAndSeed() {
     consent_at TIMESTAMPTZ,
     deleted_at TIMESTAMPTZ,
     name TEXT,
+    first_name TEXT,
+    last_name TEXT,
     email TEXT,
     phone TEXT,
     company TEXT,
@@ -353,6 +355,10 @@ async function migrateAndSeed() {
     `ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent INTEGER NOT NULL DEFAULT 1`,
     `ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_at TIMESTAMPTZ`,
     `ALTER TABLE leads ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ`,
+    // Names kept three ways so ad platforms can hash given and family name
+    // separately. `name` stays the full name every existing query reads.
+    `ALTER TABLE leads ADD COLUMN IF NOT EXISTS first_name TEXT`,
+    `ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_name TEXT`,
     `ALTER TABLE expenses ADD COLUMN IF NOT EXISTS marketing_type TEXT`,
     `ALTER TABLE expenses ADD COLUMN IF NOT EXISTS marketing_platform TEXT`,
     // Threaded replies: NULL parent_id means a top-level comment, so every

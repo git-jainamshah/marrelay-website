@@ -97,8 +97,8 @@ export default async function Home() {
               <h2 className="v-h2">How we would approach it.</h2>
             </div>
             <p className="v-body" style={{ maxWidth: '28em' }}>
-              We&apos;re a young studio, so instead of borrowed logos we show exactly how we think. Each one is a
-              worked example of a typical project, start to finish.
+              Instead of borrowed logos, we show exactly how we think. Each one is a worked example of a typical
+              project, start to finish.
             </p>
           </div>
           <div className="v-work-grid">

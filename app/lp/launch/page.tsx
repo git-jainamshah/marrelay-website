@@ -32,7 +32,7 @@ const PROOF = [
 ]
 
 const STEPS = [
-  { n: '01', t: 'Send the form', d: 'Four fields. It takes about a minute.' },
+  { n: '01', t: 'Send the form', d: 'The short version of what you need. It takes about a minute.' },
   { n: '02', t: 'A free 30-minute call', d: 'We reply within one business day with a few times that suit you.' },
   { n: '03', t: 'A fixed quote, 30% off', d: 'One page: scope, timeline and price. Then you decide, with no pressure either way.' },
 ]
@@ -40,7 +40,7 @@ const STEPS = [
 const FAQS = [
   {
     q: `What is the catch with ${OFFER.percent}% off?`,
-    a: 'None that we hide. The discount buys us work we can show, so we would rather give it than spend the same money on ads. Nothing about the project gets smaller to pay for it: the scope, the timeline and the price are agreed in writing before you pay anything, and the 30% comes off the total you are quoted rather than off a number we quietly raised first.',
+    a: 'None that we hide. The first project is how you decide whether to call us again, so we would rather put the money there than into ads. Nothing about the project gets smaller to pay for it: the scope, the timeline and the price are agreed in writing before you pay anything, and the 30% comes off the total you are quoted rather than off a number we quietly raised first.',
   },
   {
     q: 'Does it apply to any service, and is it hourly?',
@@ -93,8 +93,8 @@ export default async function LaunchPage() {
               {PROOF.map((t) => <li key={t}>{t}</li>)}
             </ul>
             <p className="lp-why" data-reveal data-delay="5">
-              <b>Why {OFFER.percent}%?</b> We are new. We would rather spend our first projects building work we can
-              show than spend the same money on ads.
+              <b>Why {OFFER.percent}%?</b> The first project is how you decide whether to call us again. We would
+              rather earn the second one on the work than win the first one on a pitch.
             </p>
           </div>
 
@@ -108,7 +108,7 @@ export default async function LaunchPage() {
                     formType={OFFER.formType}
                     location="lp-launch"
                     heading={<>Claim your <span className="it">{OFFER.percent}%</span></>}
-                    blurb="Four quick fields. We reply within one business day to set up a free call, and nothing is owed until you accept a quote."
+                    blurb="About a minute to fill in. We reply within one business day to set up a free call, and nothing is owed until you accept a quote."
                     submitLabel={`Claim my ${OFFER.percent}%`}
                     contextNote={`[${OFFER.percent}% offer] Submitted from the launch offer page.`}
                   />

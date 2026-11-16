@@ -595,7 +595,19 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .lead-form .form-head h3 { font-family: var(--v-sans); font-weight: 500; font-size: clamp(24px, 2.2vw, 30px); letter-spacing: -.035em; line-height: 1.1; margin-bottom: 8px; }
 .v3 .lead-form .form-head h3 .it { font-style: normal; }
 .v3 .lead-form .form-head p { font-size: 15px; color: var(--v-mut); }
-.v3 .lead-form .form-row { gap: 0 24px; }
+/* Rows carry the columns, so each field gets a width that suits what goes in
+   it: two names side by side, and the phone wider than the email because it
+   also carries a dial code. Below 620px every row becomes one column. */
+.v3 .lead-form .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+.v3 .lead-form .form-row.split-contact { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+/* a row whose field count changes as the form is filled in */
+.v3 .lead-form .form-row.fluid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.v3 .lead-form .field > label .opt { color: var(--v-soft); }
+@media (max-width: 620px) {
+  .v3 .lead-form .form-row,
+  .v3 .lead-form .form-row.fluid,
+  .v3 .lead-form .form-row.split-contact { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}
 .v3 .lead-form .field { margin-bottom: 26px; }
 .v3 .lead-form .field > label { font-family: var(--v-sans); font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--v-mut-2); margin-bottom: 6px; }
 .v3 .lead-form .field > label .req { color: var(--v-red); }
@@ -608,6 +620,7 @@ body:has(> .v3) { background: #F2F1EC; }
   font-family: var(--v-sans); font-size: 17px; color: var(--v-ink);
   background: transparent; border: 0; border-bottom: 1px solid var(--v-ink); border-radius: 0;
   padding: 10px 0; box-shadow: none; outline: none;
+  width: 100%; max-width: 100%;
 }
 .v3 .lead-form .field select { background-color: transparent; }
 .v3 .lead-form .field textarea { min-height: 64px; }
@@ -848,12 +861,8 @@ body:has(> .v3) { background: #F2F1EC; }
 
 /* home "Start here" box: compact 3-up contact row, no inner heading */
 .v3 .v-start .lead-form .form-head { display: none; }
-.v3 .v-start .lead-form .form-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 24px; }
-.v3 .v-start .lead-form .form-body > * { grid-column: 1 / -1; }
-/* Name and Email share the top row; Phone keeps the full width for its dial code. */
-.v3 .v-start .lead-form .form-body > .field:nth-child(2),
-.v3 .v-start .lead-form .form-body > .field:nth-child(3) { grid-column: auto; }
-.v3 .v-start .lead-form .form-body > .form-submit { justify-self: start; }
+.v3 .v-start .lead-form .form-body { display: block; }
+.v3 .v-start .lead-form .form-submit { align-self: flex-start; }
 
 /* legacy rich-text spans (.it italic, .hl highlight) inside v3 templates render plain */
 .v3 .v-h2-sm .it, .v3 .v-h2-sm .hl, .v3 .v-h2 .it, .v3 .v-h2 .hl,
@@ -1031,9 +1040,6 @@ body:has(> .v3) { background: #F2F1EC; }
 .phone-field .dial-btn:hover .caret { color: var(--v-ink); }
 .phone-field .dial-btn:focus-visible { border-bottom-color: var(--v-red); box-shadow: 0 1px 0 0 var(--v-red); }
 
-/* a phone needs a dial code and a number side by side, so it takes the whole row */
-.v3 .lead-form .field:has(.phone-field) { grid-column: 1 / -1; }
-
 /* the number itself takes everything that is left */
 .v3 .lead-form .field .phone-field .phone-input { flex: 1 1 auto; width: 100%; min-width: 0; }
 
@@ -1134,7 +1140,7 @@ body:has(> .v3) { background: #F2F1EC; }
   position: relative; z-index: 2;
   display: grid; grid-template-columns: 1fr minmax(420px, 46%);
   gap: clamp(40px, 5vw, 80px); align-items: center;
-  padding-top: clamp(148px, 11vw, 168px); padding-bottom: clamp(48px, 6vw, 88px);
+  padding-top: clamp(148px, 10vw, 150px); padding-bottom: clamp(40px, 4vw, 60px);
 }
 
 .v3 .lp-pitch .meta {
@@ -1171,7 +1177,10 @@ body:has(> .v3) { background: #F2F1EC; }
 .v3 .lp-form-card > .r { flex: 1 1 100%; }
 .v3 .lp-form-card .lead-form .form-head { display: block; margin-bottom: 22px; }
 .v3 .lp-form-card .lead-form .form-head h3 .it { color: var(--v-red); }
-.v3 .lp-form-card .lead-form .field { margin-bottom: 20px; }
+.v3 .lp-form-card .lead-form .field { margin-bottom: 16px; }
+.v3 .lp-form-card .lead-form .form-head { margin-bottom: 18px; }
+/* the optional note is the one field nobody has to fill, so it gives up the height */
+.v3 .lp-form-card .lead-form textarea { min-height: 72px; }
 .v3 .lp-form-card .lead-form .form-submit { width: 100%; justify-content: center; }
 
 /* ---- sections below the fold ---- */
@@ -1251,3 +1260,7 @@ body:has(> .v3) { background: #F2F1EC; }
   .v3 .lp-rate .save { grid-column: 1 / -1; grid-row: 3; margin-top: 6px; font-size: 14px; color: var(--v-mut-2); }
   .v3 .lp-rate .save::before { content: 'You keep '; }
 }
+
+/* promo pop-up: the two name inputs share a line like the site forms do */
+.promo-names { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 460px) { .promo-names { grid-template-columns: minmax(0, 1fr); } }

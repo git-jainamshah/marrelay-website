@@ -12,6 +12,7 @@ import {
   DEFAULT_COUNTRY, isValidEmail, isValidPhone, normalizeEmail, toStoredPhone, tidy, tidyMultiline,
   checkName, checkEmail, checkPhone, checkMessage, type FieldState,
 } from '@/lib/form-validate'
+import { joinName } from '@/lib/names'
 
 const SERVICES = [
   { value: 'web', label: 'Web development' },
@@ -38,7 +39,8 @@ const TIMELINES = [
 
 export default function ContactLeadForm() {
   const searchParams = useSearchParams()
-  const [name, setName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('') // national digits only; the dial code lives in phoneCountry
   const [phoneCountry, setPhoneCountry] = useState(DEFAULT_COUNTRY)
@@ -99,7 +101,8 @@ export default function ContactLeadForm() {
 
   // Live state for the typed fields, recomputed on every keystroke.
   const live = {
-    name: checkName(name),
+    first: checkName(firstName),
+    last: checkName(lastName),
     email: checkEmail(email),
     phone: checkPhone(phone, phoneCountry),
     message: checkMessage(message),
@@ -119,7 +122,8 @@ export default function ContactLeadForm() {
     return { cls: ' ok', note: s.message ?? null, bad: false }
   }
 
-  const vName = view('name', 'Please tell us your name.')
+  const vFirst = view('first', 'Please tell us your first name.')
+  const vLast = view('last', 'Please tell us your last name.')
   const vEmail = view('email', 'We need an email to reply to.')
   const vPhone = view('phone', 'A phone number helps us reach you.')
   const vMessage = view('message', 'A sentence or two gets us started.')
@@ -128,7 +132,8 @@ export default function ContactLeadForm() {
     e.preventDefault()
     setTried(true)
     const bad = {
-      name: live.name.status !== 'ok',
+      first: live.first.status !== 'ok',
+      last: live.last.status !== 'ok',
       email: !isValidEmail(email),
       phone: !isValidPhone(phone, phoneCountry),
       services: services.length === 0,
@@ -137,11 +142,11 @@ export default function ContactLeadForm() {
     }
     setInvalid({ services: bad.services, consent: bad.consent })
     const form = e.target as HTMLFormElement
-    if (bad.name || bad.email || bad.phone || bad.services || bad.message || bad.consent) {
+    if (bad.first || bad.last || bad.email || bad.phone || bad.services || bad.message || bad.consent) {
       const badFields = Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k])
       trackFormError({ formId: 'contact-lead-form', formType: 'contact', errorFields: badFields })
       // Classes have not re-rendered yet, so go to the field by id instead.
-      const firstKey = ['name', 'email', 'phone', 'services', 'message', 'consent'].find((k) => badFields.includes(k))
+      const firstKey = ['first', 'last', 'email', 'phone', 'services', 'message', 'consent'].find((k) => badFields.includes(k))
       const anchorId = firstKey === 'services' ? `c-${SERVICES[0].value}` : `c-${firstKey}`
       const firstBad = (document.getElementById(anchorId)?.closest('.field') as HTMLElement | null) || form
       const top = firstBad.getBoundingClientRect().top + window.pageYOffset - 140
@@ -156,7 +161,8 @@ export default function ContactLeadForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: tidy(name), email: normalizeEmail(email), phone: toStoredPhone(phone, phoneCountry),
+          firstName: tidy(firstName), lastName: tidy(lastName),
+          email: normalizeEmail(email), phone: toStoredPhone(phone, phoneCountry),
           company: tidy(company), message: tidyMultiline(message),
           services, budget, timeline, referral, referralDetail, website,
           companyUrl, companyCountry, companyProvince, companyRemote,
@@ -173,7 +179,8 @@ export default function ContactLeadForm() {
       }
       // conversion: generate_lead + purchase with hashed PII + DB lead_id
       await trackLead({
-        name: tidy(name), email: normalizeEmail(email), phone: toStoredPhone(phone, phoneCountry),
+        name: joinName(firstName, lastName), firstName: tidy(firstName), lastName: tidy(lastName),
+        email: normalizeEmail(email), phone: toStoredPhone(phone, phoneCountry),
         services, budget, timeline,
         formType: 'contact', company: tidy(company), companyCountry, companyProvince, companyRemote,
         publicId: d.leadId, consent,
@@ -188,7 +195,7 @@ export default function ContactLeadForm() {
     }
   }
 
-  const firstName = name.trim().split(' ')[0] || 'friend'
+  const greetingName = tidy(firstName) || 'friend'
 
   return (
     <form className={`lead-form${done ? ' done' : ''}`} noValidate onSubmit={handleSubmit} onFocusCapture={onFirstInteract} id="contact-lead-form">
@@ -201,23 +208,43 @@ export default function ContactLeadForm() {
         </div>
 
         <div className="form-row">
-          <div className={`field${vName.cls}`}>
-            <label htmlFor="c-name">
-              Name <span className="req">*</span>
+          <div className={`field${vFirst.cls}`}>
+            <label htmlFor="c-first">
+              First name <span className="req">*</span>
             </label>
             <input
               type="text"
-              id="c-name"
-              name="name"
-              placeholder="Your name"
-              autoComplete="name"
-              value={name}
-              onBlur={() => touch('name')}
-              onChange={(e) => setName(e.target.value)}
-              aria-invalid={vName.bad}
+              id="c-first"
+              name="firstName"
+              placeholder="Jordan"
+              autoComplete="given-name"
+              value={firstName}
+              onBlur={() => touch('first')}
+              onChange={(e) => setFirstName(e.target.value)}
+              aria-invalid={vFirst.bad}
             />
-            {vName.note && <span className={`note${vName.bad ? ' bad' : ''}`} role={vName.bad ? 'alert' : undefined}>{vName.note}</span>}
+            {vFirst.note && <span className={`note${vFirst.bad ? ' bad' : ''}`} role={vFirst.bad ? 'alert' : undefined}>{vFirst.note}</span>}
           </div>
+          <div className={`field${vLast.cls}`}>
+            <label htmlFor="c-last">
+              Last name <span className="req">*</span>
+            </label>
+            <input
+              type="text"
+              id="c-last"
+              name="lastName"
+              placeholder="Lee"
+              autoComplete="family-name"
+              value={lastName}
+              onBlur={() => touch('last')}
+              onChange={(e) => setLastName(e.target.value)}
+              aria-invalid={vLast.bad}
+            />
+            {vLast.note && <span className={`note${vLast.bad ? ' bad' : ''}`} role={vLast.bad ? 'alert' : undefined}>{vLast.note}</span>}
+          </div>
+        </div>
+
+        <div className="form-row split-contact">
           <div className={`field${vEmail.cls}`}>
             <label htmlFor="c-email">
               Email <span className="req">*</span>
@@ -235,57 +262,58 @@ export default function ContactLeadForm() {
             />
             {vEmail.note && <span className={`note${vEmail.bad ? ' bad' : ''}`} role={vEmail.bad ? 'alert' : undefined}>{vEmail.note}</span>}
           </div>
-        </div>
-
-        <div className={`field${vPhone.cls}`}>
-          <label htmlFor="c-phone">
-            Phone <span className="req">*</span>
-          </label>
-          <PhoneField
-            id="c-phone"
-            digits={phone}
-            country={phoneCountry}
-            status={vPhone.bad ? 'error' : vPhone.cls === ' ok' ? 'ok' : 'idle'}
-            onBlur={() => touch('phone')}
-            onChange={({ digits, country }) => { setPhone(digits); setPhoneCountry(country) }}
-          />
-          {vPhone.note && <span className={`note${vPhone.bad ? ' bad' : ''}`} role={vPhone.bad ? 'alert' : undefined}>{vPhone.note}</span>}
-        </div>
-
-        <div className="field">
-          <label htmlFor="c-company">
-            Company <span style={{ color: 'var(--ink-soft)', textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
-          </label>
-          <input
-            type="text"
-            id="c-company"
-            name="company"
-            placeholder="Your company, Inc."
-            autoComplete="organization"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-          />
-        </div>
-
-        <div className="field">
-          <label htmlFor="c-company-url">
-            Company website <span style={{ color: 'var(--ink-soft)', textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
-          </label>
-          <input
-            type="url"
-            id="c-company-url"
-            name="companyUrl"
-            placeholder="https://yourcompany.com"
-            autoComplete="url"
-            value={companyUrl}
-            onChange={(e) => setCompanyUrl(e.target.value)}
-          />
+          <div className={`field${vPhone.cls}`}>
+            <label htmlFor="c-phone">
+              Phone <span className="req">*</span>
+            </label>
+            <PhoneField
+              id="c-phone"
+              digits={phone}
+              country={phoneCountry}
+              status={vPhone.bad ? 'error' : vPhone.cls === ' ok' ? 'ok' : 'idle'}
+              onBlur={() => touch('phone')}
+              onChange={({ digits, country }) => { setPhone(digits); setPhoneCountry(country) }}
+            />
+            {vPhone.note && <span className={`note${vPhone.bad ? ' bad' : ''}`} role={vPhone.bad ? 'alert' : undefined}>{vPhone.note}</span>}
+          </div>
         </div>
 
         <div className="form-row">
           <div className="field">
+            <label htmlFor="c-company">
+              Company <span className="opt">(optional)</span>
+            </label>
+            <input
+              type="text"
+              id="c-company"
+              name="company"
+              placeholder="Your company, Inc."
+              autoComplete="organization"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="c-company-url">
+              Company website <span className="opt">(optional)</span>
+            </label>
+            <input
+              type="url"
+              id="c-company-url"
+              name="companyUrl"
+              placeholder="https://yourcompany.com"
+              autoComplete="url"
+              value={companyUrl}
+              onChange={(e) => setCompanyUrl(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="form-row fluid">
+          <div className="field">
             <label htmlFor="c-country">
-              Company location <span style={{ color: 'var(--ink-soft)', textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
+              Company location <span className="opt">(optional)</span>
             </label>
             <select id="c-country" name="companyCountry" value={companyCountry}
               onChange={(e) => { setCompanyCountry(e.target.value); setCompanyProvince('') }}>
@@ -310,19 +338,18 @@ export default function ContactLeadForm() {
               )}
             </div>
           )}
-        </div>
-
-        <div className="field">
-          <label htmlFor="c-remote">
-            Is your company remote? <span style={{ color: 'var(--ink-soft)', textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
-          </label>
-          <select id="c-remote" name="companyRemote" value={companyRemote}
-            onChange={(e) => setCompanyRemote(e.target.value)}>
-            <option value="">Select…</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Hybrid">Hybrid</option>
-          </select>
+          <div className="field">
+            <label htmlFor="c-remote">
+              Remote team? <span className="opt">(optional)</span>
+            </label>
+            <select id="c-remote" name="companyRemote" value={companyRemote}
+              onChange={(e) => setCompanyRemote(e.target.value)}>
+              <option value="">Select…</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </div>
         </div>
 
         <div className={`field${invalid.services ? ' invalid' : ''}`}>
@@ -481,7 +508,7 @@ export default function ContactLeadForm() {
           </svg>
         </div>
         <h3>
-          Thanks, <span className="it">{firstName}</span>!
+          Thanks, <span className="it">{greetingName}</span>!
         </h3>
         <p>
           Your project brief just landed in our inbox. Someone from our team will reach out to you shortly.

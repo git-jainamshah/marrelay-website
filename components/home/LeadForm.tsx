@@ -5,8 +5,9 @@ import { createFormTracker } from '@/lib/form-funnel'
 import PhoneField from '@/components/forms/PhoneField'
 import {
   DEFAULT_COUNTRY, isValidEmail, normalizeEmail, isValidPhone, toStoredPhone,
-  checkName, checkEmail, checkPhone, type FieldState,
+  checkName, checkEmail, checkPhone, tidy, type FieldState,
 } from '@/lib/form-validate'
+import { joinName } from '@/lib/names'
 import { useSearchParams } from 'next/navigation'
 import { getTrafficData } from '@/analytics/traffic-identification'
 import {
@@ -40,7 +41,9 @@ export default function LeadForm({
   heading, blurb, submitLabel, contextNote,
 }: Props) {
   const searchParams = useSearchParams()
-  const [name, setName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [company, setCompany] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [country, setCountry] = useState(DEFAULT_COUNTRY)
@@ -95,7 +98,8 @@ export default function LeadForm({
 
   // Live state for the three typed fields, recomputed on every keystroke.
   const live = {
-    name: checkName(name),
+    first: checkName(firstName),
+    last: checkName(lastName),
     email: checkEmail(email),
     phone: checkPhone(phone, country),
   }
@@ -105,7 +109,7 @@ export default function LeadForm({
    * required field stays quiet until they try to send; a filled one that is
    * wrong speaks up as soon as they leave it, and keeps up as they fix it.
    */
-  function view(key: 'name' | 'email' | 'phone', emptyMsg: string) {
+  function view(key: keyof typeof live, emptyMsg: string) {
     const s: FieldState = live[key]
     const revealed = touched[key] || tried
     if (s.status === 'idle') return tried ? { cls: ' invalid', note: emptyMsg, bad: true } : { cls: '', note: null, bad: false }
@@ -114,15 +118,19 @@ export default function LeadForm({
     return { cls: ' ok', note: s.message ?? null, bad: false }
   }
 
-  const vName = view('name', 'Please tell us your name.')
+  const vFirst = view('first', 'Please tell us your first name.')
+  const vLast = view('last', 'Please tell us your last name.')
   const vEmail = view('email', 'We need an email to reply to.')
   const vPhone = view('phone', 'A phone number helps us reach you.')
+
+  const fullName = joinName(firstName, lastName)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setTried(true)
     const bad = {
-      name: live.name.status !== 'ok',
+      first: live.first.status !== 'ok',
+      last: live.last.status !== 'ok',
       email: !isValidEmail(email),
       phone: !isValidPhone(phone, country),
       services: services.length === 0,
@@ -130,12 +138,12 @@ export default function LeadForm({
     }
     setInvalid({ services: bad.services, consent: bad.consent })
     const form = e.target as HTMLFormElement
-    if (bad.name || bad.email || bad.phone || bad.services || bad.consent) {
+    if (bad.first || bad.last || bad.email || bad.phone || bad.services || bad.consent) {
       const badFields = Object.keys(bad).filter((k) => (bad as Record<string, boolean>)[k])
       trackFormError({ formId, formType, errorFields: badFields })
       funnel.error(badFields)
       // Classes have not re-rendered yet, so go to the field by id instead.
-      const firstKey = ['name', 'email', 'phone', 'services', 'consent'].find((k) => badFields.includes(k))
+      const firstKey = ['first', 'last', 'email', 'phone', 'services', 'consent'].find((k) => badFields.includes(k))
       const anchorId = firstKey === 'services' ? `${idPrefix}-${SERVICES[0].value}` : `${idPrefix}-${firstKey}`
       const firstBad = (document.getElementById(anchorId)?.closest('.field') as HTMLElement | null) || form
       const top = firstBad.getBoundingClientRect().top + window.pageYOffset - 140
@@ -151,7 +159,9 @@ export default function LeadForm({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: name.trim(), email: normalizeEmail(email), phone: toStoredPhone(phone, country),
+          firstName: tidy(firstName), lastName: tidy(lastName),
+          email: normalizeEmail(email), phone: toStoredPhone(phone, country),
+          company: tidy(company),
           message: [message.trim(), contextNote].filter(Boolean).join('\n\n'), services, consent,
           formType,
           sourcePage: window.location.pathname + window.location.search,
@@ -163,7 +173,7 @@ export default function LeadForm({
         setSubmitError(d.error || 'Something went wrong - please try again.')
         return
       }
-      await trackLead({ name: name.trim(), email: normalizeEmail(email), phone: toStoredPhone(phone, country), services, formType, publicId: d.leadId, consent })
+      await trackLead({ name: fullName, firstName: tidy(firstName), lastName: tidy(lastName), email: normalizeEmail(email), phone: toStoredPhone(phone, country), services, formType, publicId: d.leadId, consent })
       funnel.success()
       setDone(true)
       const top = form.getBoundingClientRect().top + window.pageYOffset - 120
@@ -175,66 +185,101 @@ export default function LeadForm({
     }
   }
 
-  const firstName = name.trim().split(' ')[0]
-
   return (
     <form className={`lead-form${done ? ' done' : ''}`} noValidate onSubmit={handleSubmit} onFocusCapture={onFirstInteract} id={formId}
       onBlurCapture={funnel.handlers.onBlurCapture} onChangeCapture={funnel.handlers.onChangeCapture}>
       <div className="form-body">
         <div className="form-head">
           <h3>{heading ?? <>Book your <span className="it">free call</span></>}</h3>
-          <p>{blurb ?? "Four quick fields. The rest we'll cover on the call."}</p>
+          <p>{blurb ?? "About a minute to fill in. The rest we'll cover on the call."}</p>
         </div>
 
-        <div className={`field${vName.cls}`}>
-          <label htmlFor={`${idPrefix}-name`}>
-            Name <span className="req">*</span>
+        <div className="form-row">
+          <div className={`field${vFirst.cls}`}>
+            <label htmlFor={`${idPrefix}-first`}>
+              First name <span className="req">*</span>
+            </label>
+            <input
+              type="text"
+              id={`${idPrefix}-first`}
+              name="firstName"
+              placeholder="Jordan"
+              autoComplete="given-name"
+              value={firstName}
+              onBlur={() => touch('first')}
+              onChange={(e) => setFirstName(e.target.value)}
+              aria-invalid={vFirst.bad}
+            />
+            {vFirst.note && <span className={`note${vFirst.bad ? ' bad' : ''}`} role={vFirst.bad ? 'alert' : undefined}>{vFirst.note}</span>}
+          </div>
+
+          <div className={`field${vLast.cls}`}>
+            <label htmlFor={`${idPrefix}-last`}>
+              Last name <span className="req">*</span>
+            </label>
+            <input
+              type="text"
+              id={`${idPrefix}-last`}
+              name="lastName"
+              placeholder="Lee"
+              autoComplete="family-name"
+              value={lastName}
+              onBlur={() => touch('last')}
+              onChange={(e) => setLastName(e.target.value)}
+              aria-invalid={vLast.bad}
+            />
+            {vLast.note && <span className={`note${vLast.bad ? ' bad' : ''}`} role={vLast.bad ? 'alert' : undefined}>{vLast.note}</span>}
+          </div>
+        </div>
+
+        <div className="form-row split-contact">
+          <div className={`field${vEmail.cls}`}>
+            <label htmlFor={`${idPrefix}-email`}>
+              Email <span className="req">*</span>
+            </label>
+            <input
+              type="email"
+              id={`${idPrefix}-email`}
+              name="email"
+              placeholder="you@company.com"
+              autoComplete="email"
+              value={email}
+              onBlur={() => touch('email')}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={vEmail.bad}
+            />
+            {vEmail.note && <span className={`note${vEmail.bad ? ' bad' : ''}`} role={vEmail.bad ? 'alert' : undefined}>{vEmail.note}</span>}
+          </div>
+
+          <div className={`field${vPhone.cls}`}>
+            <label htmlFor={`${idPrefix}-phone`}>
+              Phone <span className="req">*</span>
+            </label>
+            <PhoneField
+              id={`${idPrefix}-phone`}
+              digits={phone}
+              country={country}
+              status={vPhone.bad ? 'error' : vPhone.cls === ' ok' ? 'ok' : 'idle'}
+              onBlur={() => touch('phone')}
+              onChange={({ digits, country: c }) => { setPhone(digits); setCountry(c) }}
+            />
+            {vPhone.note && <span className={`note${vPhone.bad ? ' bad' : ''}`} role={vPhone.bad ? 'alert' : undefined}>{vPhone.note}</span>}
+          </div>
+        </div>
+
+        <div className="field">
+          <label htmlFor={`${idPrefix}-company`}>
+            Company <span className="opt">(optional)</span>
           </label>
           <input
             type="text"
-            id={`${idPrefix}-name`}
-            name="name"
-            placeholder="Your name"
-            autoComplete="name"
-            value={name}
-            onBlur={() => touch('name')}
-            onChange={(e) => setName(e.target.value)}
-            aria-invalid={vName.bad}
+            id={`${idPrefix}-company`}
+            name="company"
+            placeholder="Your company"
+            autoComplete="organization"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
           />
-          {vName.note && <span className={`note${vName.bad ? ' bad' : ''}`} role={vName.bad ? 'alert' : undefined}>{vName.note}</span>}
-        </div>
-
-        <div className={`field${vEmail.cls}`}>
-          <label htmlFor={`${idPrefix}-email`}>
-            Email <span className="req">*</span>
-          </label>
-          <input
-            type="email"
-            id={`${idPrefix}-email`}
-            name="email"
-            placeholder="you@company.com"
-            autoComplete="email"
-            value={email}
-            onBlur={() => touch('email')}
-            onChange={(e) => setEmail(e.target.value)}
-            aria-invalid={vEmail.bad}
-          />
-          {vEmail.note && <span className={`note${vEmail.bad ? ' bad' : ''}`} role={vEmail.bad ? 'alert' : undefined}>{vEmail.note}</span>}
-        </div>
-
-        <div className={`field${vPhone.cls}`}>
-          <label htmlFor={`${idPrefix}-phone`}>
-            Phone <span className="req">*</span>
-          </label>
-          <PhoneField
-            id={`${idPrefix}-phone`}
-            digits={phone}
-            country={country}
-            status={vPhone.bad ? 'error' : vPhone.cls === ' ok' ? 'ok' : 'idle'}
-            onBlur={() => touch('phone')}
-            onChange={({ digits, country: c }) => { setPhone(digits); setCountry(c) }}
-          />
-          {vPhone.note && <span className={`note${vPhone.bad ? ' bad' : ''}`} role={vPhone.bad ? 'alert' : undefined}>{vPhone.note}</span>}
         </div>
 
         <div className={`field${invalid.services ? ' invalid' : ''}`}>

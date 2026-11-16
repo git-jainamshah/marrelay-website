@@ -18,8 +18,8 @@ export default function CaseStudiesPageView({ slots }: { slots: SlotValues }) {
             <h1 className="v-big" data-reveal data-delay="1">How we&apos;d approach it.</h1>
           </div>
           <p data-reveal data-delay="2">
-            We are a young studio, so rather than borrow logos we did something more honest: worked-through
-            hypothetical examples of how we would approach common problems, end to end.
+            Rather than borrow logos, we did something more useful: worked-through examples of how we approach
+            common problems, end to end.
           </p>
         </div>
         <p className="v-note" style={{ marginTop: 32 }} data-reveal>Hypothetical examples · assumptions, not delivered client work</p>
