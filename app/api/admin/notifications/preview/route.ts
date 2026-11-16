@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/admin/auth'
 import { getSetting } from '@/lib/admin/db'
 import { DEFAULT_EMAIL_TEMPLATE, renderLeadEmail, renderSubject, scoreLead, type EmailTemplateCfg } from '@/lib/lead-email-template'
-import { SITE_URL, envLabel } from '@/lib/env'
+import { SITE_URL, PRODUCTION_SITE_URL, envLabel } from '@/lib/env'
 import type { LeadForAlert } from '@/lib/lead-alerts'
 
 export const runtime = 'nodejs'
@@ -31,7 +31,8 @@ export async function GET(req: NextRequest) {
   const over = req.nextUrl.searchParams.get('cfg')
   const merged: EmailTemplateCfg = over ? { ...cfg, ...JSON.parse(over) } : cfg
 
-  const base = SITE_URL.replace(/\/$/, '')
+  // Previewing production from dev must show the live address, not this one.
+  const base = (env === 'production' ? PRODUCTION_SITE_URL : SITE_URL).replace(/\/$/, '')
   const html = renderLeadEmail({
     cfg: merged, lead: SAMPLE_LEAD, adminUrl: `${base}/admin/leads`, siteUrl: base,
     env, envLabel: env === 'staging' ? envLabel || 'Development' : undefined,

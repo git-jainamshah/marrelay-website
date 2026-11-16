@@ -8,6 +8,7 @@
  *    test lead for a real one
  */
 import { LeadForAlert } from '@/lib/lead-alerts'
+import { displayHost } from '@/lib/env'
 
 export type EmailTemplateCfg = {
   subject: string
@@ -256,7 +257,7 @@ export function renderLeadEmail(opts: {
   <tr><td style="padding:12px 2px 0">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="foot"><tr>
       <td style="font-size:11px;line-height:1.6;color:${MUT}">${esc(fill(cfg.footerNote || '', vars))}</td>
-      <td align="right" style="font-size:11px;line-height:1.6;color:${MUT}">${esc(siteUrl.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</td>
+      <td align="right" style="font-size:11px;line-height:1.6"><a href="${esc(siteUrl)}" style="color:${ACCENT};text-decoration:none;font-weight:600">${esc(displayHost(siteUrl))}</a></td>
     </tr></table>
   </td></tr>
 

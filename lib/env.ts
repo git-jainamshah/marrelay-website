@@ -48,6 +48,18 @@ export const SITE_URL =
   (isQA ? 'https://qa.marrelay.com' : isDev ? 'https://dev.marrelay.com' : 'https://www.marrelay.com')
 
 /**
+ * The live site's base URL, whichever environment this code is running in.
+ * Previews of production output need it, so that a preview rendered on dev
+ * does not show a dev address where the real thing would show the live one.
+ */
+export const PRODUCTION_SITE_URL = SITE_URL.replace(/^(https?:\/\/)(dev|qa)\./, '$1www.')
+
+/** How a site URL is written in content: no scheme, no www, no trailing slash. */
+export function displayHost(url: string): string {
+  return url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '')
+}
+
+/**
  * Short fingerprint of the database this deployment is talking to (host + db
  * name only, never credentials). Surfaced in the admin banner so you can
  * confirm at a glance that QA is not pointed at the production database.
