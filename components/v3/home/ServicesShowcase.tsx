@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import ViewItemList from '@/analytics/ViewItemList'
+
+/** GA4 item_list_name for the homepage services showcase. */
+const LIST_NAME = 'Home services'
 
 export type ShowcaseItem = {
   key: string
@@ -44,7 +48,8 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
 
   return (
     <>
-      <div className="v-show-wrap" data-reveal>
+      <ViewItemList listName={LIST_NAME} />
+      <div className="v-show-wrap" data-reveal data-list-name={LIST_NAME}>
         <div
           className={`v-show${paused ? ' paused' : ''}`}
           onMouseEnter={() => setPaused(true)}
@@ -57,6 +62,7 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
                   key={s.key}
                   href={s.url}
                   className={`v-show-item${act === i ? ' on' : ''}`}
+                  data-service-key={s.key}
                   onMouseEnter={() => setAct(i)}
                   onFocus={() => setAct(i)}
                 >
@@ -110,9 +116,9 @@ export default function ServicesShowcase({ items }: { items: ShowcaseItem[] }) {
       </div>
 
       {/* Narrow screens: a swipeable strip of the same media panels. */}
-      <div className="v-svc-strip" role="list">
+      <div className="v-svc-strip" role="list" data-list-name={LIST_NAME}>
         {items.map((s, i) => (
-          <Link key={s.key} href={s.url} className="v-svc-card" role="listitem" data-reveal data-delay={String(Math.min(i, 3))}>
+          <Link key={s.key} href={s.url} className="v-svc-card" role="listitem" data-service-key={s.key} data-reveal data-delay={String(Math.min(i, 3))}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={s.poster || s.media} alt="" loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
             <span className="scrim"></span>

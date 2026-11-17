@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { trackCaseStudyInteraction } from '@/analytics/events'
 
 /**
  * Illustrative before/after for the web case study. All numbers are invented
@@ -23,8 +24,8 @@ export default function WebBeforeAfter() {
       <div className="vx-top">
         <span className="vx-title">Current site vs. a reimagined one</span>
         <div className="vx-seg" role="group" aria-label="Compare">
-          <button type="button" className={!after ? 'on' : ''} aria-pressed={!after} onClick={() => setMode('before')}>Current</button>
-          <button type="button" className={after ? 'on' : ''} aria-pressed={after} onClick={() => setMode('after')}>Reimagined</button>
+          <button type="button" className={!after ? 'on' : ''} aria-pressed={!after} onClick={() => { setMode('before'); trackCaseStudyInteraction({ widget: 'web_before_after', action: 'compare', value: 'before' }) }}>Current</button>
+          <button type="button" className={after ? 'on' : ''} aria-pressed={after} onClick={() => { setMode('after'); trackCaseStudyInteraction({ widget: 'web_before_after', action: 'compare', value: 'after' }) }}>Reimagined</button>
         </div>
       </div>
 

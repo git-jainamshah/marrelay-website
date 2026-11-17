@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { trackCaseStudyInteraction } from '@/analytics/events'
 
 /**
  * Illustrative CAD/CAM sketch for the engineering case study. A simplified
@@ -26,8 +27,8 @@ export default function CadViewer() {
           <div style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 22 }}>A sample mounting bracket</div>
         </div>
         <div className="ix-toggle-row">
-          <button className={`ix-chip${dims ? ' on' : ''}`} onClick={() => setDims((v) => !v)}>Dimensions</button>
-          <button className={`ix-chip${wire ? ' on' : ''}`} onClick={() => setWire((v) => !v)}>Wireframe</button>
+          <button className={`ix-chip${dims ? ' on' : ''}`} onClick={() => { setDims((v) => !v); trackCaseStudyInteraction({ widget: 'cad_viewer', action: 'toggle_dimensions', value: !dims ? 'on' : 'off' }) }}>Dimensions</button>
+          <button className={`ix-chip${wire ? ' on' : ''}`} onClick={() => { setWire((v) => !v); trackCaseStudyInteraction({ widget: 'cad_viewer', action: 'toggle_wireframe', value: !wire ? 'on' : 'off' }) }}>Wireframe</button>
         </div>
       </div>
 
@@ -77,7 +78,18 @@ export default function CadViewer() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 14 }}>
         <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-mut)', whiteSpace: 'nowrap' }}>Exploded view</span>
-        <input className="ix-slider" type="range" min={0} max={40} value={explode} onChange={(e) => setExplode(Number(e.target.value))} />
+        {/* Tracked on settle (pointer/key release), not on change, so a single
+            drag is one event instead of one per pixel. */}
+        <input
+          className="ix-slider"
+          type="range"
+          min={0}
+          max={40}
+          value={explode}
+          onChange={(e) => setExplode(Number(e.target.value))}
+          onPointerUp={() => trackCaseStudyInteraction({ widget: 'cad_viewer', action: 'explode', value: explode })}
+          onKeyUp={() => trackCaseStudyInteraction({ widget: 'cad_viewer', action: 'explode', value: explode })}
+        />
       </div>
 
       <p className="ix-note">

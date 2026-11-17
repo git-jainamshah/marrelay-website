@@ -173,7 +173,7 @@ export default function LeadForm({
         setSubmitError(d.error || 'Something went wrong - please try again.')
         return
       }
-      await trackLead({ name: fullName, firstName: tidy(firstName), lastName: tidy(lastName), email: normalizeEmail(email), phone: toStoredPhone(phone, country), services, formType, publicId: d.leadId, consent })
+      await trackLead({ name: fullName, firstName: tidy(firstName), lastName: tidy(lastName), email: normalizeEmail(email), phone: toStoredPhone(phone, country), services, formType, leadCountry: country, publicId: d.leadId, consent })
       funnel.success()
       setDone(true)
       const top = form.getBoundingClientRect().top + window.pageYOffset - 120

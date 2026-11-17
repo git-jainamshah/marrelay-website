@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-16T06:10:24.757Z",
+ "generatedAt": "2026-11-17T03:21:34.577Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -225,7 +225,7 @@
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 144
+    "line": 120
    },
    {
     "file": "app/page.tsx",
@@ -260,7 +260,7 @@
    {
     "file": "components/v3/Footer.tsx",
     "label": "Component: v3/Footer",
-    "line": 101
+    "line": 104
    },
    {
     "file": "components/v3/Header.tsx",
@@ -282,22 +282,22 @@
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 89
+    "line": 65
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 96
+    "line": 72
    },
    {
     "file": "app/layout.tsx",
     "label": "Site metadata / social sharing image",
-    "line": 145
+    "line": 121
    },
    {
     "file": "app/lp/launch/page.tsx",
     "label": "Lp / Launch",
-    "line": 15
+    "line": 21
    },
    {
     "file": "lib/site-config.ts",
@@ -355,7 +355,7 @@
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 43
+    "line": 45
    }
   ],
   "/assets/city-night.jpg": [
@@ -367,7 +367,7 @@
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 35
+    "line": 37
    }
   ],
   "/assets/arch-curve.jpg": [
@@ -379,7 +379,7 @@
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 36
+    "line": 38
    }
   ],
   "/assets/blog-banner.jpg": [
@@ -393,50 +393,7 @@
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 32
-   },
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 54
-   }
-  ],
-  "/assets/city-blue.jpg": [
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 33
-   }
-  ],
-  "/assets/analytics-bg.mp4": [
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
     "line": 34
-   },
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 55
-   }
-  ],
-  "/assets/crowd.jpg": [
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 37
-   },
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 41
-   }
-  ],
-  "/assets/engineering-drawings-bg.mp4": [
-   {
-    "file": "lib/media-slots.ts",
-    "label": "lib/media-slots.ts",
-    "line": 38
    },
    {
     "file": "lib/media-slots.ts",
@@ -444,53 +401,96 @@
     "line": 56
    }
   ],
-  "/assets/arch-tunnel.jpg": [
+  "/assets/city-blue.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 35
+   }
+  ],
+  "/assets/analytics-bg.mp4": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 36
+   },
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 57
+   }
+  ],
+  "/assets/crowd.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
     "line": 39
+   },
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 43
+   }
+  ],
+  "/assets/engineering-drawings-bg.mp4": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 40
+   },
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 58
+   }
+  ],
+  "/assets/arch-tunnel.jpg": [
+   {
+    "file": "lib/media-slots.ts",
+    "label": "lib/media-slots.ts",
+    "line": 41
    }
   ],
   "/assets/business-services-banner-bg.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 45
+    "line": 47
    }
   ],
   "/assets/blogs-banner-bg.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 47
+    "line": 49
    }
   ],
   "/assets/blog-1.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 48
+    "line": 50
    }
   ],
   "/assets/blog-2.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 49
+    "line": 51
    }
   ],
   "/assets/blog-3.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 50
+    "line": 52
    }
   ],
   "/assets/sample-project-bg.jpg": [
    {
     "file": "lib/media-slots.ts",
     "label": "lib/media-slots.ts",
-    "line": 52
+    "line": 54
    }
   ]
  }

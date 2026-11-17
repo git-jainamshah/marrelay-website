@@ -91,7 +91,9 @@ export default function Footer() {
               {address && <span className="addr">{address}</span>}
               {socials.map((s) => (
                 <a key={s.platform} href={s.href} target="_blank" rel="noopener noreferrer"
-                  data-social={s.platform.toLowerCase().replace(/[^a-z]/g, '')}>
+                  data-social={s.platform.toLowerCase().replace(/[^a-z]/g, '')}
+                  data-dl-event="social_click"
+                  data-dl-platform={s.platform.toLowerCase().replace(/[^a-z]/g, '')}>
                   {s.platform} ↗
                 </a>
               ))}

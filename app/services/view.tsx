@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
+import ViewItemList from '@/analytics/ViewItemList'
 
 export type ServiceListItem = { key: string; full: string; intro: string; url: string; from: string; tools: { name: string; src: string }[]; chips: string[] }
 
@@ -24,9 +25,10 @@ export default function ServicesView({ items }: { items: ServiceListItem[] }) {
       </section>
 
       <section className="v-wrap" style={{ paddingTop: 'clamp(56px,7vw,96px)' }}>
-        <div className="v-svc-list always">
+        <ViewItemList listName="Services index" />
+        <div className="v-svc-list always" data-list-name="Services index">
           {items.map((s, i) => (
-            <Link key={s.key} href={s.url} className="v-svc-row gw" data-reveal>
+            <Link key={s.key} href={s.url} className="v-svc-row gw" data-service-key={s.key} data-reveal>
               <span className="n">0{i + 1}</span>
               <span className="nm">{s.full}</span>
               <span className="ds">

@@ -18,7 +18,7 @@ import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import {
   trackPageView, trackScrollDepth, trackEngagedVisit,
-  trackNav, trackCta, trackLinkClick, trackSocial, trackMenuOpen,
+  trackNav, trackCta, trackLinkClick, trackSocial, trackMenuOpen, trackSelectItem,
 } from './events'
 
 const SCROLL_MARKS = [25, 50, 75, 90]
@@ -101,6 +101,17 @@ export default function AutoTrack() {
       const a = target.closest('a[href]') as HTMLAnchorElement | null
       const btn = target.closest('button, [role="button"]') as HTMLElement | null
 
+      // A service card or row inside a tracked list is a GA4 select_item.
+      // Fires alongside the link/cta event so the ecommerce funnel has a head.
+      const picked = target.closest('[data-service-key]') as HTMLElement | null
+      if (picked) {
+        const list = picked.closest('[data-list-name]') as HTMLElement | null
+        trackSelectItem(
+          picked.getAttribute('data-service-key') || '',
+          list?.getAttribute('data-list-name') || 'Services',
+        )
+      }
+
       if (a) {
         const href = a.getAttribute('href') || ''
         if (!href || href.startsWith('#') || href.startsWith('javascript:')) return
@@ -138,7 +149,7 @@ function hrefOf(el: HTMLElement) {
 function region(el: HTMLElement) {
   if (el.closest('header, nav')) return 'header'
   if (el.closest('footer')) return 'footer'
-  if (el.closest('.svc-hero, .cs-hero-grid')) return 'hero'
+  if (el.closest('.svc-hero, .cs-hero-grid, .v-hero, .lp-hero, .v-phero')) return 'hero'
   if (el.closest('form')) return 'form'
   return 'body'
 }

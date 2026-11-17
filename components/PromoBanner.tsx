@@ -100,7 +100,7 @@ export default function PromoBanner() {
         }),
       })
       const d = await res.json().catch(() => ({}))
-      await trackLead({ name: joinName(form.firstName, form.lastName), firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), formType: 'promo-banner', publicId: d.leadId, consent: true })
+      await trackLead({ name: joinName(form.firstName, form.lastName), firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: normalizeEmail(form.email), phone: toStoredPhone(form.phone, country), formType: 'promo-banner', leadCountry: country, publicId: d.leadId, consent: true })
       funnel.success()
       setSent(true)
     } finally {

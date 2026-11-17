@@ -133,6 +133,8 @@ export function trackBeginCheckout(services, budget, formType) {
  * @param {string} [opts.companyCountry]
  * @param {string} [opts.companyProvince]
  * @param {string} [opts.companyRemote]
+ * @param {string} [opts.leadCountry] country when the form has no company block (name or ISO2)
+ * @param {string} [opts.leadRegion] province/state when the form has no company block
  * @param {string} [opts.publicId]
  * @param {boolean} [opts.consent]
  * @returns {Promise<object>} the hashed user_data (also useful for the caller)
@@ -143,6 +145,7 @@ export async function trackLead(opts = {}) {
     services = [], budget, timeline,
     formType = 'contact', company,
     companyCountry, companyProvince, companyRemote,
+    leadCountry, leadRegion,
     publicId, consent,
   } = opts
   // The forms now collect given and family name separately. Use what they sent
@@ -156,9 +159,16 @@ export async function trackLead(opts = {}) {
   const guessed = (givenName || familyName) ? { firstName: '', lastName: '' } : splitName(name)
   const firstName = givenName || guessed.firstName
   const lastName = familyName || guessed.lastName
+
+  // The contact form collects a company location. The homepage, LP and promo
+  // forms do not, but they do know the country from the phone picker, so fall
+  // back to that rather than sending no geo at all.
+  const countrySrc = companyCountry || leadCountry || ''
+  const regionSrc = companyProvince || leadRegion || ''
+
   const user_data = await buildUserData({
     email, phone, firstName, lastName,
-    region: companyProvince, country: companyCountry,
+    region: regionSrc, country: countrySrc,
   })
   if (user_data.sha256_email) setUserId(user_data.sha256_email)
 
@@ -173,6 +183,10 @@ export async function trackLead(opts = {}) {
     company_country: companyCountry || '',
     company_region: companyProvince || '',
     company_remote: companyRemote || '',
+    // Plain ISO codes, resolved from whichever field the form had. Handy as
+    // GA4 dimensions and as the unhashed geo Google Ads wants.
+    geo_country: (user_data.address && user_data.address.country) || '',
+    geo_region: (user_data.address && user_data.address.region) || '',
     lead_id: publicId || '',
     value,
     currency: CURRENCY,
