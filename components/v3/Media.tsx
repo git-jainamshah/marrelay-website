@@ -19,6 +19,7 @@ export function BgVideo({ src, poster, className }: { src: string; poster?: stri
     v.muted = true
     v.defaultMuted = true
     v.setAttribute('muted', '')
+
     const show = () => v.classList.add('ready')
     const play = () => {
       const p = v.play()
@@ -26,16 +27,45 @@ export function BgVideo({ src, poster, className }: { src: string; poster?: stri
     }
     const onReady = () => { show(); play() }
     const onError = () => { v.style.display = 'none' }
-    v.addEventListener('canplay', onReady)
+
+    // `canplay` and `loadeddata` only fire once enough data is buffered, but
+    // preload="metadata" is honoured strictly on mobile, so those events can
+    // wait on a play() that only fires from those same events. Listening for
+    // loadedmetadata too, and calling play() directly, breaks that deadlock.
+    v.addEventListener('loadedmetadata', onReady)
     v.addEventListener('loadeddata', onReady)
+    v.addEventListener('canplay', onReady)
+    v.addEventListener('playing', show)
     v.addEventListener('error', onError, true)
-    if (v.readyState >= 3) onReady()
+    if (v.readyState >= 1) onReady()
+    play()
+
+    // This banner sits well down the page. iOS will not start an offscreen
+    // video, and nothing retries once it scrolls in, so ask again on entry.
+    let io: IntersectionObserver | null = null
+    if (typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver(
+        (entries) => { for (const e of entries) if (e.isIntersecting) { show(); play() } },
+        { rootMargin: '200px' },
+      )
+      io.observe(v)
+    }
+
+    // Last resort: the element is opacity 0 until `ready`, so if no event ever
+    // arrives the viewer sees nothing at all. Reveal it regardless, leaving a
+    // still first frame rather than a hole where the video should be.
+    const t = window.setTimeout(show, 1800)
+
     window.addEventListener('pageshow', play)
     return () => {
-      v.removeEventListener('canplay', onReady)
+      v.removeEventListener('loadedmetadata', onReady)
       v.removeEventListener('loadeddata', onReady)
+      v.removeEventListener('canplay', onReady)
+      v.removeEventListener('playing', show)
       v.removeEventListener('error', onError, true)
       window.removeEventListener('pageshow', play)
+      window.clearTimeout(t)
+      io?.disconnect()
     }
   }, [src])
 
