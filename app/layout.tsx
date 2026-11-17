@@ -176,6 +176,15 @@ export default async function RootLayout({
       className={GeistSans.variable}
     >
       <head>
+        {/* The consent banner is the Largest Contentful Paint on first visit:
+            GTM loads, GTM loads Cookiebot, Cookiebot loads its SDK, then the
+            dialog paints. Opening these connections early takes the DNS and
+            TLS handshakes off that critical path. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://consent.cookiebot.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://consentcdn.cookiebot.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
