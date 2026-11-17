@@ -6,7 +6,7 @@ import { getSlot } from '@/lib/media-slots-server'
 export const metadata: Metadata = {
   title: 'About Marrelay',
   description:
-    'Marrelay is a Toronto digital studio working on one fixed project price instead of an hourly rate. Web, data and analytics, SEO and ads, social, and engineering drafting, for startups and small businesses in Canada and the US.',
+    'Marrelay is a Toronto digital studio that quotes one fixed price for a project instead of billing by the hour. Here is why we started it.',
   alternates: { canonical: '/about' },
   openGraph: { url: '/about' },
 }
@@ -14,42 +14,19 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: 'What is Marrelay?',
-    a: 'Marrelay is a Toronto-based digital studio. We design, build and grow websites and digital products for startups and small businesses across Canada and the US. We work remotely, with one small, senior team on every project, for a price agreed before the work starts.',
+    a: 'Marrelay is a Toronto digital studio. We design, build and grow websites and digital products for startups and small businesses across Canada and the US, for a price agreed before the work starts. We work remotely, with one small team on every project.',
   },
   {
     q: 'Why does Marrelay charge a fixed price instead of an hourly rate?',
-    a: 'Because an hourly rate bills you for the overrun. Projects scoped in hours tend to run past the hours, and the client absorbs the difference while the agency carries no cost for a loose estimate. A fixed price moves that risk onto us, which is where we think it belongs. It also means the scoping conversation at the start has to be honest, so we ask more questions than you may expect.',
+    a: 'Because an hourly rate bills you for the overrun. Work scoped in hours tends to run past the hours, and the client absorbs the difference while nobody carries a cost for a loose estimate. A fixed price moves that risk to us, which is where we think it belongs. If you ask for something outside the agreed scope, we price it before we build it.',
   },
   {
     q: 'What does Marrelay do?',
-    a: 'Web development, data and analytics implementation, SEO and paid ads, and social are done in house, by us. Engineering and CAD drafting we scope and stand behind, with the drafting done by a specialist we work with. Either way you get one contract and one point of contact.',
-  },
-  {
-    q: 'How does Marrelay price projects?',
-    a: 'You hire us for a project, not for hours. We put the scope and one number on a single page before any work begins, and that number does not change because the work took longer than we thought. If you ask for something outside the agreed scope, we price it before we build it.',
+    a: 'Web development, data and analytics, SEO and paid ads, social, and engineering and CAD drafting.',
   },
   {
     q: 'Where is Marrelay based?',
-    a: 'Toronto, Canada. We do not keep a physical office. We work remotely and take on projects across Canada and the US, and further afield when the fit is right.',
-  },
-  {
-    q: 'Who is Marrelay for?',
-    a: 'Startups and small businesses that want one small, senior team to take a project end to end, for a price agreed up front, and to own everything at the finish.',
-  },
-]
-
-const FIXED = [
-  {
-    t: 'The number comes before the work.',
-    b: 'Scope and price on one page. You approve it, and that is what you pay. It does not move because the hours did.',
-  },
-  {
-    t: 'We ask more questions than you expect.',
-    b: 'A fixed price only works if the scope is honest at the start, so the first call goes deeper than most. If the budget does not match what you are describing, we would rather tell you then than three invoices in.',
-  },
-  {
-    t: 'New requests get priced before they get built.',
-    b: 'Want something outside what we agreed? We tell you what it costs and you decide. Nothing turns up on an invoice that you have not already seen and approved.',
+    a: 'Toronto, Canada. We work remotely and take on projects across Canada and the US, and further afield when the fit is right.',
   },
 ]
 
@@ -57,22 +34,17 @@ const PRINCIPLES = [
   {
     n: '01',
     t: 'You talk to the people doing the work.',
-    b: 'No account managers and no handoffs. If we are the wrong fit for what you need, we will say so on the first call and point you somewhere better.',
+    b: 'No account managers, no handoffs. If we are the wrong fit, we will say so on the first call and point you somewhere better.',
   },
   {
     n: '02',
-    t: 'You see something working, not a status report.',
-    b: 'Progress you can click and react to, on a regular cadence, rather than a document telling you that progress happened.',
+    t: 'Everything is yours at the end.',
+    b: 'Code, files, accounts and keys, handed over when we finish. Nothing quietly stops working the day you stop paying us.',
   },
   {
     n: '03',
-    t: 'Everything is yours when we finish.',
-    b: 'Code, files, accounts and keys, all transferred at handover. No lock-in, and nothing that quietly stops working the day you stop paying us.',
-  },
-  {
-    n: '04',
-    t: 'Small on purpose.',
-    b: 'We keep the studio small so the work gets senior attention. It also means we take fewer projects at a time, which is a trade we have made deliberately.',
+    t: 'We stay small.',
+    b: 'Fewer projects at once, and senior attention on each one. That is the trade, and we made it on purpose.',
   },
 ]
 
@@ -100,7 +72,7 @@ export default async function AboutPage() {
         </h1>
         <p className="v-about-lede" data-reveal data-delay="2">
           Almost everyone in this industry bills by the hour. Almost every project runs long. The client pays for
-          both. We think that is backwards, so we quote one price for the whole project and we hold it.
+          both. We think that is backwards.
         </p>
       </section>
 
@@ -115,19 +87,20 @@ export default async function AboutPage() {
           <div className="l" data-reveal><span className="v-kick">Why we started</span></div>
           <div className="r v-story" data-reveal>
             <p>
-              Marrelay began in 2026. The work behind it is older. We came up building websites and then implementing
-              the digital analytics behind them, the tracking and measurement that lets whoever is paying for the
-              traffic see what it actually did.
+              We spent years building websites for other people, and then wiring up the analytics behind them. That
+              second part meant we were usually the ones who could see what a project had really cost by the end.
             </p>
             <p>
-              That second half is where we kept watching the same thing happen. A project gets scoped in hours. The
-              hours run out before the work is finished, because they usually do. The timeline moves, the invoices
-              keep arriving, and the client quietly absorbs the difference. Nobody is being dishonest about it. The
-              model just does not reward anyone for getting the estimate right.
+              The pattern rarely changed. Work gets scoped in hours. The hours run out before the work is finished.
+              The timeline moves, the invoices keep arriving, and the client quietly covers the difference. Nobody
+              sets out to do that. It is just what happens when the clock is the product.
             </p>
             <p>
-              Fixed-price work used to be normal, and we think there is a real need for it again. So we built the
-              studio we would have wanted to hire, with the part we disagreed with taken out.
+              We thought someone should go back to naming a price and standing behind it. So in 2026 we started
+              Marrelay with that one thing fixed, and built the rest of the studio around it.
+            </p>
+            <p>
+              Fixed-price work used to be ordinary in this industry. We would like it to be ordinary again.
             </p>
           </div>
         </div>
@@ -136,69 +109,14 @@ export default async function AboutPage() {
       <section className="v-wrap v-sec v-statement" data-reveal>
         <p>
           One number, agreed before anything starts. If the work takes longer than we thought, that is our problem,
-          not your change order.
+          not yours.
         </p>
-      </section>
-
-      <section className="v-wrap v-sec">
-        <div className="v-split">
-          <div className="l sticky" data-reveal>
-            <span className="v-kick">How the price works</span>
-            <p className="v-body">
-              A fixed price is only worth anything if it survives contact with the project. Here is what we hold
-              ourselves to so that it does.
-            </p>
-          </div>
-          <div className="r" style={{ borderTop: '1px solid var(--v-ink)' }}>
-            {FIXED.map((f) => (
-              <div key={f.t} className="v-prin" data-reveal>
-                <span className="t">{f.t}</span>
-                <span className="b">{f.b}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="v-wrap v-sec">
-        <div className="v-split">
-          <div className="l sticky" data-reveal>
-            <span className="v-kick">What we do</span>
-            <h2 className="v-h2-sm">Ours, and honestly ours.</h2>
-          </div>
-          <div className="r" data-reveal>
-            <div className="v-stance">
-              <div><h3>In house</h3></div>
-              <div>
-                <p>
-                  Web development, data and analytics implementation, SEO and paid ads, and social. The people who
-                  build the site are the same people who set up its tracking and run the ads on it, so nothing gets
-                  lost in a handoff between two agencies that have never spoken.
-                </p>
-              </div>
-            </div>
-            <div className="v-stance">
-              <div><h3>With a specialist</h3></div>
-              <div>
-                <p>
-                  Engineering and CAD drafting. We are not going to pretend this one sits in house. We scope it, we
-                  stand behind the delivery and the deadline, and the drafting itself is done by a specialist we
-                  work with. You still get one contract, one price and one person to call.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
       </section>
 
       <section className="v-wrap v-sec">
         <div className="v-split">
           <div className="l" data-reveal>
             <span className="v-kick">How we work</span>
-            <p className="v-body">
-              Not a mission statement. These are the rules we actually run projects by, and if we ever break one,
-              call us on it.
-            </p>
           </div>
           <div className="r" style={{ borderTop: '1px solid var(--v-ink)' }}>
             {PRINCIPLES.map((p) => (
