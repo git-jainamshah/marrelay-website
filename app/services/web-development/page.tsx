@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import ServicePage, { ServiceData } from '@/components/services/ServicePage'
 import { mergePackages } from '@/lib/pricing'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Web Development in Toronto',
   description:
-    'Toronto web development studio. Marketing sites, product UIs, and online stores designed and coded by one small team - fast, accessible, and easy for you to update.',
+    'Toronto web development studio. Marketing sites, product UIs and online stores, designed and coded by one small team at a fixed project price.',
   alternates: { canonical: '/services/web-development' },
-  openGraph: { url: '/services/web-development' },
+  openGraph: { url: '/services/web-development', images: OG_IMAGES },
 }
 
 const stage = (

@@ -1,11 +1,12 @@
 import { Metadata } from 'next'
 import { TERMS_DEFAULT_HTML } from '@/lib/admin/legal-defaults'
 import LegalPage from '@/components/v3/LegalPage'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
   alternates: { canonical: '/terms' },
-  openGraph: { title: 'Marrelay - Terms of Service', url: '/terms' },
+  openGraph: { title: 'Marrelay - Terms of Service', url: '/terms', images: OG_IMAGES },
   description: 'Terms of Service for Marrelay.',
 }
 

@@ -27,7 +27,11 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   // The <title> may differ from the on-page H1: see Post.seoTitle.
   const seoTitle = post.seoTitle ?? post.title
   return {
-    title: seoTitle,
+    // Absolute, so the root "Marrelay - %s" template does not prefix the brand.
+    // On an article the keywords should lead, and the 11-character prefix was
+    // pushing several of these past the ~60 characters Google renders. Google
+    // appends the site name itself when it wants to.
+    title: { absolute: seoTitle },
     description: post.description,
     keywords: post.tags,
     alternates: { canonical: url },

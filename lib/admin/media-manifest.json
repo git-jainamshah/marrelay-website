@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-17T03:21:34.577Z",
+ "generatedAt": "2026-11-17T04:13:00.607Z",
  "files": [
   {
    "filename": "analytics-bg.mp4",
@@ -14,16 +14,16 @@
    "relPath": "/assets/arch-curve.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 429285,
-   "modifiedAt": "2026-11-13T21:50:54.429Z"
+   "size": 406888,
+   "modifiedAt": "2026-11-17T04:08:18.630Z"
   },
   {
    "filename": "arch-tunnel.jpg",
    "relPath": "/assets/arch-tunnel.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 328852,
-   "modifiedAt": "2026-11-13T21:50:54.541Z"
+   "size": 305281,
+   "modifiedAt": "2026-11-17T04:08:19.270Z"
   },
   {
    "filename": "blog-banner.jpg",
@@ -38,16 +38,16 @@
    "relPath": "/assets/blogs-banner-bg.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 4771958,
-   "modifiedAt": "2026-11-13T20:24:13.404Z"
+   "size": 728459,
+   "modifiedAt": "2026-11-17T04:08:16.670Z"
   },
   {
    "filename": "business-services-banner-bg.jpg",
    "relPath": "/assets/business-services-banner-bg.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 3298783,
-   "modifiedAt": "2026-11-13T20:24:13.412Z"
+   "size": 426636,
+   "modifiedAt": "2026-11-17T04:08:17.270Z"
   },
   {
    "filename": "city-blue.jpg",
@@ -62,32 +62,32 @@
    "relPath": "/assets/city-night.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 186915,
-   "modifiedAt": "2026-11-13T21:50:54.209Z"
+   "size": 176559,
+   "modifiedAt": "2026-11-17T04:08:19.506Z"
   },
   {
    "filename": "contact-us-banner-bg.jpg",
    "relPath": "/assets/contact-us-banner-bg.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 3813507,
-   "modifiedAt": "2026-11-13T20:24:13.432Z"
+   "size": 302035,
+   "modifiedAt": "2026-11-17T04:08:16.958Z"
   },
   {
    "filename": "contact-us-form.jpg",
    "relPath": "/assets/contact-us-form.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 6135339,
-   "modifiedAt": "2026-11-13T20:24:13.452Z"
+   "size": 573801,
+   "modifiedAt": "2026-11-17T04:08:15.790Z"
   },
   {
    "filename": "crowd.jpg",
    "relPath": "/assets/crowd.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 177015,
-   "modifiedAt": "2026-11-13T21:50:54.297Z"
+   "size": 163343,
+   "modifiedAt": "2026-11-17T04:08:19.746Z"
   },
   {
    "filename": "engineering-drawings-bg.mp4",
@@ -126,24 +126,24 @@
    "relPath": "/assets/marrelay-logo-red-gradient-alt.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 665801,
-   "modifiedAt": "2026-11-13T20:24:13.516Z"
+   "size": 36266,
+   "modifiedAt": "2026-11-17T04:08:17.546Z"
   },
   {
    "filename": "marrelay-logo-red-gradient.jpg",
    "relPath": "/assets/marrelay-logo-red-gradient.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 668328,
-   "modifiedAt": "2026-11-13T20:24:13.516Z"
+   "size": 36421,
+   "modifiedAt": "2026-11-17T04:08:17.454Z"
   },
   {
    "filename": "marrelay-logo-sunset-gradient.jpg",
    "relPath": "/assets/marrelay-logo-sunset-gradient.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 828499,
-   "modifiedAt": "2026-11-13T20:24:13.520Z"
+   "size": 39878,
+   "modifiedAt": "2026-11-17T04:08:17.358Z"
   },
   {
    "filename": "marrelay-logo-white.png",
@@ -158,8 +158,8 @@
    "relPath": "/assets/marrelay-mark-on-white.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 110275,
-   "modifiedAt": "2026-11-13T20:24:13.520Z"
+   "size": 29492,
+   "modifiedAt": "2026-11-17T04:08:19.830Z"
   },
   {
    "filename": "marrelay-mark.png",
@@ -190,16 +190,16 @@
    "relPath": "/assets/office-dark-hero.png",
    "kind": "photo",
    "mime": "image/png",
-   "size": 626900,
-   "modifiedAt": "2026-11-13T20:24:13.524Z"
+   "size": 468794,
+   "modifiedAt": "2026-11-17T04:08:18.062Z"
   },
   {
    "filename": "sample-project-bg.jpg",
    "relPath": "/assets/sample-project-bg.jpg",
    "kind": "photo",
    "mime": "image/jpeg",
-   "size": 5638673,
-   "modifiedAt": "2026-11-13T20:24:13.552Z"
+   "size": 491720,
+   "modifiedAt": "2026-11-17T04:08:16.162Z"
   },
   {
    "filename": "web-dev-bg.mp4",
@@ -215,12 +215,12 @@
    {
     "file": "app/blogs/[slug]/page.tsx",
     "label": "Blogs / [Slug]",
-    "line": 88
+    "line": 92
    },
    {
     "file": "app/blogs/[slug]/page.tsx",
     "label": "Blogs / [Slug]",
-    "line": 147
+    "line": 151
    },
    {
     "file": "app/layout.tsx",
@@ -298,6 +298,11 @@
     "file": "app/lp/launch/page.tsx",
     "label": "Lp / Launch",
     "line": 21
+   },
+   {
+    "file": "lib/og.ts",
+    "label": "lib/og.ts",
+    "line": 14
    },
    {
     "file": "lib/site-config.ts",

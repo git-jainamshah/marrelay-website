@@ -1,0 +1,45 @@
+# Marrelay
+
+> Marrelay is a digital studio in Toronto, Canada. We design, build and grow websites and digital products for startups and small businesses across Canada and the United States. We quote one fixed price for a project before the work starts, instead of billing by the hour.
+
+Marrelay started in 2026. Our background is building websites and implementing the digital analytics behind them. We work remotely, with one small senior team on each project.
+
+## How we price
+
+We do not bill by the hour. The scope and the price go on one page before any work begins, and that price does not change because the work took longer than estimated. Work outside the agreed scope is priced before it is built. Current package prices are published on the pricing page rather than quoted on a sales call.
+
+- [Pricing](https://www.marrelay.com/pricing): current fixed-price packages for each service, with what each one includes.
+
+## What we do
+
+- [Services](https://www.marrelay.com/services): overview of all five disciplines.
+- [Web development](https://www.marrelay.com/services/web-development): websites and web applications, built custom rather than on a page builder.
+- [Data and analytics](https://www.marrelay.com/services/data-analytics): GA4 and Google Tag Manager implementation, data layers, conversion tracking and consent configuration.
+- [SEO and ads](https://www.marrelay.com/services/seo-ads): search optimization and paid search and social campaigns.
+- [Social](https://www.marrelay.com/services/social): social media content and management.
+- [Engineering and CAD](https://www.marrelay.com/services/engineering): CAD drafting, technical drawings and documentation.
+
+## Company
+
+- [About](https://www.marrelay.com/about): why the studio exists and how it works.
+- [Contact](https://www.marrelay.com/contact): project enquiries.
+- [Case studies](https://www.marrelay.com/case-studies): illustrative examples of the work. These show the kind of outcome we aim for and use invented figures, not measured client results.
+
+## Writing
+
+- [Journal](https://www.marrelay.com/blogs): articles on web development, analytics implementation, tracking and consent.
+- [Google Consent Mode v2 in 3 steps](https://www.marrelay.com/blogs/google-consent-mode-v2-in-3-steps)
+- [Core Web Vitals for non-developers](https://www.marrelay.com/blogs/core-web-vitals-for-non-developers)
+- [How much does a small business website cost](https://www.marrelay.com/blogs/how-much-does-a-small-business-website-cost)
+- [Website redesign without losing SEO](https://www.marrelay.com/blogs/website-redesign-without-losing-seo)
+- [WordPress vs Webflow vs custom built](https://www.marrelay.com/blogs/wordpress-vs-webflow-vs-custom-built)
+- [ChatGPT ads conversion tracking setup](https://www.marrelay.com/blogs/chatgpt-ads-conversion-tracking-setup)
+- [DWG vs STEP vs STL CAD file formats explained](https://www.marrelay.com/blogs/dwg-vs-step-vs-stl-cad-file-formats-explained)
+
+## Facts
+
+- Based in Toronto, Ontario, Canada. Remote, with no public office address.
+- Serves clients in Canada and the United States.
+- Founded in 2026.
+- Pricing model: fixed project price, not hourly.
+- Contact: hello@marrelay.com

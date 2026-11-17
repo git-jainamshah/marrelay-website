@@ -5,13 +5,15 @@ import { getPackageOverrides } from '@/lib/pricing'
 import { SERVICES_V3 } from '@/lib/v3-content'
 import Faq from '@/components/v3/Faq'
 import PricingStance from '@/components/v3/PricingStance'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'Fixed-price packages for web development, data & analytics, social, SEO & ads, and engineering. Pick a starting point and get a 1-page proposal in 3 working days. No sales calls.',
+    'Fixed-price packages for web development, data and analytics, social, SEO and ads, and engineering. A 1-page proposal in 3 working days.',
   alternates: { canonical: '/pricing' },
   openGraph: {
+    images: OG_IMAGES,
     title: 'Marrelay - Pricing',
     description:
       'Fixed-price packages for web development, data & analytics, social, SEO & ads, and engineering. No sales calls required.',

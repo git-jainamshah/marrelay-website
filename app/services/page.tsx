@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import ServicesView from './view'
 import { getPackageOverrides } from '@/lib/pricing'
 import { SERVICES_V3 } from '@/lib/v3-content'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Services',
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
     'Web, data, SEO & ads, social and engineering/CAD for startups and small businesses in Canada and the US. Fixed project price, not hourly, Toronto-based.',
   alternates: { canonical: '/services' },
   openGraph: {
+    images: OG_IMAGES,
     title: 'Marrelay - Services',
     description: 'Web, data, SEO & ads, social and engineering/CAD. One fixed project price, not by the hour.',
     url: '/services',

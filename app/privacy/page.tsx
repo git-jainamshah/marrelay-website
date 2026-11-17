@@ -1,11 +1,12 @@
 import { Metadata } from 'next'
 import { PRIVACY_DEFAULT_HTML } from '@/lib/admin/legal-defaults'
 import LegalPage from '@/components/v3/LegalPage'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   alternates: { canonical: '/privacy' },
-  openGraph: { title: 'Marrelay - Privacy Policy', url: '/privacy' },
+  openGraph: { title: 'Marrelay - Privacy Policy', url: '/privacy', images: OG_IMAGES },
   description: 'Privacy Policy for Marrelay website.',
 }
 

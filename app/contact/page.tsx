@@ -3,13 +3,14 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import ContactLeadForm from '@/components/ContactLeadForm'
 import { getCompany, getEnabledSocials } from '@/lib/site-config'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Contact',
   description:
     "Let's book a discovery call. Fill this in and we'll reply within a few hours with a couple of times that work.",
   alternates: { canonical: '/contact' },
-  openGraph: { url: '/contact' },
+  openGraph: { url: '/contact', images: OG_IMAGES },
 }
 
 const NEXT = [

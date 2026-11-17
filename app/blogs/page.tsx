@@ -5,6 +5,7 @@ import { getSlot } from '@/lib/media-slots-server'
 import JournalIndex, { PostCard } from '@/components/v3/JournalIndex'
 import { getViewCounts } from '@/lib/blog/views-server'
 import { plainText } from '@/lib/blog/richtext'
+import { OG_IMAGES } from '@/lib/og'
 
 export const revalidate = 300
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     'Practical guides on analytics, web performance, and engineering/CAD for small and mid-size businesses. Written to be used, not skimmed.',
   alternates: { canonical: '/blogs' },
   openGraph: {
+    images: OG_IMAGES,
     title: 'Marrelay - Blog',
     description: 'Practical guides on analytics, web performance, and engineering/CAD for small and mid-size businesses.',
     url: '/blogs',

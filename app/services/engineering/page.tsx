@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import ServicePage, { ServiceData } from '@/components/services/ServicePage'
 import { mergePackages } from '@/lib/pricing'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Engineering & CAD Drafting in Toronto',
   description:
-    'Toronto CAD drafting and engineering. Mechanical drafting, blueprints, and 3D modelling for founders, fabricators, and contractors who need it precise, and on time.',
+    'Toronto CAD drafting and engineering. Mechanical drafting, blueprints and 3D modelling for founders, fabricators and contractors.',
   alternates: { canonical: '/services/engineering' },
-  openGraph: { url: '/services/engineering' },
+  openGraph: { url: '/services/engineering', images: OG_IMAGES },
 }
 
 const stage = (

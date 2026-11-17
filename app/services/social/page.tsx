@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import ServicePage, { ServiceData } from '@/components/services/ServicePage'
 import { mergePackages } from '@/lib/pricing'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'Social Media Marketing in Toronto',
   description:
     'Toronto social media studio. We run your channels end to end: strategy, content, community, and creator partnerships.',
   alternates: { canonical: '/services/social' },
-  openGraph: { url: '/services/social' },
+  openGraph: { url: '/services/social', images: OG_IMAGES },
 }
 
 const stage = (

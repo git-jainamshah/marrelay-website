@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import ServicePage, { ServiceData } from '@/components/services/ServicePage'
 import { mergePackages } from '@/lib/pricing'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'SEO & Google Ads in Toronto',
   description:
     'Toronto SEO and paid ads. Technical SEO, content, and paid search & social that compound - qualified leads at a falling cost, with the math shown weekly.',
   alternates: { canonical: '/services/seo-ads' },
-  openGraph: { url: '/services/seo-ads' },
+  openGraph: { url: '/services/seo-ads', images: OG_IMAGES },
 }
 
 const stage = (

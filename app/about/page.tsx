@@ -2,13 +2,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getSlot } from '@/lib/media-slots-server'
+import { OG_IMAGES } from '@/lib/og'
 
 export const metadata: Metadata = {
   title: 'About Marrelay',
   description:
     'Marrelay is a Toronto digital studio that quotes one fixed price for a project instead of billing by the hour. Here is why we started it.',
   alternates: { canonical: '/about' },
-  openGraph: { url: '/about' },
+  openGraph: { url: '/about', images: OG_IMAGES },
 }
 
 const FAQ = [
